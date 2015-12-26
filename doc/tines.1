@@ -1,0 +1,81 @@
+.TH TINES 1 "26 Dec 2015"
+.SH NAME
+tines \- outliner, planner, organizer, notebook
+.SH SYNOPSIS
+.B tines
+[\fIfile\fP]
+[\fIoptions\fP]
+[\fIcommand\fP [\fIcommand\fP] .. ]
+.SH DESCRIPTION
+\fItines\fP is an ncurses-based outliner
+with planning and organizing capabilities.
+You can use it in two different ways:
+.IP \[bu] 4
+As an outliner, reading and writing
+to the file specified on the command line.
+\fItines\fP supports OPML, its own XML-based format,
+or indented ASCII.
+.IP \[bu]
+As an organizer, storing outlines, calendars,
+action lists, project lists, tracking lists,
+notes, and most other kinds of text data, in a single file.
+.LP
+\fItines\fP
+can import and export OPML and indented text files,
+and additionally can export to HTML and PostScript.
+.LP
+Running \fItines\fP without specifying a file
+loads the default ~/.hnb file.
+If the file does not exist, \fItines\fP creates the file
+and populates it with example data.
+.SH OPTIONS
+\fBtines\fP can be invoked with the following options:
+.TP
+.B \-h, \-\-help
+Shows a summary of options.
+.TP
+.B \-v, \-\-version
+Shows the version of \fItines\fP on your system.
+.TP
+.B \-t, \-\-tutorial
+Loads an example database instead of a file.
+.TP
+.B \-rc <\fIfile\fP>
+Loads the specified config file (the default is ~/.hnbrc).
+.TP
+.B \-ui <curses|cli>
+Specifies the user interface to use.
+The default is \fBcurses\fP.
+The \fBcli\fP option is useful for scripting \fItines\fP,
+or debugging and testing.
+.TP
+.B \-e
+Runs CLI commands in noninteractive mode.
+In this mode, \fItines\fP starts in CLI mode.
+Type `help' to get more information.
+.SH FILES
+.IP ~/.hnb
+The default file for your notes.
+To use an other, specify its name on the command line.
+.IP ~/.hnbrc
+The default configuration file. To load an other config file than default,
+use the \fB-rc\fP command-line option.
+.SH SEE ALSO
+For more information on the usage of the program, load the tutorial or
+press \fBF1\fP while running \fItines\fP.
+.LP
+\fItines\fP is a fork of the \fIhnb\fP outliner,
+written by \[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).
+For information about \fIhnb\fP, see
+http://hnb.sourceforge.net
+.SH AUTHOR
+The original \fIhnb\fP was written by
+\[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).
+.LP
+\fItines\fP is now maintained by Larry Kollar.
+.LP
+This manual page was originally written by Andras Bali <drewie@bigfoot.com>,
+and has been heavily modified for \fItines\fP by Larry Kollar.
+.LP
+To get the latest version of \fItines\fP, see
+https://github.com/larrykollar/tines/
