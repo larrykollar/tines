@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>tree exported from hnb</TITLE>
+</HEAD>
+<BODY>
+<UL>
+<LI>the commandline interpreter (cli) used was developed specifically for this application, but it is made not in any way dependant on any other thing than c.</LI>
+<LI>programming with libcli</LI>
+  <UL>
+	<LI>adding commands and variables</LI>
+	  <UL>
+		<LI>adding a command to the interpreter is done by issuing the macro</LI>
+		<LI>cli_add_command("commandname", callback, "description");</LI>
+		<LI>where callback is a function of the form </LI>
+		<LI>int callback(char *params);</LI>
+		<LI>the string passed to the callback is the string remaining when the command is chopped of the commandline</LI>
+		<LI>variables can be added with either</LI>
+		<LI>cli_add_int("variablename", &integer_variable, "description");</LI>
+		<LI>cli_add_string("variablename", &string_variable, "description");</LI>
+		<LI>or by calling the real add function</LI>
+		<LI>cli_add_item("variablename", &integerdata, &stringdata, callback, "description");</LI>
+		<LI>the callback will be issued whenever the variable is set, a variable can have both integer and string attached at the same time</LI>
+	  </UL>
+	<LI>running commands</LI>
+	  <UL>
+		<LI>when issuing cli_docmd("commandline") the interpreter will run the commandline and return with the value given to the callback function assosicated</LI>
+		<LI>this function is usually wrapped up in a macro making it possible to use printf style formatting</LI>
+		<LI>#define docmdf(args...) \</LI>
+		  <UL>
+			<LI>do{ char buf[100];\</LI>
+			<LI>snprintf (buf, 99, args);\</LI>
+			<LI>cli_docmd(buf);\</LI>
+			<LI>}while(0)</LI>
+		  </UL>
+	  </UL>
+	<LI>commandline completion</LI>
+	  <UL>
+		<LI>char *cli_complete(const char *commandline);</LI>
+		<LI>returns a completion fo the given commandline.</LI>
+		<LI>the string returned is statically allocated</LI>
+		<LI>if there is no match a message is printed on the output</LI>
+		<LI>if there is multiple matches the matches are listed on the output, and the commandline is expanded in such a manner that it rquals the first characters</LI>
+	  </UL>
+	<LI>customisation</LI>
+	  <UL>
+		<LI>by default cli outputs to standard output, when embedding it in an application this is often not what you want.</LI>
+		<LI>cli_outfun can be assigned a void functino that takes a string as parameter</LI>
+		<LI>cli_width should be assigned the width in characters of the output device</LI>
+		<LI>cli_precmd can be assigned a void function taking the commandline as a parameter to be executed before each command</LI>
+		<LI>cli_postcmd can be assigned a void function taking the commandline as a parameter to be executed after each command</LI>
+	  </UL>
+	<LI>history</LI>
+	  <UL>
+		<LI>libcli also provides a simple history facility</LI>
+		<LI>if you call cli_history_add("commandline"); for every function you execute,</LI>
+		<LI>char *cli_historyprev();</LI>
+		<LI>and</LI>
+		<LI>char *cli_historynext();</LI>
+		<LI>will allow you to page back and forward in the history</LI>
+		  </UL>
+	  </UL>
+</UL>
+</BODY></HTML>

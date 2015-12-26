@@ -1,0 +1,44 @@
+ROADMAP
+===================================
+
+When I started listing all the updates I wanted from hnb
+after fixing the 64-bit issue, I realized I'd need a more
+organized approach. Forking a dead project isn't a big
+deal, and maybe I'll get a little help.
+
+These items are in no particular order or priority. If you
+want to pick one up and do it, no matter where it is in
+the roadmap, that would be great. (I would particularly like
+to have UTF-8 support as soon as possible, but I'm not sure
+my coding skills are up to the job right now.)
+
+1.9.19alpha (YOU ARE HERE): The fork from hnb 1.9.18pre7.
+This version runs on 64-bit computers and fixes a minor
+bug that caused other outliners to reject hnb's OPML export.
+
+1.9.19 - 2.0:
+* finish renaming (.hnb to .tines, for example)
+* import/convert .hnb files
+* rewrite/expand the documentation (I've started on this)
+* Planner menu
+* automated test suite (using libcli)
+* new command: export_branch (export from the selected node
+  instead of the entire tree)
+* new command: insert_above (insert new node above current)
+* new command: sleep (put the process in the background)
+* move tutorial.inc, etc. into /usr/local/share/tines
+* new attributes (mapped to OPML "type" attribute for import/export)
+
+2.0 - 3.0:
+* autoconf
+* code cleanup
+* replace XML code with xmllib
+* UTF-8 friendly
+* use OPML as the default file format, maintaining hnb
+  as a legacy format
+* use XSLT as basis for all export activity
+
+3.0 and beyond: (this is pie in the sky stuff)
+* Add Qt for optional GUI, maintaining console mode
+* (???) Complete rewrite, maybe as an interpreted language (for
+  example, Perl/TK or Python/Qt)

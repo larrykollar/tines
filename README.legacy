@@ -1,0 +1,297 @@
+(Old hnb readme, includes contributors and changelog info that may
+be of historical importance. ==LK)
+
+HIERARCHICAL NOTEBOOK
+	
+	hierarchical notebook (hnb) is program to organise, many kinds of data
+	in one place, for example addresses, to-do lists, ideas, book "reviews",
+	brainstorming, organising a speech, making a  structured packing list 
+	random notes, and probably many more I  haven't thought of yet..
+	
+
+HOW TO GET hnb?
+	new releases and information about hnb will appear at hnb's home page
+	
+	http://sourceforge.net/projects/hnb/
+	
+INSTALLING hnb
+	if you've got a source release you must first compile hnb,..
+	see further down in this file for instructions.
+	
+	Windows
+		the windows binary distribution, is a .zip file	containing the
+		executable, this README file, an sample database, and the 
+		license for hnb's use. the binary is stand alone, so you can 
+		just copy it wherever you'd like it to reside.
+	Linux 
+		the Linux binary distribution is a .tar.gz file	containing the
+		executable, this README file, a an sample database, and the
+		license for hnb's use. The binary is dynamically linked 
+		against ncurses just place it anywhere in your path.. like
+		/usr/bin, /usr/local/bin or /home/user/bin
+		
+COMPILING hnb
+	
+	hnb uses a custom Makefile, that should work on most unix'ish systems with a curses library.
+	
+	make
+	su
+	(enter root password)
+	make install
+	
+	
+USAGE DOCUMENTATION
+	If you start hnb without any parameters and no default database, or
+	with the -t or --tutorial option, hnb will load a special tutorial
+	database.
+	
+CHANGELOG
+	1.9.18
+		fixed segfault reported by thomas sattler, due to faulty handling of NULL input in node_get
+		fixed segfault occuring when selecting the first menu item directly
+		added autosave, and warning for concurrent sessions
+		remove recovery file upon normal exit, when not in readonly mode
+		from Terry Brown
+			styles for child/not child on todo nodes
+			parameter for expand to expand recursively
+			new configuration variable add_at_top which causes nodes added when incremental search fails to be added at top when set to 1
+		patch for xhtml compliance and automatic links for http:// urls, from Raphael Hertzog
+	1.9.17
+		bug fix, when saving hnb DTD, I also saved the text attribute
+		removed the format names from prefs.c,.. now the string specified is used instead, (makes extending easier)
+		improved the tokenizer for libcli, it now acts almost exactly as bash, even the hooks for understanding $variable_expansion is included in the code, uses a single malloc
+		various bug fixes
+		cleanups and merging of commands, e.g. go_root, go_recurse, and go_backrecurse are now go <root|backrecurse|recurse|up|down|left|right>
+		search now is a single command taking direction and query as arguments.
+		changed escape to be the key used to bring up the menu,.. and remapped ^Q to be quit (again)
+	1.9.16
+		attempts to fix the compile on OSX
+			renaming mergesort to node_mergesort due to nameclash
+			only compiling the static lib
+		made indent and outdent only work when there is no data typed already, (thus making > and < allowed typed in navigation mode as long as they're not the first character typed.
+		removed errors appearing with -pedantic (at least here)
+			removing all macros with variable arguments replacing them with va_list
+			removing inline statements from libcli
+		created an utility function for string replacements, that I inserted into all the various import/export filters.
+		added a function "insert_cal <month> <year>" which inserts the specified month/year in a fashion that makes hnb useable as a simple timeplanner as well. (when I get around to adding support for clones, this might be interesting)
+		allowing the user to use <,>,+ and - when typing in new data without erratic behavior, and not the need to enter edit mode. (except if it is the first char of the data)
+		fixed an issue with creating the first child, and pressing insert, and various other commands,.. 
+		added rpm spec file from Asgeir Nilsen
+		made file_opml and file_hnb interpret all attributes
+		implemented buffered reading for the xml tokenizer
+		changed the function prototype for functions that register with libcli, they must now register with an int (int argc, char **argv, void *data) function
+			overhauled hnb to use this API, some more refinement might be needed in someplaces, but it seems to work OK for now.
+		added a menu that is accesed from F9
+	1.9.15
+		outdent fixed to be more efficient and work as intended
+		added export context
+		changed all import/export functions to use the query variable if filename passed is *
+	1.9.14
+		bugfix: The new sort and shuffle functions could result in dataloss when saved.
+		new feature: expand/collapse and expand_all/collapse_all are new bindable functions, expand/collapse is bound to +/- in the default config file, they force portions of the tree to stay open even when you leave it.
+	1.9.13
+		Apparently I broke the nasty quick-sort I had implemented, when I changed the way the tree was stored. Implemented a Merge-sort which is faster anyways.
+		Improved the behavior of non fixed navigation when the whole tree is displayed.
+		Added a shuffle function (not currently bound), I used it while developing the new mergesort, but someone might find it useful.
+	1.9.12
+		Changed the datastructure to use a "assosciation list" for storing the actual data. Will move all tags, like checkbox to this structure.
+			Should actually make it possible to do the addition of start end date and other "columns" a breeze, perhaps even automatic for some export/import formats
+		modified tree_duplicate to use the new node_duplicate function, and a modified version of the import_node which takes a single node with data set as input.
+		added import_node_text which disregards all other data items
+	1.9.11
+		changed node_swap to only swap relational pointers, thus making it easier to extend the data stored in Node later
+			thus also changing and move node, indent/out-dent and sort to accommodate for a truer swap
+		fixed a bug with editing of newly introduced child
+			note: should perhaps move ui_action_edit into a built-in command that is handled specially since it now needs special attention by being a subcommand to ui_action_command
+	1.9.4-1.9.10 feb 2003
+		re-implementation of positioning of selection bar in non fixed mode
+		massive code cleanup and separation
+		separation of variables from prefs.* to static variables in the code modules where they belonged
+		integration with spell checker (Ispell, but through prefs it could easily be made Aspell instead)
+		new preferences format
+		ability to execute commands and running mail-client / web-browser if a node or it's children contain url's / mail addresses
+		OPML import and export
+		postscript export
+		htmlcss export
+		save_state and restore_state for single level undo where needed
+		new XML tokenizer
+		cut/paste functionality
+	1.9.3 jan 2003
+		stabilising of the code
+		ability to use default terminal colours, (patch from NN)
+	1.9.1 oct 2002
+		option to remember current position in hnb file when saving/loading
+		cleaned up most of the help-system code
+		further code separation
+	1.9.0 oct 2002
+		fixed the movement behaviour when going to the parent node,.. the screen jumped too much
+		separated the various export and load filters into own files
+		used my new libcli for the cli code, and as "glue" in some code spots
+		reverted to a manual makefile instead of autoconf/automake
+		improvements to dynamic key-bindings, multiple key-bindings for each action, all key-bindings in various context got their own choice in the preferences.
+		The first of the actual key-bindings shown as help
+		added some more bindings for the node editor, (skip word and bskip word, hooks for even more)
+	1.8 30 aug 2001
+		changed the default window scrolling behaviour to move the selection bar instead of the whole screen when possible
+		integrated libxml support changes from orang@imonk.com
+		added flag to keep whitespace when loading XML file
+	1.7 6 jul 2001
+		made the tutorial save-able, if opened in place of the default database
+		fixed sorting segfault
+		BSD curses workaround,.. does it work?
+		changed percentage calculation algorithm
+		cleanup of the node drawing code
+		integrated priorities
+		integrated Andrew J. Webers libxml2 import/export filters
+		preferences items
+			mouse
+			bullet mode
+			prefs revision checking
+			priority colours
+			bold mode colours configurable
+			keyboard redefinition
+	1.6 25 may 2001
+		generic XML import and export filter
+		preferences
+		colour settings
+		todobox fixes
+		percentage calculations fixes
+		XML tag shortcuts
+		macrofied node.<c|h>
+	1.5 19 may 2001
+		switched to autoconf/automake
+		joining/splitting of nodes.
+		hooks for priority setting
+			(press ^P on a to-do node)
+		added import/export of XML
+		optimisations
+		update to man-page
+		update documentation
+		default format is now XML
+		commented all header-functions
+	1.4 16 may 2001
+		added preferences saving/loading
+		replaced tab char in display with a space.
+		removal of temporary node, when issuing insert in a new leaf.
+		cli mode, for use in scripts etc.
+		pipe export by Karsten Hilbert
+		automatic generation of README.html
+	1.3 14 may 2001
+		bloat
+		various feedback changes
+		debug mode for my own sake
+		added collapse-views
+	1.2 12 may 2001
+		added mouse navigation
+		code cleanups
+		improved navigation in edit mode
+		improved pgup/pgdn
+	1.1 10 may 2001
+		ran all the files through indent
+			indent -bad -bap -br -ts4 -ce -ci4 -i4 -cli4 -cbi0 -ss -di0 -nbc -npsl -T Node -brs -ip4 -bbo --line-length78 
+		changed the editor cursor
+		minor code tweaks and cleanups
+		added manpage by Andras BALI
+		switched to bold indication of subnodes
+		fixed grabbing of nodes (copy/move)
+		improved tree.c, multiple trees are now possible
+	1.0 21 april 2001
+		changed ctrl+space for marking to ctrl+g in win32 port
+		bullet system for all nodes ( +/- [X] [ ] )
+		added copying feature
+		better user feedback when moving
+		various fixes
+	0.9 15 april 2001 end of easter holdidays
+		undefined keyboard debugging in win32 port
+		added in-binary tutorial, and export mode for the include file
+		changed curses mode to raw
+		upon request from Marck Rintsch, ctrl+s now saves the file
+		added more visual feedback when saving, quitting and such
+		added an standard bullet on all entries.
+	0.8 15 april 2001
+		ascii export
+		html export
+			(doesn't escape any html by itself)
+		latex export
+			doesn't work for deeper nesting levels than four
+		postscript export
+			based on the latex export
+			uses system calls and requires latex, and dvips
+		loading(insertion) of an external file into the db
+		added done percentage
+	0.7 13 april 2001
+		rearranged input structures
+		added todo checkboxes
+		added error display
+		remade the help system
+		fixed resizing
+		made search case insensitive
+		refined search control interface
+	0.6b 11 april 2001
+		the guadec hacked fixes on strics computer
+		
+		worked on search ability
+		fixed the display of confirm mode in curses ui.
+		added reparenting
+		cleaned up node_remove
+		 
+		added load,save and display of todo in standard file format
+		changed to bz2 format on distribution file
+	0.5
+		help item's update
+		added insert in the interface
+	0.4 march 2001
+		added registry functions
+		small bugfix for node recurse()  (go right, and to top)
+		fixed tab'ing into children of empty nodes bug
+		fixed wordwrap
+	0.3 15.oct 2000
+		first rendition of cgi-bin browser
+		wordwrap
+		added registry
+		added resize functionality
+		pageup/pagedown
+		changes to help/confirming interface
+AUTHORS
+	hnb authors
+	
+	Øyvind Kolås       <pippin@users.sourceforge.net>
+		project maintainer
+	Andras BALI        <drewie@bigfoot.com>
+		Debian Package
+		manual page
+	Karsten Hilbert    <Karsten.Hilbert@gmx.net>
+		pipe export
+	Martin van Beilen  <bln@simlab.dhs.org>
+		various todo/done issues in the code
+	Andrew J Weber     <orang@imonk.com>
+		libxml2 import/export
+	Terry Brown        <tbrown@nrru.umn.edu>
+		setting style of checkbox for nodes with/without children
+		add_at_top variable for adding
+		bugfix for some terminals where the cursor disappear in empty nodes
+		new parameter for expand function to expand recursively
+BUGS
+	slashes (/) inside nodes are not escaped correctly in cli mode
+	bullets/todo boxes, doesn't check that the line is writable (top of screen on multi-line nodes)
+TODO
+	buffer limits
+		they are high,.. but a really long node might crash it
+	more entities on each node
+		current entities:
+			priority
+			title/data
+			todo item
+			done/not done
+		future items:
+			created date
+			modified date
+			due date, for project planning
+			details dialog for each node to modify such things
+			cronological id
+	purge todo items on lower levels
+	curses interface
+		"context" menu for mouse mode
+	make a dead tree copy of the source for examination
+		enscript *.h *.c -E  --output uts.ps -U 2 -j
+	make it stop outdent when - is pressed without being in edit mode,.. and characters are typed.

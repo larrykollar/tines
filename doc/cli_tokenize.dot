@@ -1,0 +1,68 @@
+digraph "libcli_tokenizer" {
+	epsilon=0.01;
+	maxiter=1000;
+	start=4;
+	center=1;
+	size="9,9";
+	edgehandles=0;
+	rankdir=LR;
+	
+	"start" [shape = doublecircle];
+	"end" [shape = doublecircle level=1];
+
+	"start"	-> "start"	[label="ws eat"]
+	"start" -> "quo"	[label="default"]
+
+	"quo" -> "delimit" [label="ws new+eat"]
+	"quo" -> "qpp"	[label="\" eat"]
+	"quo" -> "app"	[label="\' eat"]
+	"quo" -> "end"	[label="\\0 new nil"]
+	"quo" -> "wvar" [label="$ eat+varclear"]
+	"quo" -> "wpp"	[label="default eat+store"]
+
+
+	"delimit" -> "delimit"	[label="ws eat"]
+	"delimit" -> "end"		[label="\\0 nil"]
+	"delimit" -> "quo"		[label="default nil"]
+
+	"wpp"	-> "wescape"		[label="\\ eat"]
+	"wpp"	-> "quo"	[label="ws nil"]
+	"wpp"  	-> "quo"	[label="\\0 nil"]
+	"wpp"	-> "wvar" [label="$ eat+varclear"]
+	"wpp"	-> "wpp"			[label="default eat+store"]
+
+	"wvar"	-> "wvar" [label="A..Z,a..z,0..9,-,_ varstore,eat "]
+	"wvar"	-> "wpp"	[label="default varinsert"]
+
+	"wescape"	-> "quo" [label="\\0 nil"]
+	"wescape"	-> "wpp"		[label="n eat+store(\\n)"]
+	"wescape"	-> "wpp"		[label="t eat+store(\\t)"]
+	"wescape"	-> "wpp"		[label="r eat+store(\\r)"]
+	"wescape"	-> "wpp" 		[label="default eat+store"]
+
+	"qpp"	-> "qescape"		[label="\\ eat"]
+	"qpp"	-> "quo"	[label="\" eat"]
+	"qpp"  	-> "quo"	[label="\\0 nil"]
+	"qpp"	-> "qvar" [label="$ eat+varclear"]
+	"qpp"	-> "qpp"			[label="default eat+store"]
+
+	"qescape"	-> "quo" [label="\\0 nil"]
+	"qescape"	-> "qpp"		[label="n eat+store(\\n)"]
+	"qescape"	-> "qpp"		[label="t eat+store(\\t)"]
+	"qescape"	-> "qpp"		[label="r eat+store(\\r)"]
+	"qescape"	-> "qpp" 		[label="default eat+store"]
+
+	"qvar"	-> "qvar" [label="A..Z,a..z,0..9,-,_ varstore,eat "]
+	"qvar"	-> "qpp"	[label="default varinsert"]
+
+	"app"	-> "aescape"		[label="\\ eat"]
+	"app"	-> "quo"	[label="\' eat"]
+	"app"  	-> "quo"	[label="\\0 nil"]
+	"app"	-> "app"			[label="default eat+store"]
+
+	"aescape"	-> "quo" [label="\\0 nil"]
+	"aescape"	-> "app"		[label="n eat+store(\\n)"]
+	"aescape"	-> "app"		[label="t eat+store(\\t)"]
+	"aescape"	-> "app"		[label="r eat+store(\\r)"]
+	"aescape"	-> "app" 		[label="default eat+store"]
+}

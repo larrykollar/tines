@@ -1,0 +1,111 @@
+digraph "xml_states" {
+	epsilon=0.0000001;
+	maxiter=1000;
+	start=3;
+	center=1;
+	size="7,8";
+	edgehandles=0;
+/*	rankdir=LR;*/
+/*	ordering=out;*/
+
+	"start" [shape = doublecircle];
+
+	"start"	-> "tag"	[label="<"]
+	"tag"	->	"tagexcl"	[label="!"]
+	"tag"	->	"tag"	[label="ws"]
+
+	"tagexcl"->	"swallowdtd" [label="D"]
+	"swallowdtd"->	"start"  [label="ret"]
+	"swallowdtd"->	"swallowdtd" [label="in dtd"]
+
+	"tagexcl"->	"commentdash1"			[label="-"]
+	"commentdash1"->	"commentdash2"	[label="-"]
+	"commentdash2"->	"incomment"	[label="!-"]
+	"commentdash2"->	"commentenddash1" [label="-"]
+
+	"incomment"->"incomment"
+	"incomment" -> "commentenddash1" [label="-"]
+	"commentenddash1"	->	"incomment" [label="!-"]
+	"commentenddash1"	->	"commentenddash2" [label="-"]
+	"commentenddash2"	->	"incomment" [label="!-"]
+	"commentenddash2"	->	"commentdone" [label=">"]
+	"commentdone"	->	"start" [label="ret"]
+	"tag"	->	"prolog"		    [label="?"]
+	"prolog"	->	"prologq"     	[label="?"]
+	"prolog"	-> "prolog"  [label="!?"]
+	"prologq"	->	"prolog"         [label="!>"]
+	"prologq"	->	"prologdone"                [label=">"]
+	"prologdone"	->	"start" 
+	"tag"	->	"tagnamestart"		[label="a..Z"]
+	"tagnamestart"	->	"tagname"	[label="a..Z"]
+	"tagnamestart"	->	"tagnamestart"		[label="ws"]
+	"tagname"	->	"tagname"		[label="a..Z,0..9"]
+	"tagname"	->	"tagnamedone"		[label="ws,/,>"]
+	"tagnamedone"	->	"intag"		[label="ret"]
+	"tag"		->	"tagclose"			[label="/"]
+	"tagclose"	->	"tagclosenamestart"	[label="a..Z"]
+	"tagclosenamestart"	->	"tagclosename"		[label="a..Z"]
+	"tagclosenamestart"	->	"tagclosedone"	[label=">"]
+	"tagclosename"	->	"tagclosename"	[label="a..Z"]
+	"tagclosename"	->	"tagclosedone"	[label=">"]
+	"tagclosedone"    -> "start"	[label="ret"]
+	"start"		-> "whitespace" 				[label="ws"]
+	"whitespace"			-> "whitespace" 	[label="ws"]
+	"whitespace"			-> "whitespacedone" [label="!ws"]
+	"whitespacedone"	-> "start" 				[label="ret"]
+
+	"start"		-> "entitystart"				[label="&"]
+	"entitystart"	-> "entity"					[label="!;"]
+	"entity"	-> "entity"						[label="!;"]
+	"entity"	-> "entitydone"					[label=";"]
+	"entitydone"	-> "start"
+
+	"start"			->	"word"					[label="."]
+	"word"			-> "word"					[label="."]
+	"word"			-> "worddone"				[label="<,ws,&"]
+	"worddone"		-> "start"					[label="ret"]
+
+	"intag"	-> "intag" [label="ws"]
+	"intag"	-> "tagend"		[label=">"]
+	"intag"	-> "empty"		[label="/"]
+	"empty"			-> "empty"					[label="ws"]
+	"empty"			->	"emptyend"				[label=">"]
+	"intag"	-> "attstart"				[label="a..Z,0..9"]
+	"attstart"		->	"attname"		[label="a..Z,0..9"]
+	"attstart"		->	"attdone"		[label="ws,/,>"]
+	"attname"		->	"attname"		[label="a..Z,0..9"]
+	"attname"		->	"attdone"		[label="ws"]
+	"attdone"		->	"intag"			[label="ws"]
+
+	"attdone"		->	"att"			[label="ret"]
+
+	"att"			->	"atteq" 		[label="="]
+	"att"			->	"att"			[label="ws"]
+	"att"			->	"intag"			[label="*"]
+
+	"atteq"	    	 -> "atteq" 		[label="ws"]
+
+	"atteq"	    	 -> "eqapos" 		[label="'"]
+	"eqapos"		 -> "eqaposval"		[label="!'"]
+	"eqapos"		 -> "eqaposvaldone" [label="'"]
+	"eqaposval" 	 -> "eqaposval"		[label="!'"]
+	"eqaposval" 	 -> "eqaposvaldone" [label="'"]
+	"eqaposvaldone"  -> "intag"			[label="ret"]
+
+	"atteq"	    	 -> "eqquot" 		[label="\""]
+	"eqquot"		 -> "eqquotval"		 [label="!\""]
+	"eqquot"		 -> "eqquotvaldone" [label="\""]
+	"eqquotval" 	 -> "eqquotval"		[label="!\""]
+	"eqquotval" 	 -> "eqquotvaldone" [label="\""]
+	"eqquotvaldone"  -> "intag"			[label="ret"]
+
+	"atteq"	    	 -> "eqval"  [label="!ws"]
+	"eqval" 	 	 -> "eqval"       [label="!ws"]
+	"eqval" 	 	 -> "eqvaldone"   [label="ws"]
+	"eqvaldone"  	 -> "intag"       [label="ret"]
+
+
+	"tagend" 	    -> "start"
+	"emptyend" 	    -> "start"
+
+}
