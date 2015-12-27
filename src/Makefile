@@ -7,7 +7,7 @@ OBJS=$(patsubst %.c,%.o,$(CFILES))
 %.o: %.c *.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
-hnb: libcli/libcli.a Makefile $(OBJS) init_subsystems.c *.h *.inc
+hnb: libcli/libcli.a Makefile $(OBJS) init_subsystems.c *.h ../doc/*.inc
 	$(CC) -o hnb $(OBJS) $(LIBS) $(CFLAGS)
 #	strip hnb
 

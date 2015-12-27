@@ -95,7 +95,7 @@ static long import_help (int argc, char **argv, long *data)
 	import_state_t ist;
 
 	init_import (&ist, node);
-#include "tutorial.inc"
+#include "../doc/tutorial.inc"
 
 	if (node_getflag (node, F_temp))
 		node = node_remove (node);
