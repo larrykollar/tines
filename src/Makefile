@@ -23,9 +23,11 @@ init_subsystems.c: *.c
 	echo "void init_subsystems(){">>init_subsystems.c
 	cat *.c | grep "^\!init_" | sort | sed -e "s/^\!/ /g">>init_subsystems.c
 	echo "}">>init_subsystems.c
+
 clean:
 	rm -f xml_debug tines $(OBJS) *~ cli_*.inc
 	(cd libcli;make clean)
+
 hnb_p: *.c libcli/libcli_p.a init_subsystems.c
 	$(CC) -o hnb_p *.c -pg -lncurses_p libcli/libcli_p.a -I.. -Ilibcli -DHAVE_CONFIG_H
 

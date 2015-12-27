@@ -1,5 +1,5 @@
 
-src/hnb: src/*.c src/*.h doc/*.inc doc/hnbrc.inc
+src/tines: src/*.c src/*.h doc/*.inc doc/hnbrc.inc
 	(cd src;make)
 
 install: src/tines
@@ -20,12 +20,12 @@ doc/hnbrc.inc: doc/hnbrc
 	cat doc/hnbrc | util/asc2c >> doc/hnbrc.inc
 	echo "\"">>doc/hnbrc.inc
 
-tar: updaterc clean hnb.spec config.h
-	(cd ..;mkdir tines-`cat hnb/VERSION`)
-	(cd ..;cp -r tines/* tines-`cat hnb/VERSION`; tar cvzf tines-`cat hnb/VERSION`.tar.gz tines-`cat tines/VERSION`)
+tar: updaterc clean config.h
+	(cd ..;mkdir tines-`cat tines/VERSION`)
+	(cd ..;cp -r tines/* tines-`cat tines/VERSION`; tar cvzf tines-`cat tines/VERSION`.tar.gz tines-`cat tines/VERSION`)
 	rm -rf ../tines-`cat VERSION`
 
-config.h: VERSION
-	cp config.h config.h.tmp
-	cat config.h.tmp | sed 's/VERSION .*/VERSION "'"`cat VERSION`"'"/' > config.h
+src/config.h: VERSION
+	cp src/config.h config.h.tmp
+	cat config.h.tmp | sed 's/VERSION .*/VERSION "'"`cat VERSION`"'"/' > src/config.h
 	rm config.h.tmp

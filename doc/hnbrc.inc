@@ -1,10 +1,11 @@
-"# configuration file for hnb,\n\
+-n "
+# configuration file for hnb,\n\
 #\n\
-# use a tab-spacing of 4 when editing this file, or edit it through\n\
+# use a tab-spacing of 4 when editing this file, or edit it thorugh\n\
 # hnb with \"hnb -a ~/.hnbrc\" to take advantage of the indentation in it\n\
 #\n\
 # (please be aware that this is the configuration file for a development version,\n\
-#  things might change drastically soon... or perhaps later)\n\
+#  things might change drastically soon,.. or perhaps later)\n\
 \n\
 ##### bullets\n\
 	# what kind of bullets are displayed before each item\n\
