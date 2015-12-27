@@ -7,9 +7,9 @@ OBJS=$(patsubst %.c,%.o,$(CFILES))
 %.o: %.c *.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
-hnb: libcli/libcli.a Makefile $(OBJS) init_subsystems.c *.h *.inc
-	$(CC) -o hnb $(OBJS) $(LIBS) $(CFLAGS)
-#	strip hnb
+tines: libcli/libcli.a Makefile $(OBJS) init_subsystems.c *.h ../doc/*.inc
+	$(CC) -o tines $(OBJS) $(LIBS) $(CFLAGS)
+#	strip tines
 
 libcli/libcli.a: libcli/*.c
 	(cd libcli;make libcli.a)
@@ -24,7 +24,7 @@ init_subsystems.c: *.c
 	cat *.c | grep "^\!init_" | sort | sed -e "s/^\!/ /g">>init_subsystems.c
 	echo "}">>init_subsystems.c
 clean:
-	rm -f xml_debug hnb $(OBJS) *~ cli_*.inc
+	rm -f xml_debug tines $(OBJS) *~ cli_*.inc
 	(cd libcli;make clean)
 hnb_p: *.c libcli/libcli_p.a init_subsystems.c
 	$(CC) -o hnb_p *.c -pg -lncurses_p libcli/libcli_p.a -I.. -Ilibcli -DHAVE_CONFIG_H
