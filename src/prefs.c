@@ -34,14 +34,14 @@
 
 Tprefs prefs = {
 	"hnb",					/*format; */
-	0,							/*tutorial; */
-	"",							/*rc_file[100]; */
-	"",							/*db_file[100]; */
-	"",							/*default_db_file[100]; */
-	1,							/*showpercent */
-	0,							/*fixed focusbar */
-	0,							/*save position */
-	0					/*readonly */
+	0,						/*tutorial; */
+	"",						/*rc_file[100]; */
+	"",						/*db_file[100]; */
+	"",						/*default_db_file[100]; */
+	1,						/*showpercent */
+	0,						/*fixed focusbar */
+	0,						/*save position */
+	0						/*readonly */
 };
 
 typedef struct {
@@ -63,11 +63,10 @@ void init_prefs ()
 	sprintf (prefs.default_db_file, "C:\\hnb_data");
 #endif
 	
-	cli_add_string ("format", prefs.format, "the format of the current file");
-
-	cli_add_string ("rc_file", prefs.rc_file, "");
-	cli_add_string ("db_file", prefs.db_file, "");
-	cli_add_string ("default_db_file", prefs.default_db_file, "");
+	cli_add_string ("format", prefs.format, "The format of the current file.");
+	cli_add_string ("rc_file", prefs.rc_file, "The path and name of the current rc file.");
+	cli_add_string ("db_file", prefs.db_file, "The path and name of the current database file.");
+	cli_add_string ("default_db_file", prefs.default_db_file, "The path and name of the default database file.");
 
 	cli_add_int ("showpercent", &prefs.showpercent, "");
 	cli_add_int ("fixedfocus", &prefs.fixedfocus, "");
@@ -76,7 +75,7 @@ void init_prefs ()
 
 #ifdef NCURSES_VERSION 
 	cli_add_int ("escdelay", (long *)&ESCDELAY,
-				 "how long does curses wait before it decides ESC is ESC and not a coded key sequence");
+				 "How long curses waits before it decides ESC is ESC and not a coded key sequence.");
 #endif
 }
 

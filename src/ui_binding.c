@@ -427,7 +427,7 @@ void init_ui_binding ()
 	cli_add_command ("bkill_word", dummy_cmd, "");
 	cli_add_command ("kill_word", dummy_cmd, "");
 	cli_add_help ("bkill_word", "erases the preceding word");
-	cli_add_help ("bkill_word", "erases the following word");
+	cli_add_help ("kill_word", "erases the following word");
 
 	cli_add_command ("bol", dummy_cmd, "");
 	cli_add_help ("bol", "move cursor to beginning of line");

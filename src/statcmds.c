@@ -124,5 +124,5 @@ void init_stats ()
 {
 	cli_add_command ("stats", stats_cmd, "");
 	cli_add_help ("stats",
-				  "Reoprts number of items, leaf items and total number of words in tree");
+				  "Reports number of items, leaf items and total number of words in tree");
 }

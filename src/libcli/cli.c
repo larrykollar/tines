@@ -31,6 +31,8 @@
 	scripts? (with simple flow-control?)
 */
 
+static char tempstr[100] = "";
+
 #ifdef WIN32
 #define snprintf(a,b,args...) sprintf(a,args)
 #endif
@@ -113,10 +115,10 @@ static  long item_matches (const char *itemname);
 
 typedef struct ItemT {
 	char *name;					/* what the user types */
-	long (*func) (int argc,char **argv, long *data);	/* function that is the command */
+	long (*func) (int argc, char **argv, long *data);	/* function that is the command */
 	long *integer;				/* pointer to integer (set to NULL if string) */
 	char *string;				/* pointer to string (set to NULL if integer) */
-	char *usage;					/* helptext for this command */
+	char *usage;				/* helptext for this command */
 	char *help;
 	int flags;
 	struct ItemT *next;
@@ -219,6 +221,7 @@ static void init_cli (void)
 {
 	cli_add_command ("?", help, "? - this listing");
 	cli_add_command ("show_vars", vars, "show all variables");
+	cli_add_string  ("temp_str", tempstr, "A temporary variable for use in macros."
 	inited = 1;
 }
 

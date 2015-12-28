@@ -1,0 +1,11 @@
+Files in this directory serve one of the following purposes:
+
+* User-level documentation (man pages, HTML version of the
+  embedded tines manual)
+* Developer documentation (the XML parser and CLI tokenizer)
+* Default files (config, default database)
+
+The .dot files can be opened and viewed with Graphviz. The
+distribution includes PDF versions for convenience.
+
+Additional information is welcome.
