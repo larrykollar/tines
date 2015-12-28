@@ -31,7 +31,7 @@
 	scripts? (with simple flow-control?)
 */
 
-static char tempstr[100] = "";
+static char tempstr[100];
 
 #ifdef WIN32
 #define snprintf(a,b,args...) sprintf(a,args)
@@ -59,7 +59,8 @@ static void default_output(char *data){
 				wp=word;
 				*wp='\0';
 			} else {
-				printf(tbuf);printf("\n");
+				/* printf(tbuf);printf("\n"); */
+				printf( "%s\n", tbuf );
 				bp=tbuf;
 				*bp='\0';
 				strcpy(bp,word);
@@ -193,8 +194,8 @@ void cli_add_help(char *name, char *helptext){
 }
 
 
-static long help (int argc,char **argv, long *data);
-static long vars (int argc,char **argv, long *data);
+static long help (int argc, char **argv, long *data);
+static long vars (int argc, char **argv, long *data);
 
 static int inited = 0;
 
@@ -221,7 +222,7 @@ static void init_cli (void)
 {
 	cli_add_command ("?", help, "? - this listing");
 	cli_add_command ("show_vars", vars, "show all variables");
-	cli_add_string  ("temp_str", tempstr, "A temporary variable for use in macros."
+	cli_add_string  ("temp_str", tempstr, "A temporary variable for use in macros." );
 	inited = 1;
 }
 
