@@ -198,8 +198,12 @@ long cmd_att_list (int argc, char **argv, long *data)
 */
 void init_nodetest ()
 {
-	cli_add_command ("att_set", cmd_att_set, "");
-	cli_add_command ("att_get", cmd_att_get, "");
-	cli_add_command ("att_clear", cmd_att_clear, "");
+	cli_add_command ("att_set", cmd_att_set, "<attribute> <value>");
+	cli_add_command ("att_get", cmd_att_get, "<attribute>");
+	cli_add_command ("att_clear", cmd_att_clear, "<attribute>");
 	cli_add_command ("att_list", cmd_att_list, "");
+	cli_add_help( "att_set", "Sets an attribute for the current entry." );
+	cli_add_help( "att_get", "Returns the specified attribute value for the current entry." );
+	cli_add_help( "att_clear", "Removes the specified attribute." );
+	cli_add_help( "att_list", "Lists the text and attributes for the current entry." );
 }

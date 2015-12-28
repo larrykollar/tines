@@ -1,11 +1,8 @@
--n "
-# configuration file for hnb,\n\
+"# configuration file for tines\n\
 #\n\
-# use a tab-spacing of 4 when editing this file, or edit it thorugh\n\
-# hnb with \"hnb -a ~/.hnbrc\" to take advantage of the indentation in it\n\
+# use a tab-spacing of 4 when editing this file, or edit it through\n\
+# tines with \"tines -a ~/.tinesrc\" to take advantage of the indentation in it\n\
 #\n\
-# (please be aware that this is the configuration file for a development version,\n\
-#  things might change drastically soon,.. or perhaps later)\n\
 \n\
 ##### bullets\n\
 	# what kind of bullets are displayed before each item\n\
@@ -24,7 +21,7 @@
 		#bullet_todo_parent_done   \"[X]\"\n\
 		#bullet_todo_parent_undone \"[ >\"\n\
 		#bullet_todo_parent_done   \"[X>\"\n\
-	bullet_leaf            \"  ·\"\n\
+	bullet_leaf            \"  *\"\n\
 	bullet_parent          \"  +\"\n\
 	bullet_parent_expanded \"  -\"\n\
 	bullet_todo_leaf_undone   \"[ ]\"\n\
@@ -37,9 +34,12 @@
 		# defining how each node is displayed, the display string syntax is\n\
 		# interpreted as follows:\n\
 		#\n\
-		#   spaces turn into real spaces, i means indentation, - means bullet,\n\
-		#   d means the real data of the node, x is a temporary placeholder for\n\
-		#   upcoming column-types,. (for debugging only)\n\
+		#   spaces turn into real spaces\n\
+		#	i means indent\n\
+		#	- means bullet\n\
+		#   d means the real data of the node\n\
+		#	x is a temporary placeholder for\n\
+		#   upcoming column-types (for debugging only)\n\
 		#\n\
 		#   i and x can take an argument specifying how many characters wide\n\
 		#   the field should be\n\
@@ -52,9 +52,18 @@
 		display_format \"i4- d\"\n\
 		\n\
 	##### fixed focus\n\
-		# lock the selection bar to a position 1/3 down the screen\n\
+		# If 1, lock the selection bar to a position 1/3 down the screen\n\
 		fixedfocus \"0\"\n\
 		\n\
+	##### movement restrictions\n\
+		# To restrict up/down movements to a single level,\n\
+		# set these variables to 0.\n\
+		forced_up 1\n\
+		forced_down 1\n\
+	##### automatically added nodes\n\
+		# To put automatically added nodes at the top of the current leve,\n\
+		# set this variable to 1.\n\
+		add_at_top 0\n\
 	\n\
 ##### external commands\n\
 	##### http:// handler\n\
@@ -73,10 +82,11 @@
 			#web_command \"mozilla -remote 'openURL(*,new-window)'	> /dev/null 2>&1 &\"\n\
 			#web_command \"konqueror *				> /dev/null 2>&1 &\"\n\
 			#web_command \"galeon -n					> /dev/null 2>&1 &\"\n\
-			web_command \"w3m *\"\n\
-			#web_command \"lynx *\"\n\
+			#web_command \"w3m *\"\n\
+			web_command \"lynx *\"\n\
 			#web_commend \"rxvt -fn fixed -rv +sb -e w3m *		> /dev/null 2>&1 &\"\n\
 			#web_command \"opera -remote 'openURL(*,new-window)'	> /dev/null 2>&1 &\"\n\
+			#web_command \"links *\"\n\
 		\n\
 	##### mail@handler\n\
 		# what command is executed when a user wants a action performed on a\n\
@@ -106,19 +116,22 @@
 ##### file formats\n\
 	##### Default Format\n\
 		# hnb, opml, xml, ascii  are possible choices\n\
+		# \"hnb\" is the native tines format (moving to OPML as default soon)\n\
 		format \"hnb\"\n\
 		\n\
 	##### Remember current position in tree\n\
-		# wheter hnb remembers the current position in a file, (currently\n\
-		# supported by the hnb DTD only, but might easily be extended since\n\
-		# it fakes it with a XML comment) 1=true 0=false\n\
+		# whether tines remembers the current position in a file\n\
+		# (currently supported by the tines DTD only, but might\n\
+		# easily be extended since it fakes it with a XML comment)\n\
+		# 1=true 0=false\n\
 		savepos	\"1\"\n\
 		\n\
 	##### XML format\n\
 		##### XML Cuddling\n\
-			# When loading xml files, should data be allowed on \n\
-			# the same line as tags?\n\
-			xml_cuddle \"0\"\n\
+			# When loading xml files, set to 1 to allow data on \n\
+			# the same line as tags.\n\
+			xml_cuddle \"1\"\n\
+\n\
 	##### Autosave\n\
 		# when nodes_changed reaches above threshold, invoke autosave\n\
 		autosave_threshold \"15\"\n\
@@ -128,8 +141,6 @@
 		# of \"ticks\"/keypresses, invoke autosave\n\
 		autosave_timeout    \"50\"\n\
 		autosave_timer     \"0\"\n\
-			\n\
-		\n\
 	\n\
 ##### Color/style\n\
 	# color scheme configuration, syntax is:\n\
@@ -172,7 +183,7 @@
 	\n\
 	context main\n\
 		helptext \"ESC| menu || |F2| save || |F5| commandline || |return| edit |\n\
-		bind f1 'status \"Take a look at ~/.hnbrc to check out the configuration\"'\n\
+		bind f1 'status \"Take a look at ~/.tinesrc to check out the configuration\"'\n\
 		bind .. 'status \"there you will also find details about the available keybindings.\"'\n\
 		bind .. 'status \"please feel free to contribute more useful keybindings and helptexts...\"'\n\
 		\n\
@@ -214,11 +225,18 @@
 		bind ppage pageup\n\
 		bind home  \"go root\"\n\
 		\n\
-		\n\
 		bind return edit\n\
 		bind del    remove\n\
 		\n\
 		bind ins    insert_below\n\
+		bind .. edit\n\
+		\n\
+		bind ^O     insert_below\n\
+		bind .. edit\n\
+		\n\
+		# temporary kludge until we implement insert_above\n\
+		bind ^B insert_below\n\
+		bind .. \"movenode up\"\n\
 		bind .. edit\n\
 		\n\
 		bind tab complete\n\
@@ -344,6 +362,7 @@
 		bind .. \"context main\"\n\
 		\n\
 		bind any unbound\n\
+\n\
 	context grab\n\
 		helptext \"Node grabbed |  |return| |space| drop here || |ESC| cancel\"\n\
 		bind esc    restore_state\n\
@@ -355,6 +374,7 @@
 		bind up     \"movenode up\"\n\
 		bind down   \"movenode down\"\n\
 		bind any    unbound\n\
+\n\
 	context export\n\
 		helptext \"Export |  | A |scii || | H |tml  html| C |ss  | P |ostscript  | O |PML  |ESC| cancel \"\n\
 			macro define m_export_ascii\n\
@@ -440,6 +460,7 @@
 			bind .. 'context main'\n\
 		\n\
 		bind any unbound\n\
+\n\
 	context search\n\
 		helptext \"Searching |  |ESC| cancel || | n |ext || | p |revious || |space|/|return| go\"\n\
 		bind down   'search -f \"$query\"'\n\
@@ -455,6 +476,7 @@
 		bind ..     restore_state\n\
 		\n\
 		bind any    unbound\n\
+\n\
 	context user\n\
 		helptext \"Usermenu | |ESC| cancel |F1| ispell language |F2| browser command |F3| expand all  |F4|  collapse all\"\n\
 		bind esc \"context main\"\n\
@@ -518,7 +540,7 @@
 		menu \"File\" \"save      F2\" \"save\"\n\
 		menu \"File\" \"save as..   \" \"macro saveas\"\n\
 			macro define saveas\n\
-				getquery db_file 'fila to save'\n\
+				getquery db_file 'file to save'\n\
 				save_state\n\
 				go root\n\
 				export_$format $db_file\n\
@@ -559,6 +581,65 @@
 		menu \"Entry\" \"toggle done ^D\" \"toggle_done\"\n\
 		menu \"Entry\" \"expand      +\" \"expand\"\n\
 		menu \"Entry\" \"collapse    -\" \"collapse\"\n\
+	##### Planner\n\
+		Planner macros\n\
+			macro define pl_new_act\n\
+				add \"Next Actions: \"\n\
+				go bottom\n\
+				add \"Action...\"\n\
+				go down\n\
+				movenode right\n\
+				toggle_todo\n\
+			end\n\
+			macro define pl_new_proj\n\
+				add \"Project: \"\n\
+				go bottom\n\
+				toggle_todo\n\
+				add \"Objective: \"\n\
+				go down\n\
+				movenode right\n\
+				add \"Actions...\"\n\
+				go down\n\
+				toggle_todo\n\
+			end\n\
+			macro define pl_new_wait\n\
+				add \"Waiting For: \"\n\
+				go bottom\n\
+				add \"Items...\"\n\
+				go down\n\
+				movenode right\n\
+				toggle_todo\n\
+			end\n\
+			macro define pl_add_cal\n\
+				getquery \"Month (1-12)\"\n\
+				temp_str $query\n\
+				getquery \"Year (4 digits)\"\n\
+				insert_cal $temp_str $query\n\
+			end\n\
+			macro define pl_add_yr\n\
+				getquery \"Year (4 digits)\"\n\
+				add \"$query Calendar\"\n\
+				insert_below\n\
+				movenode right\n\
+				insert_cal 1 $query\n\
+				insert_cal 2 $query\n\
+				insert_cal 3 $query\n\
+				insert_cal 4 $query\n\
+				insert_cal 5 $query\n\
+				insert_cal 6 $query\n\
+				insert_cal 7 $query\n\
+				insert_cal 8 $query\n\
+				insert_cal 9 $query\n\
+				insert_cal 10 $query\n\
+				insert_cal 11 $query\n\
+				insert_cal 12 $query\n\
+			end\n\
+		menu \"Planner\" \"----------------\" \"\"\n\
+		menu \"Planner\" \"New Actions List\" \"macro pl_new_act\"\n\
+		menu \"Planner\" \"New Waiting List\" \"macro pl_new_wait\"\n\
+		menu \"Planner\" \"New Project List\" \"macro pl_new_proj\"\n\
+		menu \"Planner\" \"Add Month...    \" \"macro pl_add_cal\"\n\
+		menu \"Planner\" \"Add Year...     \" \"macro pl_add_yr\"\n\
 	##### level\n\
 		menu \"Level\" \"------------\" \"\"\n\
 		menu \"Level\" \"sort      ^S\" \"sort -a\"\n\
@@ -567,9 +648,10 @@
 #####\n\
 	context main\n\
 	macro define m_about\n\
-		status \"hnb - hierarchical notebook   http://hnb.sourceforge.net/\"\n\
-		status \"(c) Øyvind Kolås 2001-2003    pippin@users.sourceforge.net\"\n\
+		status \"tines - an outliner, planner, organizer, and notebook\n\
+		status \"(c) 2015 Larry Kollar (lkollar@gmail.com)\n\
 	end\n\
 	\n\
 	macro m_about\n\
+# vim: ts=4 sw=4\n\
 "
