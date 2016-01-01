@@ -19,12 +19,14 @@ bug that caused other outliners to reject hnb's OPML export.
 1.9.19 - 2.0:
 * finish renaming (.hnb to .tines, for example)
 * import/convert .hnb files
-* rewrite/expand the documentation (I've started on this)
-* Planner menu
+* rewrite/expand the documentation (mostly complete)
+* Planner menu (complete)
 * automated test suite (using libcli)
 * new command: export_branch (export from the selected node
   instead of the entire tree)
 * new command: insert_above (insert new node above current)
+  (we have a working substitute for now, using key bindings -
+  use Ctrl-B to insert above)
 * new command: sleep (put the process in the background)
 * move tutorial.inc, etc. into /usr/local/share/tines
 * new attributes (mapped to OPML "type" attribute for import/export)

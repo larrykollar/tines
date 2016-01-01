@@ -1,0 +1,46 @@
+.TH TINES_HNB 7 "29 Dec 2015"
+.SH NAME
+tines_hnb \- hnb/Tines outliner format
+.SH DESCRIPTION
+The default file format for \fIhnb\fP is a simple XML document type.
+The Tines outliner supports it as a legacy format,
+but future versions will use OPML as the default.
+.LP
+The top-level element is <tree>, which contains one or more <node> elements.
+<node> elements in turn can contain <data> and other <node> elements.
+.LP
+Each <node> element can have two optional attributes:
+.IP \[bu] 4
+\fItype\fP is a text string describing the node type.
+Currently, Tines supports only the "todo" type.
+.IP \[bu] 4
+\fIdone\fP is a text string that can take the values "yes" or "no".
+It is used in conjunction with
+.BR type= \[dq]todo\[dq]
+to indicate whether the to-do entry is checked or not.
+.LP
+The DTD is embedded in each hnb file.
+.RS
+.nf
+
+<!DOCTYPE tree[
+<!ELEMENT tree (node*)>
+<!ELEMENT data (#PCDATA)> <!-- (max 4096 bytes long) -->
+<!ELEMENT node (data?,node*)>
+<!ATTLIST node done (yes|no) #IMPLIED
+          type CDATA #IMPLIED
+>]>
+.fi
+.RE
+.LP
+In addition, the processing instruction <?hnb pos="\fIn\fP" ?>
+stores which entry was selected when the file was last closed.
+.SH SEE ALSO
+.BR tines (1),
+.BR tines_opml (1),
+.BR hnb (1)
+.SH AUTHOR
+The original \fIhnb\fP was written by
+\[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).
+.LP
+\fItines\fP is now maintained by Larry Kollar, who also wrote this manpage.
