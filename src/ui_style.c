@@ -116,7 +116,7 @@ void ui_style_restore_color ()
 	}
 }
 
-static long ui_style_cmd (int argc, char **argv, long *data)
+static void* ui_style_cmd (int argc, char **argv, void *data)
 {
 	char *item;
 	char *colors;
@@ -124,7 +124,7 @@ static long ui_style_cmd (int argc, char **argv, long *data)
 
 	if(argc!=4){
 		cli_outfunf("usage: %i <item> <fg/bg> <atts>");
-		return (long)data;
+		return data;
 	}
 
 	item=argv[1];
@@ -137,7 +137,7 @@ static long ui_style_cmd (int argc, char **argv, long *data)
 
 		if (style_no == -1) {
 			printf ("unknown style 'style [%s] %s %s'\n", item, colors, atts);
-			return (long) data;
+			return data;
 		}
 		color2 = strchr (colors, '/');
 		color2[0] = '\0';
@@ -166,7 +166,7 @@ static long ui_style_cmd (int argc, char **argv, long *data)
 			bkgdset (' ' + COLOR_PAIR (ui_style_background));
 		}
 	}
-	return (long) data;
+	return data;
 }
 
 /*

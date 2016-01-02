@@ -47,11 +47,54 @@ Node *node_recurse (Node *node)
 	return 0;
 }
 
+Node *node_recurse_visible (Node *node)
+{
+	if (node_getflag(node,F_expanded) && node_right (node))
+		return node_right (node);
+	if (node_down (node))
+		return node_down (node);
+
+	while (node_left (node)) {
+		if (node_down (node_left (node)))
+			return node_down (node_left (node));
+		node = node_left (node);
+	}
+	return 0;
+}
+
+Node *node_traverse_right_of (Node *stop, Node *node)
+{
+	if (node_right (node))
+		return node_right (node);
+	if (node_down (node))
+		return node_down (node);
+	while (node_left (node) && (node_left (node) != stop)) {
+		if (node_down (node_left (node)))
+			return node_down (node_left (node));
+		node = node_left (node);
+	}
+
+	return 0;
+}
+
 Node *node_backrecurse (Node *node)
 {
 	if (node_up (node)) {
 		node = node_up (node);
 		while (node_right (node)) {
+			node = node_right (node);
+			node = node_bottom (node);
+		}
+		return (node);
+	}
+	return (node_left (node));
+}
+
+Node *node_backrecurse_visible (Node *node)
+{
+	if (node_up (node)) {
+		node = node_up (node);
+		while (node_getflag(node,F_expanded) && node_right (node)) {
 			node = node_right (node);
 			node = node_bottom (node);
 		}

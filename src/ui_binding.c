@@ -250,14 +250,14 @@ static int string2keycode (char *str)
 
 int ui_current_scope = 0;
 
-static long ui_context_cmd (int argc, char **argv, long *data)
+static void* ui_context_cmd (int argc, char **argv, void *data)
 {
 	if(argc<2){
 		cli_outfunf("usage: %s <contextname>",argv[0]);
-		return(long)data;
+		return data;
 	}
 	ui_current_scope = string2scope (argv[1]);
-	return (long) data;
+	return data;
 }
 
 static void makebinding (int scope_no, int key, int action, char *action_name,
@@ -272,7 +272,7 @@ static void makebinding (int scope_no, int key, int action, char *action_name,
 	ui_binding_count[scope_no]++;
 }
 
-static long ui_bind_cmd (int argc, char **argv, long *data)
+static void* ui_bind_cmd (int argc, char **argv, void *data)
 {
 /*	char context[40];*/
 	char *key;
@@ -280,7 +280,7 @@ static long ui_bind_cmd (int argc, char **argv, long *data)
 
 	if(argc<3){
 		cli_outfunf("error in bindings %s %s %s %s\n",argv[0],argv[1],argv[2],argv[3]);
-		return (long)data;
+		return data;
 	}
 	key=argv[1];
 	action=argv[2];
@@ -293,7 +293,7 @@ static long ui_bind_cmd (int argc, char **argv, long *data)
 					 ui_action_command, "command", action);
 	}
 
-	return (long) data;
+	return data;
 }
 
 

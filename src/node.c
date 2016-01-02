@@ -88,6 +88,9 @@ void node_set (Node *node, char *name, char *data)
 {
 	Node_AttItem *att;
 
+	if (node == NULL)
+		return;
+
 	att = node->attrib;
 	while (att) {
 		if (!strcmp (att->name, name)) {
@@ -139,48 +142,48 @@ void node_unset (Node *node, char *name)
 #include <stdio.h>
 
 
-long cmd_att_set (int argc, char **argv, long *data)
+void *cmd_att_set (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
 	if(argc!=3){
 		cli_outfunf("usage: %s <attribute> <value>",argv[0]);
-		return (long) pos;
+		return pos;
 	}
 		
 	node_set (pos, argv[1], argv[2]);
-	return (long) pos;
+	return pos;
 }
 
-long cmd_att_get (int argc, char **argv, long *data)
+void *cmd_att_get (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	char *cdata;
 	
 	if(argc!=2){
 		cli_outfunf("usage: %s <attribute>",argv[0]);
-		return (long) pos;
+		return pos;
 	}
 			
 	cdata = node_get (pos, argv[1]);
 
 	if (cdata)
 		cli_outfun (cdata);
-	return (long) pos;
+	return pos;
 }
 
-long cmd_att_clear (int argc, char **argv, long *data)
+void *cmd_att_clear (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	if(argc!=2){
 		cli_outfunf("usage: %s <attribute>",argv[0]);
-		return (long) pos;
+		return pos;
 	}
 	node_unset (pos, argv[1]);
-	return (long) pos;
+	return pos;
 }
 
-long cmd_att_list (int argc, char **argv, long *data)
+void *cmd_att_list (int argc,char **argv, void *data)
 {
 	Node_AttItem *att;
 	Node *pos = (Node *) data;
@@ -190,7 +193,7 @@ long cmd_att_list (int argc, char **argv, long *data)
 		cli_outfunf ("%s: [%s]", att->name, att->data);
 		att = att->next;
 	}
-	return (long) pos;
+	return pos;
 }
 
 /*

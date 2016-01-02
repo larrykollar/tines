@@ -76,7 +76,7 @@ static void binary_export_nodes (FILE * file, Node *node, int level)
 	}
 }
 
-static long export_binary (int argc, char **argv, long *data)
+static void* export_binary (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
 	char *filename = argc>=2?argv[1]:"";
@@ -89,7 +89,7 @@ static long export_binary (int argc, char **argv, long *data)
 
 	if (!file) {
 		cli_outfunf ("binary export, unable to open \"%s\"", filename);
-		return (long) node;
+		return node;
 	}
 
 	fwrite (&hnb_binary_header, 4, 1, file);
@@ -99,16 +99,16 @@ static long export_binary (int argc, char **argv, long *data)
 
 	cli_outfunf ("binary export, wrote data to \"%s\"", filename);
 
-	return (long) node;
+	return node;
 }
 
 
-static long import_binary (int argc, char **argv, long *data)
+static void* import_binary (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
 	char *filename = argc==2?argv[1]:"";
 	import_state_t ist;
-	long moredata=1;
+	int moredata=1;
 
 
 
@@ -117,7 +117,7 @@ static long import_binary (int argc, char **argv, long *data)
 	file = fopen (filename, "r");
 	if (!file) {
 		cli_outfunf ("binary import, unable to open \"%s\"", filename);
-		return (long) node;
+		return node;
 	}
 
 	{int header,version;
@@ -166,7 +166,7 @@ static long import_binary (int argc, char **argv, long *data)
 		node=node_remove(node);
 	cli_outfunf("binary import - imported \"%s\"",filename);
 	
-	return (long) node;
+	return node;
 }
 
 /*

@@ -14,7 +14,7 @@
 #define MAX_MARK 10
 Node *marks[MAX_MARK];	/* for marks 0-9. should be expandable */
 
-static long set_mark(int argc, char **argv, long *data)
+static void* set_mark(int argc, char **argv, void *data)
 {
     Node *pos=(Node *)data;
     int mark_number;
@@ -22,7 +22,7 @@ static long set_mark(int argc, char **argv, long *data)
     if( (argc!=2))
 	{
 	    cli_outfunf("usage: %s <mark_number>", argv[0]);
-	    return (long)data;
+	    return data;
 	}
     mark_number=atoi(argv[1]);
 
@@ -31,10 +31,10 @@ static long set_mark(int argc, char **argv, long *data)
 	    marks[mark_number] = pos;
 	}
 
-    return (long)pos;
+    return pos;
 }
 
-static long go_mark(int argc, char **argv, long *data)
+static void* go_mark(int argc, char **argv, void *data)
 {
     Node *pos=(Node *)data;
     int mark_number;
@@ -42,7 +42,7 @@ static long go_mark(int argc, char **argv, long *data)
     if( (argc!=2))
 	{
 	    cli_outfunf("usage: %s <mark_number>", argv[0]);
-	    return (long)data;
+	    return data;
 	}
     mark_number=atoi(argv[1]);
 
@@ -53,7 +53,7 @@ static long go_mark(int argc, char **argv, long *data)
 		pos = temp;
 	}
 
-    return (long)pos;
+    return pos;
 }
 
 /*

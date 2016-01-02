@@ -44,11 +44,11 @@
 
 static char *ui_helptext[MAX_SCOPES] = { 0 };
 
-static long ui_helptext_cmd (int argc, char **argv, long *data)
+static void* ui_helptext_cmd (int argc, char **argv, void *data)
 {
 	if(argc>1)
 		ui_helptext[ui_current_scope] = strdup (argv[1]);
-	return (long) data;
+	return data;
 }
 
 #define MAX_STATUS_LINES 100
@@ -129,7 +129,7 @@ void set_status (char *message)
 }
 
 
-static long ui_status_cmd (int argc, char **argv, long *data)
+static void* ui_status_cmd (int argc, char **argv, void *data)
 {
 	if(argc==2 && (!strcmp(argv[1],"-c") || !strcmp(argv[1],"--clear"))){
 		status_ttl=0;
@@ -138,7 +138,7 @@ static long ui_status_cmd (int argc, char **argv, long *data)
 		if(!ui_inited)
 		cli_outfun(argv[1]);
 	}
-	return (long) data;
+	return data;
 }
 
 

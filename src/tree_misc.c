@@ -27,16 +27,16 @@
 #include "ui_cli.h"
 #include "evilloop.h"
 
-static long cmd_movenode (int argc, char **argv, long *data)
+static void* cmd_movenode (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	if(argc<2){
 		cli_outfunf("usage: %s <left|right|up|down>",argv[0]);
-		return (long)pos;
+		return pos;
 	}
 	if(prefs.readonly){
 		cli_outfun("readonly flag set, avoiding tree change");
-		return (long)data;
+		return data;
 	}
 	if (!strcmp (argv[1], "left")) {
 		if (node_left (pos)) {
@@ -69,7 +69,7 @@ static long cmd_movenode (int argc, char **argv, long *data)
 		}
 	}
 	docmd(pos,"tree_changed");
-	return (long) pos;
+	return pos;
 }
 
 /*
@@ -80,12 +80,13 @@ void init_movenode ()
 	cli_add_command ("movenode", cmd_movenode, "<up|left|right|down>");
 }
 
-static long cmd_go(int argc, char **argv, long *data){
+static void* cmd_go(int argc, char **argv, void *data){
 	Node *pos=(Node *)data;
 	
 	if(argc!=2){
-		cli_outfunf("usage: %s <up|down|left|right|recurse|backrecurse|root|top|bottom>");
-		return (long)pos;
+		cli_outfunf("usage: %s <up|down|left|right|recurse[-visible]"
+				"|backrecurse[-visible]|root|top|bottom>");
+		return pos;
 	}
 	
 	if(!strcmp(argv[1],"up")){
@@ -106,6 +107,12 @@ static long cmd_go(int argc, char **argv, long *data){
 	} else if(!strcmp(argv[1],"backrecurse")){
 		if(node_backrecurse(pos))
 			pos=node_backrecurse(pos);
+	} else if(!strcmp(argv[1],"recurse-visible")){
+		if(node_recurse_visible(pos))
+			pos=node_recurse_visible(pos);
+	} else if(!strcmp(argv[1],"backrecurse-visible")){
+		if(node_backrecurse_visible(pos))
+			pos=node_backrecurse_visible(pos);
 	} else if(!strcmp(argv[1],"root")){
 		pos=node_root(pos);
 	} else if(!strcmp(argv[1],"top")){
@@ -115,7 +122,7 @@ static long cmd_go(int argc, char **argv, long *data){
 	}
 
 	
-	return (long)pos;
+	return pos;
 }
 
 /*
@@ -131,7 +138,7 @@ void init_go ()
 #include "ctype.h"
 #include "ui_binding.h"
 
-static long cmd_outdent (int argc, char **argv, long *data)
+static void* cmd_outdent (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
@@ -140,11 +147,11 @@ static long cmd_outdent (int argc, char **argv, long *data)
 			inputbuf[strlen (inputbuf) + 1] = 0;
 			inputbuf[strlen (inputbuf)] = lastbinding->key;
 		}		
-		return (long)pos;
+		return pos;
 	}
 	if(prefs.readonly){
 		cli_outfun("readonly flag set, avoiding tree change");
-		return (long)data;
+		return data;
 	}
 
 	if (node_left (pos)) {
@@ -176,12 +183,12 @@ static long cmd_outdent (int argc, char **argv, long *data)
 		}
 		docmd(pos,"tree_changed");
 	}
-	return (long) pos;
+	return pos;
 }
 
 /*	FIXME: no real need for a temporary node */
 
-static long cmd_indent (int argc, char **argv, long *data)
+static void* cmd_indent (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
@@ -190,11 +197,11 @@ static long cmd_indent (int argc, char **argv, long *data)
 			inputbuf[strlen (inputbuf) + 1] = 0;
 			inputbuf[strlen (inputbuf)] = lastbinding->key;
 		}		
-		return (long)pos;
+		return pos;
 	}
 	if(prefs.readonly){
 		cli_outfun("readonly flag set, avoiding tree change");
-		return (long)data;
+		return data;
 	}
 
 	if (node_up (pos)) {
@@ -220,7 +227,7 @@ static long cmd_indent (int argc, char **argv, long *data)
 		node_remove (node_down (pos));
 		docmd(pos,"tree_changed");
 	}
-	return (long) pos;
+	return pos;
 }
 
 /*
@@ -236,13 +243,13 @@ void init_outdent_indent ()
 				  "moves the active item and the following siblings one level to the right");
 }
 
-static long remove_cmd (int argc, char **argv, long *data)
+static void* remove_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
 	if(prefs.readonly){
 		cli_outfun("readonly flag set, avoiding tree change");
-		return (long)data;
+		return data;
 	}
 	if (node_right (pos)) {
 		Tbinding *c;
@@ -263,7 +270,7 @@ static long remove_cmd (int argc, char **argv, long *data)
 		pos = node_remove (pos);
 		docmd(pos,"tree_changed");
 	}
-	return (long) pos;
+	return pos;
 }
 
 /*
@@ -277,7 +284,7 @@ void init_remove ()
 }
 
 
-static long commandline_cmd (int argc, char **argv, long *data)
+static void* commandline_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
@@ -292,7 +299,7 @@ static long commandline_cmd (int argc, char **argv, long *data)
 		if (commandline[0])
 			pos = docmd (pos, commandline);
 	} while (commandline[0] && strcmp(commandline,"q") && strcmp(commandline,"quit"));
-	return (long) pos;
+	return pos;
 }
 
 /*
@@ -305,12 +312,12 @@ void init_commandline ()
 				  "Invokes the interactive commandline in curses mode.");
 }
 
-static long insert_below_cmd (int argc, char **argv, long *data)
+static void* insert_below_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	if(prefs.readonly){
 		cli_outfun("readonly flag set, avoiding tree change");
-		return (long)data;
+		return data;
 	}
 
 	if (node_getflag (pos, F_temp)) {
@@ -325,7 +332,7 @@ static long insert_below_cmd (int argc, char **argv, long *data)
 	}
 	inputbuf[0] = 0;
 	docmd(pos,"tree_changed");
-	return (long) pos;
+	return pos;
 }
 
 /*

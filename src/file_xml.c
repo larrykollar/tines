@@ -76,7 +76,6 @@ static int findchar (char *haystack, char *needles)
 static void xml_export_nodes (FILE * file, Node *node, int level)
 {
 	char tag[bufsize];
-	int flags;
 	char *data;
 
 	static int no_quote = 0;
@@ -85,7 +84,6 @@ static void xml_export_nodes (FILE * file, Node *node, int level)
 		int data_start = 0;
 
 		tag[0] = 0;
-		flags = node_getflags (node);
 		data = fixnullstring (node_get (node, TEXT));
 
 		indent (level, "  ");
@@ -147,7 +145,7 @@ static void xml_export_nodes (FILE * file, Node *node, int level)
 	}
 }
 
-static long export_xml (int argc, char **argv, long *data)
+static void* export_xml (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
 	char *filename = argc==2?argv[1]:"";
@@ -159,7 +157,7 @@ static long export_xml (int argc, char **argv, long *data)
 		file = fopen (filename, "w");
 	if (!file) {
 		cli_outfunf ("xml export, unable to open \"%s\"", filename);
-		return (long) node;
+		return node;
 	}
 
 	xml_export_nodes (file, node, 0);
@@ -170,7 +168,7 @@ static long export_xml (int argc, char **argv, long *data)
 	cli_outfunf ("xml export, wrote data to \"%s\"", filename);
 
 
-	return (long) node;
+	return node;
 }
 
 /* joins up tags with data if there is data as the first child
@@ -202,7 +200,7 @@ static Node *xml_cuddle_nodes (Node *node)
 }
 
 
-static long import_xml (int argc, char **argv, long *data)
+static void* import_xml (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
 	char *filename = argc==2?argv[1]:"";
@@ -221,7 +219,7 @@ static long import_xml (int argc, char **argv, long *data)
 	file = fopen (filename, "r");
 	if (!file) {
 		cli_outfunf ("xml import, unable to open \"%s\"", filename);
-		return (long) node;
+		return node;
 	}
 	s = xml_tok_init (file);
 	init_import (&ist, node);
@@ -231,7 +229,7 @@ static long import_xml (int argc, char **argv, long *data)
 			cli_outfunf ("xml import error, parsing og '%s', line:%i %s", filename,
 						 s->line_no,rdata);
 			fclose (file);
-			return (long) node;
+			return node;
 		}
 
 		switch (type) {
@@ -328,7 +326,7 @@ static long import_xml (int argc, char **argv, long *data)
 
 	cli_outfunf ("xml import - imported \"%s\" %i lines", filename, s->line_no);
 	xml_tok_cleanup (s);
-	return (long) node;
+	return node;
 }
 
 /*

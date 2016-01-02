@@ -262,7 +262,7 @@ int calc_percentage_size (Node *node, int *retsize)
 
 #include "cli.h"
 
-static long toggle_todo_cmd (int argc, char **argv, long *data)
+static void* toggle_todo_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
@@ -271,17 +271,18 @@ static long toggle_todo_cmd (int argc, char **argv, long *data)
 		node_set(pos,"done","no");
 	} else {
 		node_unset(pos,"type");
+		node_unset(pos,"done");
 	}
 
-	return (long) pos;
+	return pos;
 }
 
-static long toggle_done_cmd (int argc, char **argv, long *data)
+static void* toggle_done_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
 	if (strcmp(fixnullstring(node_get(pos,"type")),"todo")) {	/* bail out if not todo info set */
-		return (long) pos;
+		return pos;
 	}
 
 	if (!strcmp(fixnullstring(node_get(pos,"done")),"yes")) {	/* bail out if not todo info set */
@@ -290,7 +291,7 @@ static long toggle_done_cmd (int argc, char **argv, long *data)
 		node_set(pos,"done","yes");
 	}
 
-	return (long) pos;
+	return pos;
 }
 
 /*
@@ -300,8 +301,8 @@ void init_tree_todo ()
 {
 	cli_add_command ("toggle_todo", toggle_todo_cmd, "");
 	cli_add_help ("toggle_todo",
-				  "Toggles visiblity and usage of the checkbox for the currently active item.");
+				  "Toggles visiblity and usage of the checkbox for the current entry.");
 	cli_add_command ("toggle_done", toggle_done_cmd, "");
 	cli_add_help ("toggle_done",
-				  "Toggles visiblity and usage of the checkbox for the currently active item.");
+				  "Toggles visiblity and usage of the checkbox for the current entry.");
 }

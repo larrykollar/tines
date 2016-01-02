@@ -15,6 +15,7 @@ typedef struct {
 	long showpercent;
 	long fixedfocus;
 	long savepos;
+	long saveexpand;
 	long readonly;
 } Tprefs;
 

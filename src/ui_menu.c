@@ -110,11 +110,11 @@ static Node *menu_do(Node *pos){
 	return pos;
 }
 
-static long cmd_menu(int argc, char **argv, long *data){
+static void* cmd_menu(int argc,char **argv,void *data){
 	Node *pos=(Node *)data;
     
 	if(argc==1){ /* draw menu */
-		return (long)menu_do(pos);
+		return menu_do(pos);
 	} else if(argc==4){
 		char *submenu=argv[1];
 		char *label=argv[2];
@@ -144,7 +144,7 @@ static long cmd_menu(int argc, char **argv, long *data){
 		if(menu[col][row].width>menu[col][0].width)
 			menu[col][0].width=menu[col][row].width;	
 	}
-	return(long)pos;
+	return pos;
 }
 
 /*

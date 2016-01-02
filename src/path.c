@@ -25,8 +25,6 @@
 #include "tokenizer.h"
 #include "path.h"
 
-#define DEBUG 1
-
 /*
 	converts a best matching node to the path.. (path tokens start
 	as specified)

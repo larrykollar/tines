@@ -57,7 +57,7 @@ char *tokenize (char *haystack)
 					buffer[pos] = token_seperator;
 				}
 
-				if ((pos == 1)) {	/* "root" */
+				if (pos == 1) {	/* "root" */
 					token[0] = token_seperator;
 					token[1] = 0;
 				}

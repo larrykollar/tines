@@ -49,7 +49,7 @@ static void autosave_invoke(Node *pos){
 	autosave_timer=0;
 }
 
-static long tree_changed_cmd (int argc, char **argv, long *data)
+static void* tree_changed_cmd (int argc, char **argv, void *data)
 {
 		/* TODO: add increment handling, for "extreme changes" */
 	Node *pos = (Node *) data;
@@ -57,10 +57,10 @@ static long tree_changed_cmd (int argc, char **argv, long *data)
 	nodes_changed++;
 	if(autosave_threshold && autosave_threshold<=nodes_changed)
 		autosave_invoke(pos);
-	return (long) pos;
+	return pos;
 }
 
-static long autosave_check_timeout (int argc, char **argv, long *data)
+static void* autosave_check_timeout (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
     
@@ -70,7 +70,7 @@ static long autosave_check_timeout (int argc, char **argv, long *data)
 			autosave_invoke(pos);
 		}		
 	}
-	return (long) pos;
+	return pos;
 }
 
 /*

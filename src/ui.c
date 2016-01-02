@@ -21,7 +21,6 @@
 #include "config.h"
 
 #include <curses.h>
-#include <locale.h>
 #include "tree.h"
 #include "ui_overlay.h"
 #include "ui.h"
@@ -38,8 +37,7 @@ int ui_inited = 0;
 
 void ui_init ()
 {
-    setlocale( LC_ALL, "" );
-    initscr ();
+	initscr ();
 	clear ();
 	intrflush (stdscr, TRUE);
 	keypad (stdscr, TRUE);

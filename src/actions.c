@@ -32,7 +32,7 @@ static char address[1024]="";*/
 static char web_command[255] = "lynx *";
 static char mail_command[255] = "rxvt -rv +sb -e mutt *";
 
-static long cmd_system(int argc, char **argv, long *data){
+static void* cmd_system(int argc, char **argv, void *data){
 	Node *pos=(Node *)data;
 	int ui_was_inited = ui_inited;
 	if (argc>1) {
@@ -42,7 +42,7 @@ static long cmd_system(int argc, char **argv, long *data){
 		if (ui_was_inited)
 			ui_init ();
 	}
-	return (long)pos;
+	return pos;
 }
 
 static int action_node (Node *node)
@@ -136,21 +136,21 @@ static int action_node (Node *node)
  * url/email address substring,.. and launches an app based on that?
  *
  */
-static long cmd_action (int argc, char **argv, long *data)
+static void* cmd_action (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	Node *node = node_right (pos);
 
 	while (node) {
 		if (!action_node (node))
-			return (long) pos;
+			return pos;
 		node = node_down (node);
 	}
 	if (!action_node (pos)) {
-		return (long) pos;
+		return pos;
 	} else {
 		cli_outfunf ("nothing to do");
-		return (long) pos;
+		return pos;
 	}
 
 	/***

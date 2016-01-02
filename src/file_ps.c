@@ -51,22 +51,33 @@ static char *psquote[]={
 
 /* *INDENT-ON* */
 
-static void ps_export_node (FILE * file, int level, int flags, char *data)
+static void ps_export_node (FILE * file, int level, Node *tnode)
 {
+	char *data = fixnullstring (node_get (tnode, TEXT));
+	char *type = node_get (tnode, "type");
 	char *quoted=string_replace(data,psquote);
+	int done;
+
 	indent (level, "\t");
-	fprintf (file, "( ) S 10 ss %i LM 0 a (%s ) P\n", level * 22,
+	if (type && !strcmp (type, "todo")) {
+	  type = node_get (tnode, "done");
+	  done = type ? type[0] == 'y' : 0;
+	  fprintf (file, "( ) S 10 ss %i LM 0 a ([%s]%s ) P\n", level * 22,
+		   done ? "DONE" : "____", quoted);
+	} else {
+	  fprintf (file, "( ) S 10 ss %i LM 0 a (%s ) P\n", level * 22,
 			 quoted);
+	}
 	free(quoted);
 }
 
-static long export_ps (int argc, char **argv, long *data)
+static void* export_ps (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
 	char *filename = argc==2?argv[1]:"";
 	Node *tnode;
-	int level, flags, startlevel;
-	char *cdata;
+	int level, /* flags, */ startlevel;
+/*	char *cdata; */
 	FILE *file;
 
 	if (!strcmp (filename, "-"))
@@ -75,7 +86,7 @@ static long export_ps (int argc, char **argv, long *data)
 		file = fopen (filename, "w");
 	if (!file) {
 		cli_outfunf ("postscript export, unable to open \"%s\"", filename);
-		return (long) node;
+		return node;
 	}
 	startlevel = nodes_left (node);
 
@@ -208,9 +219,7 @@ end %% close minidict: *this is important*\n\
 
 	while ((tnode != 0) & (nodes_left (tnode) >= startlevel)) {
 		level = nodes_left (tnode) - startlevel;
-		flags = node_getflags (tnode);
-		cdata = fixnullstring (node_get (tnode, TEXT));
-		ps_export_node (file, level, flags, cdata);
+		ps_export_node (file, level, tnode);
 		if (node_up (tnode) && node_up (tnode) == node_backrecurse (tnode))
 			fprintf (file, " H\n");
 
@@ -225,7 +234,7 @@ close\n\
 	cli_outfunf ("postscript export, saved output to \"%s\"", filename);
 	if (file != stdout)
 		fclose (file);
-	return (long) node;
+	return node;
 }
 
 /*

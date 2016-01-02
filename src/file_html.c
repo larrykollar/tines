@@ -52,7 +52,7 @@ static char *htmlquote[]={
 /* *INDENT-ON* */
 
 
-static long export_html (int argc, char **argv, long *data)
+static void* export_html (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
 	char *filename = argc==2?argv[1]:"";
@@ -67,7 +67,7 @@ static long export_html (int argc, char **argv, long *data)
 		file = fopen (filename, "w");
 	if (!file) {
 		cli_outfunf ("html export, unable to open \"%s\"", filename);
-		return (long) node;
+		return node;
 	}
 
 	startlevel = nodes_left (node);
@@ -132,7 +132,7 @@ static long export_html (int argc, char **argv, long *data)
 		fclose (file);
 
 	cli_outfunf ("html export, saved output in \"%s\"", filename);
-	return (long) node;
+	return node;
 }
 
 static void htmlcss_export_nodes (FILE * file, Node *node, int level)
@@ -164,7 +164,7 @@ static void htmlcss_export_nodes (FILE * file, Node *node, int level)
 }
 
 
-static long export_htmlcss (int argc, char **argv, long *data)
+static void* export_htmlcss (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
 	char *filename = argc==2?argv[1]:"";
@@ -176,7 +176,7 @@ static long export_htmlcss (int argc, char **argv, long *data)
 		file = fopen (filename, "w");
 	if (!file) {
 		cli_outfunf ("html export, unable to open \"%s\"", filename);
-		return (long) node;
+		return node;
 	}
 
 	fprintf (file, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
@@ -201,9 +201,9 @@ div.level1 {\n\
 	padding-top: 2.5em;\n\
 	font-family: verdana, arial, helvetica, sans-serif; position:relative;\n\
 	font-size:   18pt;\n\
-	text-decoration: underline;\n\
+	text-decoration: none;\n\
 	font-weight: bold;\n\
-	left:        0em;\n\
+	left:        2em;\n\
 	padding-right: 0em;\n\
 }\n\
 div.level2 {\n\
@@ -226,7 +226,7 @@ div.level2 {\n\
 		fclose (file);
 
 	cli_outfunf ("html css export, saved output in \"%s\"", filename);
-	return (long) node;
+	return node;
 }
 
 /*

@@ -72,12 +72,12 @@ static void spell_node (Node *node)
 	}
 }
 
-static long spell_cmd (int argc, char **argv, long *data)
+static void* spell_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	if(prefs.readonly){
 			cli_outfun("readonly flag set, avoiding changes");
-			return (long)data;
+			return data;
 	}
 	if (argc==2 && (!strcmp (argv[1], "-r"))) {
 		int startlevel;
@@ -92,7 +92,7 @@ static long spell_cmd (int argc, char **argv, long *data)
 	} else {
 		spell_node (pos);
 	}
-	return (long) pos;
+	return pos;
 }
 
 /*

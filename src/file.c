@@ -150,13 +150,13 @@ int file_check (char *filename)
 }
 
 
-static long cmd_save (int argc,char **argv, long *data)
+static void* cmd_save (int argc,char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
 	if(prefs.readonly){
 		docmd (pos, "status \"readonly mode, not writing to disk\"\n");
-		return (long)pos;
+		return pos;
 	}
 	
 	if (prefs.db_file[0] != (char) 255) { /* magic value of tutorial */
@@ -179,10 +179,10 @@ static long cmd_save (int argc,char **argv, long *data)
 	} else {
 		/* make tutorial users initial database, if initial database dont exist */
 	}
-	return (long) pos;
+	return pos;
 }
 
-static long cmd_revert (int argc,char **argv, long *data)
+static void* cmd_revert (int argc,char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
@@ -197,7 +197,7 @@ static long cmd_revert (int argc,char **argv, long *data)
 			pos=docmd (pos, buf);
 		}
 	}
-	return (long) pos;
+	return pos;
 }
 
 

@@ -28,7 +28,7 @@
 
 /************** search ************************/
 
-static long search( int argc, char **argv, long *data){
+static void* search(int argc,char **argv,void *data){
 	Node *pos=(Node *)data;
 	
 	if(argc==2){
@@ -37,7 +37,7 @@ static long search( int argc, char **argv, long *data){
 			if (pos == NULL) {
 				docmdf (pos, "status 'reached bottom of tree and \\'%s\\' not found'",
 						argv[1]);
-				return (long) data;
+				return data;
 			}			
 		}
 	} else if(argc>2){
@@ -46,20 +46,20 @@ static long search( int argc, char **argv, long *data){
 			if (pos == NULL) {
 				docmdf (pos, "status 'reached top of tree and \\'%s\\' not found'",
 						argv[2]);
-				return (long) data;
+				return data;
 			}			
 		} else if(!strcmp(argv[1],"-f")){
 			pos=node_recursive_match( argv[2],pos);
 			if (pos == NULL) {
 				docmdf (pos, "status 'reached bottom of tree and \\'%s\\' not found'",
 						argv[2]);
-				return (long) data;
+				return data;
 			}
 		}
-		return (long)pos;
+		return pos;
 	} 
 	cli_outfunf("usage: %s [-b|-f] <string>",argv[0]);
-	return (long)pos;
+	return pos;
 }
 
 /*

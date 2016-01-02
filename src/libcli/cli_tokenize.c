@@ -219,7 +219,7 @@ char **argv_tokenize(char *input_string){
 				varname[varname_pos]=0;
 			}
 			if(r->action & a_varinsert){
-				total_length+=strlen(cli_getstring(varname));
+				total_length+=strlen(cli_getstring((char*)varname));
 				varname_pos=0;
 				varname[varname_pos]=0;
 			}
@@ -269,8 +269,8 @@ char **argv_tokenize(char *input_string){
 				varname[varname_pos]=0;
 			}
 			if(r->action & a_varinsert){
-				strcpy(output,cli_getstring(varname));
-				output+=strlen(cli_getstring(varname));
+				strcpy(output,cli_getstring((char*)varname));
+				output+=strlen(cli_getstring((char*)varname));
 			}
 			if(r->action & a_store){
 				if(r->storechar){

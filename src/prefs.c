@@ -71,6 +71,7 @@ void init_prefs ()
 	cli_add_int ("showpercent", &prefs.showpercent, "");
 	cli_add_int ("fixedfocus", &prefs.fixedfocus, "");
 	cli_add_int ("savepos", &prefs.savepos, "");
+	cli_add_int ("saveexpand", &prefs.saveexpand, "");
 	cli_add_int ("readonly", &prefs.readonly, "");
 
 #ifdef NCURSES_VERSION 

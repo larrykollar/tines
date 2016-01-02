@@ -9,15 +9,22 @@ but future versions will use OPML as the default.
 The top-level element is <tree>, which contains one or more <node> elements.
 <node> elements in turn can contain <data> and other <node> elements.
 .LP
-Each <node> element can have two optional attributes:
+Each <node> element can have three optional attributes:
 .IP \[bu] 4
 \fItype\fP is a text string describing the node type.
 Currently, Tines supports only the "todo" type.
 .IP \[bu] 4
-\fIdone\fP is a text string that can take the values "yes" or "no".
+.I done
+is a text string that can take the values "yes" or "no".
 It is used in conjunction with
 .BR type= \[dq]todo\[dq]
 to indicate whether the to-do entry is checked or not.
+.IP \[bu] 4
+.I expanded
+.RI ( lhnb
+extension, adopted by Tines):
+A text string that can take the values "yes" or "no".
+It is used to indicate the saved expansion state of nodes with children.
 .LP
 The DTD is embedded in each hnb file.
 .RS
@@ -29,6 +36,7 @@ The DTD is embedded in each hnb file.
 <!ELEMENT node (data?,node*)>
 <!ATTLIST node done (yes|no) #IMPLIED
           type CDATA #IMPLIED
+          expanded (yes|no) #IMPLIED
 >]>
 .fi
 .RE

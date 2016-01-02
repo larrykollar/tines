@@ -141,7 +141,7 @@ static int cmp_descending(Node *a,Node *b){
 	return cmp_todo(b,a);
 }
 
-static long sort_cmd (int argc, char **argv, long *data)
+static void* sort_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	int (*cmp) (Node *a, Node *b)=cmp_todo;
@@ -155,7 +155,7 @@ static long sort_cmd (int argc, char **argv, long *data)
 	node_mergesort (node_top (pos), nodes_down (node_top (pos)) + 1, cmp);
 	if (node_left (pos))
 		node_left (pos)->right = node_top (pos);
-	return (long) pos;
+	return pos;
 }
 
 /*

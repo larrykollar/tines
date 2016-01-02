@@ -38,10 +38,10 @@ void cli_add_help(char *name,char *helptext);
 
 void cli_cleanup(void);
 
-void
+void *
 cli_add_item (char *name,
 		  long *integer, char *string,
-		  long (*func) (int argc,char **argv, long *data), char *usage);
+		  void *func (int argc, char **argv, void *data), char *usage);
 
 #define cli_add_int(name,integer,usage)\
 	cli_add_item (name, integer, NULL, NULL, usage)
@@ -55,7 +55,7 @@ cli_add_item (char *name,
 int cli_load_file(char *filename);
 
 char *cli_complete (const char *commandline);	/* returns a completed commandline */
-long cli_docmd (char *commandline, void *data);	/* run commandline */
+void *cli_docmd (char *commandline, void *data);	/* run commandline */
 
 
 extern void (*cli_outfun) (char *);	/* the outputting function 

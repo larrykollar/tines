@@ -18,17 +18,15 @@
  * Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <string.h>
 #include "tree.h"
 #include "cli.h"
-#include <string.h>
-#define NULL 0
 
 #include "evilloop.h"
 #include "ctype.h"
 #include "ui_binding.h"
 
-
-static long cmd_expand (int argc, char **argv, long *data)
+static void* cmd_expand (int argc,char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	if(argc==1){
@@ -37,7 +35,7 @@ static long cmd_expand (int argc, char **argv, long *data)
 				inputbuf[strlen (inputbuf) + 1] = 0;
 				inputbuf[strlen (inputbuf)] = lastbinding->key;
 			}
-			return (long)pos;
+			return pos;
 		}
 		node_setflag(pos,F_expanded,1);
 	} else if((!strcmp(argv[1],"-a"))||(!strcmp(argv[1],"--all"))){
@@ -48,6 +46,17 @@ static long cmd_expand (int argc, char **argv, long *data)
 			tnode = node_recurse (tnode);
 		}
 		cli_outfun ("expanded all nodes");
+	} else if(!strcmp(argv[1],"--subtree")) {
+		node_setflag(pos,F_expanded,1);
+		if(node_right(pos)) {
+			Node *tnode = node_right(pos);
+
+			while (tnode) {
+				node_setflag(tnode,F_expanded,1);
+				tnode = node_traverse_right_of (pos, tnode);
+			}
+		}
+		cli_outfun ("expanded subtree");
 	} else if((!strcmp(argv[1],"-h"))||(!strcmp(argv[1],"--here"))){
 		Node *tnode = node_right(pos);
 		int lvl = nodes_left(pos);
@@ -64,10 +73,10 @@ static long cmd_expand (int argc, char **argv, long *data)
 		}
 		cli_outfun ("expanded all nodes on branch");
 	}
-	return (long) pos;
+	return pos;
 }
 
-static long cmd_collapse (int argc,char **argv, long *data)
+static void* cmd_collapse (int argc,char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 	if(argc==1){
@@ -76,7 +85,7 @@ static long cmd_collapse (int argc,char **argv, long *data)
 				inputbuf[strlen (inputbuf) + 1] = 0;
 				inputbuf[strlen (inputbuf)] = lastbinding->key;
 			}		
-			return (long)pos;
+			return pos;
 		}
 		node_setflag(pos,F_expanded,0);
 	} else if((!strcmp(argv[1],"-a"))||(!strcmp(argv[1],"--all"))){
@@ -87,9 +96,20 @@ static long cmd_collapse (int argc,char **argv, long *data)
 			tnode = node_recurse (tnode);
 		}
 		cli_outfun ("collapsed all nodes");
+	} else if(!strcmp(argv[1],"--subtree")) {
+	        node_setflag(pos,F_expanded,0);
+		if(node_right(pos)) {
+		  Node *tnode = node_right(pos);
+
+		  while (tnode) {
+		    node_setflag(tnode,F_expanded,0);
+		    tnode = node_traverse_right_of (pos, tnode);
+		  }
+		}
+		cli_outfun ("collapsed subtree");
 	}
 	
-	return (long) pos;
+	return pos;
 }
 
 /*
@@ -97,14 +117,16 @@ static long cmd_collapse (int argc,char **argv, long *data)
 */
 void init_expanded ()
 {
-	cli_add_command ("expand", cmd_expand, "[--all|-a|--here|-h]");
+	cli_add_command ("expand", cmd_expand, "[--all|-a|--here|-h|--subtree]");
 	cli_add_help ("expand",
-				  "expand the current entry, thus showing its subentries, if the\
-parameter -a|--all is given, all nodes in the tree will be expanded\
-if the parameter -h|--here is given, all descendents of the current\
-node will be expanded");
-	cli_add_command ("collapse", cmd_collapse, "");
+				  "Expands the current entry, showing its subentries. If the \
+parameter -a|--all is given, expands all entries in the tree. \
+If the parameter -h|--here is given, expands all descendents of the current \
+entry. If the parameter --subtree is given, expands all descendants of the \
+current entry.");
+	cli_add_command ("collapse", cmd_collapse, "[--all|-a|--subtree]");
 	cli_add_help ("collapse",
-				  "collapse the current entry's subentries, if the\
-parameter -a is given, all nodes in the tree will be collapsed");
+				  "Collapses the current entry's subentries. If the \
+parameter -a is given, collapses all entries in the tree. If the parameter \
+--subtree is given, collapses everything under the current entry.");
 }

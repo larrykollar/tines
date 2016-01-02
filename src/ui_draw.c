@@ -167,6 +167,7 @@ static int draw_textblock (int line_start, int col_start, int width,
 			case '\t':
 			case '\n':
 			case '\r':			/* all whitespace is treated as spaces */
+			wordwrap:
 				if (col + wpos + 1 >= col_end) {	/* reached margin */
 					if (drawmode == drawmode_edit) {
 						if (cursor_state == 0)
@@ -206,8 +207,12 @@ static int draw_textblock (int line_start, int col_start, int width,
 							addstr ((char *) word);
 
 						}
-						if (data[dpos])
-							addch (' ');
+						if (data[dpos]) {
+							if (isspace(data[dpos]))
+								addch (' ');
+							else
+								addch (data[dpos]);
+						}
 					}
 				}
 
@@ -236,10 +241,12 @@ static int draw_textblock (int line_start, int col_start, int width,
 				word[wpos = 0] = 0;
 				break;
 			default:
-				if (wpos < 198) {
-					word[wpos++] = data[dpos];
-					word[wpos] = 0;
-				}
+				if (col_start + wpos + 2 >= col_end)
+					goto wordwrap;
+
+				word[wpos++] = data[dpos];
+				word[wpos] = 0;
+
 				break;
 		}
 		dpos++;
@@ -252,7 +259,7 @@ static int draw_textblock (int line_start, int col_start, int width,
 		} else {
 			ui_style (ui_style_selected);
 		}
-		addch (data[cursor_pos]);
+		addch(A_CHARTEXT & inch());
 		if (node_right (node)) {
 			ui_style (ui_style_parentnode);
 		} else {
@@ -538,7 +545,7 @@ static struct {
 
 /* FIXME: make backup?,.. and make sure data is present,.., make possiblity to write back? */
 
-long display_format_cmd (int argc, char **argv, long *data)
+void* display_format_cmd (int argc, char **argv, void *data)
 {
 	char *p = argv[1];
 	int width;
@@ -546,7 +553,7 @@ long display_format_cmd (int argc, char **argv, long *data)
 	int col_no = 0;
 
 	if(argc<2){
-		return (long)data;
+		return data;
 	}
 
 	do {
@@ -631,7 +638,7 @@ long display_format_cmd (int argc, char **argv, long *data)
 
 	col_def[col_no].type = col_terminate;
 
-	return (long) data;
+	return data;
 }
 
 
@@ -793,10 +800,10 @@ void ui_draw (Node *node, char *input, int edit_mode)
 		line_nodeno[active_line] = node_no (node);
 
 		if (edit_mode) {
-			lines = draw_item (active_line, (int) input, node, drawmode_edit);
+			lines = draw_item (active_line, (int) (intptr_t) input, node, drawmode_edit);
 		} else {
 			lines =
-				draw_item (active_line, (int)strlen (input), node,
+				draw_item (active_line, strlen (input), node,
 						   drawmode_completion);
 		}
 

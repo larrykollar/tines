@@ -1,7 +1,8 @@
 /*
- * hnb.c -- the main app, of hierarchical notebook, an personal database
+ * tines.c -- the main loop of tines, an outliner/planner/organizer/notebook
  *
  * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * hnb forked by Larry Kollar, Dec 2015, renamed Tines
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -26,14 +27,24 @@
 		
 		--
 		sannsynlig grunn: feil håndtering av temporary attributte
+
+ (Google Translate says this means:
+
+ nodes which disappear [which I haven't seen -LK]
+ 	std. creation
+	editing
+	go to parent
+
+	likely reason: incorrect handing of temporary attributes)
 */
 
-#include "../config.h"
+#include "config.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <locale.h>
 
 #include "tree.h"
 
@@ -44,16 +55,14 @@
 #include "file.h"
 #include "evilloop.h"
 
-#define DEBUG 1
-
 static void usage (const char *av0)
 {
 	fprintf (stderr,
 			 "\nusage: %s [database] [options] [command [command] ..]\n",
 			 av0);
 	fprintf (stderr, "\n\
-Hierarchical NoteBook by ¯yvind KolŒs <pippin@users.sourceforge.net>\n\
-It is distributed under the GNU General Public License\n\
+Tines by Larry Kollar (lkollar@gmail.com), a fork of hnb by Oyvind Kolas\n\
+It is distributed under the GNU General Public License.\n\
 \n\
 default database: '%s'\n", prefs.default_db_file);
 	fprintf (stderr, "\n\
@@ -71,8 +80,8 @@ Options:\n\
 	fprintf (stderr, "\t-s --stylized load stylized xml (using libxml2)\n");
 #endif
 	fprintf (stderr, "\n\
-\t-rc <file>        specify other config file\n\
-\t-ui <interface>   interface to use, curses (default) or cli\n\
+\t-rc <file>        specify a different config file\n\
+\t-ui <interface>   interface to use, curses (default) or CLI\n\
 \t-e                execute commands\n\
 \n\n");
 }
@@ -89,7 +98,7 @@ int main (int argc, char **argv)
 	
 	int recover=0;  /* whether in recover mode */
 
-	struct {					/* initilaized defaults */
+	struct {					/* initialized defaults */
 		int version;
 		int usage;
 		int def_db;
@@ -100,13 +109,15 @@ int main (int argc, char **argv)
 		char *rcfile;
 		char *cmd;
 	} cmdline = {
-		0,						/* version */
+			0,					/* version */
 			0,					/* usage */
 			1,					/* load default db */
 			"",					/*format to load by default */
 			1,					/* ui */
 			0,					/* tutorial */
 	NULL, NULL, NULL};
+
+/* TODO: replace this with getopt_long() (getopt.h) */
 	{							/*parse commandline */
 		for (argno = 1; argno < argc; argno++) {
 			if (!strcmp (argv[argno], "-h")
@@ -179,6 +190,8 @@ int main (int argc, char **argv)
 
 	init_subsystems ();
 
+	setlocale(LC_ALL, "");
+
 	if (cmdline.usage) {
 		usage (argv[0]);
 		exit (0);
@@ -226,12 +239,12 @@ int main (int argc, char **argv)
 
 	if (!prefs.tutorial) {
 		int oldpos = -1;
-		char file_to_load[4096];
+		char file_to_load[4096]; /* TODO: malloc this */
 
 		strcpy(file_to_load, prefs.db_file);	
 		
 		{ /* check for recovery file */
-		  char recovery_file[4096];
+		  char recovery_file[4096]; /* TODO: malloc this */
 		  FILE *tfile;
 		  
 	  	  struct stat statbuf;
@@ -312,7 +325,7 @@ o)pen read_only\n\
 
 
 		{
-			char buf[4096];
+			char buf[4096]; /* TODO: malloc this */
 			if(recover)
 			sprintf (buf, "import_binary %s", file_to_load);
 			else
@@ -327,7 +340,9 @@ o)pen read_only\n\
 		}
 	}
 
-
+/* TODO: this should load a default read-only db from SHAREDIR
+ * and set the readonly flag.
+ */
 	if (prefs.tutorial) {
 		if (prefs.tutorial != 2)
 			prefs.db_file[0] = (char) 255;	/* disable saving */
@@ -359,7 +374,7 @@ o)pen read_only\n\
 				int c = 0;
 
 				while (c != 'q') {
-					char buf[100];
+					char buf[100]; /* TODO: malloc this? */
 
 					c = getch ();
 					sprintf (buf, "[%i] [%c]\n", c, c);
@@ -373,7 +388,7 @@ o)pen read_only\n\
 	tree_free (pos);
 
 	{
-	    char swapfile[4096];
+	    char swapfile[4096]; /* TODO: malloc this */
 	    sprintf(swapfile,"%s_hnb_rescue",prefs.db_file);
 		if(!prefs.readonly)
 			    remove(swapfile);
