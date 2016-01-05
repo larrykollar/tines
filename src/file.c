@@ -1,7 +1,8 @@
 /*
- * file.c -- utility functions for import/export hnb
+ * file.c -- utility functions for import/export tines
  *
  * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Modified for Tines by Larry Kollar, 2016
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -164,7 +165,7 @@ static void* cmd_save (int argc,char **argv, void *data)
 			char buf[4096];
 			char swapfile[4096];
 
-			sprintf(swapfile,"%s_hnb_rescue",prefs.db_file);
+			sprintf(swapfile,"%s_tines_rescue",prefs.db_file);
 			/* remove(swapfile); when not removing it works as a lockfile */
 			docmd (pos, "autosave_threshold_nodes_changed 0");
 

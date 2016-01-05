@@ -1,7 +1,8 @@
 /*
- * prefs.c -- preferences and global variable mangement of hnb
+ * prefs.c -- preferences and global variable mangement of tines
  *
  * Copyright (C) 2001,2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * modified for tines project by Larry Kollar (lkollar@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -55,12 +56,12 @@ typedef struct {
 void init_prefs ()
 {
 #ifndef WIN32
-	sprintf (prefs.rc_file, "%s/.hnbrc", getenv ("HOME"));
-	sprintf (prefs.default_db_file, "%s/.hnb", getenv ("HOME"));
+	sprintf (prefs.rc_file, "%s/.tinesrc", getenv ("HOME"));
+	sprintf (prefs.default_db_file, "%s/.tines", getenv ("HOME"));
 #endif
 #ifdef WIN32
-	sprintf (prefs.rc_file, "C:\\hnb.rc");
-	sprintf (prefs.default_db_file, "C:\\hnb_data");
+	sprintf (prefs.rc_file, "C:\\tines.rc");
+	sprintf (prefs.default_db_file, "C:\\tines_data");
 #endif
 	
 	cli_add_string ("format", prefs.format, "The format of the current file.");
@@ -86,7 +87,7 @@ void write_default_prefs ()
 
 	file = fopen (prefs.rc_file, "w");
 	fprintf (file,
-#include "../doc/hnbrc.inc"
+#include "../doc/tinesrc.inc"
 		);
 	fclose (file);
 }
@@ -96,7 +97,7 @@ void load_prefs (void)
 	if (xml_check (prefs.rc_file)) {
 		printf
 			("seems like your current ~/.hnbrc is outdated (it's xml the new format\n\
-is plain text,.. remove it and let hnb make a new default\n");
+is plain text,.. remove it and let tines make a new default\n");
 		exit (0);
 	}
 	cli_load_file (prefs.rc_file);

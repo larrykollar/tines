@@ -304,13 +304,17 @@ static int draw_spacing (int line, int col, int width, Node *node,
 	return width;
 }
 
-static char bullet_leaf[4] = "  *";
-static char bullet_parent[4] = "  +";
-static char bullet_parent_expanded[4] = "  -";
-static char bullet_todo_leaf_undone[4] = "[ ]";
-static char bullet_todo_leaf_done[4] = "[X]";
-static char bullet_todo_parent_undone[4] = "[ ]";
-static char bullet_todo_parent_done[4] = "[X]";
+/* 13: three four-byte characters + null */
+static char bullet_leaf[13] = "  *";
+static char bullet_parent[13] = "  +";
+static char bullet_parent_expanded[13] = "  -";
+static char bullet_todo_leaf_undone[13] = "[ ]";
+static char bullet_todo_leaf_done[13] = "[X]";
+static char bullet_todo_parent_undone[13] = "[ ]";
+static char bullet_todo_parent_done[13] = "[X]";
+static char bullet_textleaf[13] = "t *";
+static char bullet_textparent[13] = "t +";
+static char bullet_textparent_expanded[13] = "t -";
 
 
 static int draw_bullet (int line, int col, int width, Node *node,
@@ -328,20 +332,34 @@ static int draw_bullet (int line, int col, int width, Node *node,
 
 		move (line, col);
 		switch (perc) {
+			/* no todo info */
 			case -1:
-				if (drawmode != drawmode_test)
-					addstr ((node_right (node)) ? node_getflag(node,F_expanded)
-							? bullet_parent_expanded : bullet_parent
-							: bullet_leaf);
+				if (strcmp(fixnullstring(node_get(node, "type")), "text")) {
+					/* not a text node */
+					if (drawmode != drawmode_test) {
+						addstr ((node_right (node)) ? node_getflag(node,F_expanded)
+								? bullet_parent_expanded : bullet_parent
+								: bullet_leaf);
+					}
+				} else {
+					if (drawmode != drawmode_test) {
+						addstr ((node_right (node)) ? node_getflag(node,F_expanded)
+								? bullet_textparent_expanded : bullet_textparent
+								: bullet_textleaf);
+					}
+				}
 				break;
+			/* not started */
 			case 0:
 				if (drawmode != drawmode_test)
 					addstr ((node_right (node)) ? bullet_todo_parent_undone : bullet_todo_leaf_undone);
 				break;
+			/* done */
 			case 2000:
 				if (drawmode != drawmode_test)
 					addstr ((node_right (node)) ? bullet_todo_parent_done : bullet_todo_leaf_done);
 				break;
+			/* value = 1..1000 (1..100%) */
 			default:{
 				char str[100];
 
@@ -705,8 +723,6 @@ static int draw_item (int line_start, int cursor_pos, Node *node,
 	return lines_used;
 }
 
-extern int hnb_nodes_up;
-extern int hnb_nodes_down;
 
 #define MAXLINES 512
 static long line_nodeno[MAXLINES] = { 0 };
@@ -714,6 +730,9 @@ static long line_nodeno[MAXLINES] = { 0 };
 void ui_draw (Node *node, char *input, int edit_mode)
 {
 	int lines;
+
+	int hnb_nodes_up;
+	int hnb_nodes_down;
 
 	static struct {
 		long self;
@@ -853,7 +872,7 @@ defines how each node is displayed, the display string syntax is \
 interpreted as follows: \
 spaces turn into real spaces, i means indentation, - means bullet, \
 d means the real data of the node, x is a temporary placeholder for \
-upcoming columntypes,. (for debugging only) \
+upcoming columntypes. (for debugging only) \
 i and x can take an argument specifying how many characters wide \
 the field should be");
 	cli_add_string ("bullet_leaf", bullet_leaf, "");
@@ -863,4 +882,7 @@ the field should be");
 	cli_add_string ("bullet_todo_parent_done", bullet_todo_parent_done, "");
 	cli_add_string ("bullet_todo_leaf_undone", bullet_todo_leaf_undone, "");
 	cli_add_string ("bullet_todo_leaf_done", bullet_todo_leaf_done, "");
+	cli_add_string ("bullet_textleaf", bullet_textleaf, "");
+	cli_add_string ("bullet_textparent", bullet_textparent, "");
+	cli_add_string ("bullet_textparent_expanded", bullet_textparent_expanded, "");
 }

@@ -1,10 +1,29 @@
 
-src/tines: src/*.c src/*.h doc/*.inc doc/hnbrc.inc
+# Arguments to install
+# Use this one for Linux
+INSTFLAGS=-D
+# Use this one for MacOSX & BSD
+# INSTFLAGS=-d
+
+# Install directories
+BINDIR=/usr/local/bin
+MANDIR=/usr/local/man
+SHAREDIR=/usr/local/share/tines
+
+# Override the shell builtin echo
+ECHO=/bin/echo
+
+src/tines: src/*.c src/*.h doc/*.inc
 	(cd src;make)
 
 install: src/tines
-	install -D src/tines /usr/local/bin/tines
-	install -D -m444 doc/tines.1 /usr/local/man/man1/tines.1
+	install $(INSTFLAGS) src/tines $(BINDIR)/tines
+	install $(INSTFLAGS) -m444 doc/tines.1 $(MANDIR)/man1/tines.1
+	install $(INSTFLAGS) -m444 doc/tines_hnb.7 $(MANDIR)/man7/tines_hnb.7
+	install $(INSTFLAGS) -m444 doc/tines_opml.7 $(MANDIR)/man7/tines_opml.7
+	install $(INSTFLAGS) -m444 doc/tinesrc $(SHAREDIR)/tinesrc
+	install $(INSTFLAGS) -m444 doc/starter.hnb $(SHAREDIR)/starter.hnb
+#	install $(INSTFLAGS) -m444 doc/default.css $(SHAREDIR)/default.css
 
 clean:
 	(cd src;make clean)
@@ -12,13 +31,13 @@ clean:
 	rm -f *~
 
 rcupdate: updaterc
-updaterc: doc/hnbrc.inc
+updaterc: doc/tinesrc.inc
 
-doc/hnbrc.inc: doc/hnbrc
+doc/tinesrc.inc: doc/tinesrc
 	(cd util;make)
-	echo -n "\"">doc/hnbrc.inc
-	cat doc/hnbrc | util/asc2c >> doc/hnbrc.inc
-	echo "\"">>doc/hnbrc.inc
+	$(ECHO) -n "\"">doc/tinesrc.inc
+	cat doc/tinesrc | util/asc2c >> doc/tinesrc.inc
+	$(ECHO) "\"">>doc/tinesrc.inc
 
 tar: updaterc clean config.h
 	(cd ..;mkdir tines-`cat tines/VERSION`)

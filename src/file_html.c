@@ -1,7 +1,8 @@
 /*
- * file_html.c -- html export filter for hnb
+ * file_html.c -- html export filter for tines
  *
  * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Modified for Tines by Larry Kollar, 2016
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -77,7 +78,7 @@ static void* export_html (int argc, char **argv, void *data)
 	fprintf (file, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\n\
 <html>\n\
 <head>\n\
-	<title>tree exported from hnb</title>\n\
+	<title>Tree exported from Tines</title>\n\
 </head>\n\
 <body>\n\
 <ul>\n");
@@ -184,7 +185,7 @@ static void* export_htmlcss (int argc, char **argv, void *data)
 \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n\
 <html><head>\n\
 <meta http-equiv=\"Content-type\" content=\"text/html; charset=ISO8859-1\" />\n\
-<title>tree exported from hnb</title>\n\
+<title>Tree exported from Tines</title>\n\
 <style type=\"text/css\" id=\"internalStyle\">\n\
 body {\n\
 	padding-right: 3em;\n\

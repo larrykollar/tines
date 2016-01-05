@@ -21,6 +21,9 @@
 		#bullet_todo_parent_done   \"[X]\"\n\
 		#bullet_todo_parent_undone \"[ >\"\n\
 		#bullet_todo_parent_done   \"[X>\"\n\
+		#bullet_textleaf           \"t *\"\n\
+		#bullet_textparent         \"t +\"\n\
+		#bullet_textparent_expanded \"t -\"\n\
 	bullet_leaf            \"  *\"\n\
 	bullet_parent          \"  +\"\n\
 	bullet_parent_expanded \"  -\"\n\
@@ -28,6 +31,9 @@
 	bullet_todo_leaf_done     \"[X]\"\n\
 	bullet_todo_parent_undone \"[ ]\"\n\
 	bullet_todo_parent_done   \"[X]\"\n\
+	bullet_textleaf           \"t *\"\n\
+	bullet_textparent         \"t +\"\n\
+	bullet_textparent_expanded \"t -\"\n\
 	\n\
 ##### user interface\n\
 	##### display format\n\
@@ -60,6 +66,7 @@
 		# set these variables to 0.\n\
 		forced_up 1\n\
 		forced_down 1\n\
+	\n\
 	##### automatically added nodes\n\
 		# To put automatically added nodes at the top of the current leve,\n\
 		# set this variable to 1.\n\
@@ -182,7 +189,7 @@
 	##################################################\n\
 	\n\
 	context main\n\
-		helptext \"ESC| menu || |F2| save || |F5| commandline || |return| edit |\n\
+		helptext \"ESC| menu || |F2| save || |F3| text || |F5| commandline || |return| edit |\n\
 		bind f1 'status \"Take a look at ~/.tinesrc to check out the configuration\"'\n\
 		bind .. 'status \"there you will also find details about the available keybindings.\"'\n\
 		bind .. 'status \"please feel free to contribute more useful keybindings and helptexts...\"'\n\
@@ -190,6 +197,7 @@
 		bind esc menu\n\
 		bind ^Q 'context quitsave'\n\
 		\n\
+		bind f3 'toggle_text'\n\
 		bind f5 'commandline'\n\
 		bind .. 'status --clear'\n\
 		\n\
@@ -536,9 +544,9 @@
 			escdelay 100\n\
 ##### menu definition\n\
 	##### file\n\
-		menu \"File\" \"------------\" \"\"\n\
-		menu \"File\" \"save      F2\" \"save\"\n\
-		menu \"File\" \"save as..   \" \"macro saveas\"\n\
+		menu \"File\" \"-------------\" \"\"\n\
+		menu \"File\" \"Save      F2\" \"save\"\n\
+		menu \"File\" \"Save As...  \" \"macro saveas\"\n\
 			macro define saveas\n\
 				getquery db_file 'file to save'\n\
 				save_state\n\
@@ -546,41 +554,52 @@
 				export_$format $db_file\n\
 				restore_state\n\
 			end\n\
-		menu \"File\" \"revert   \" \"revert\"		\n\
+		menu \"File\" \"Save Branch \" \"macro savebranch\"\n\
+			macro define savebranch\n\
+				getquery 'File to save'\n\
+				save_state\n\
+				export_$format $db_file\n\
+				restore_state\n\
+			end\n\
+		menu \"File\" \"Revert      \" \"revert\"		\n\
 		menu \"File\" \"------------\" \"\"\n\
-		menu \"File\" \"export    ^E\" \"context export\"\n\
-		menu \"File\" \"import    ^L\" \"context import\"\n\
+		menu \"File\" \"Export    ^E\" \"context export\"\n\
+		menu \"File\" \"Import    ^L\" \"context import\"\n\
 		menu \"File\" \"------------\" \"\"\n\
-		menu \"File\" \"spell chk F6\" \"macro m_spellcheck\"\n\
-		menu \"File\" \"expand all\"	    \"expand --all\"\n\
-		menu \"File\" \"collapse all\"      \"collapse --all\"\n\
-		menu \"File\" \"statistics\"	\"macro stats\"\n\
+		menu \"File\" \"Spell Chk F6\" \"macro m_spellcheck\"\n\
+		menu \"File\" \"Statistics  \"	\"macro stats\"\n\
 			macro define stats\n\
 				status \"file: \\\"$db_file\\\" format:$format\"\n\
 				mem\n\
 				stats			\n\
 			end\n\
 		menu \"File\" \"------------\" \"\"\n\
-		menu \"File\" \"exit      ^Q\" \"context quitsave\"\n\
+		menu \"File\" \"Exit      ^Q\" \"context quitsave\"\n\
 	##### edit\n\
 		menu \"Edit\" \"---------\" \"\"\n\
-		menu \"Edit\" \"copy   ^C\" \"copy\"\n\
-		menu \"Edit\" \"cut    ^X\" \"cut\"\n\
-		menu \"Edit\" \"paste  ^V\" \"paste\"\n\
+		menu \"Edit\" \"Copy   ^C\" \"copy\"\n\
+		menu \"Edit\" \"Cut    ^X\" \"cut\"\n\
+		menu \"Edit\" \"Paste  ^V\" \"paste\"\n\
 		menu \"Edit\" \"---------\" \"\"\n\
 		menu \"Edit\" \"Search ^F\" \"macro m_search\"\n\
 	##### entry\n\
 		menu \"Entry\" \"--------------\" \"\"\n\
-		menu \"Entry\" \"edit    return\" \"edit\"\n\
-		menu \"Entry\" \"delete     del\" \"remove\"\n\
+		menu \"Entry\" \"Edit    return\" \"edit\"\n\
+		menu \"Entry\" \"Delete     del\" \"remove\"\n\
 		menu \"Entry\" \"--------------\" \"\"\n\
-		menu \"Entry\" \"do action   ^A\" \"action\"\n\
-		menu \"Entry\" \"indent      >\" \"indent\"\n\
-		menu \"Entry\" \"outdent     <\" \"outdent\"\n\
-		menu \"Entry\" \"toggle todo ^T\" \"toggle_todo\"\n\
-		menu \"Entry\" \"toggle done ^D\" \"toggle_done\"\n\
-		menu \"Entry\" \"expand      +\" \"expand\"\n\
-		menu \"Entry\" \"collapse    -\" \"collapse\"\n\
+		menu \"Entry\" \"Do Action     ^A\" \"action\"\n\
+		menu \"Entry\" \"Indent         >\" \"indent\"\n\
+		menu \"Entry\" \"Outdent        <\" \"outdent\"\n\
+		menu \"Entry\" \"Toggle Todo   ^T\" \"toggle_todo\"\n\
+		menu \"Entry\" \"Toggle Done   ^D\" \"toggle_done\"\n\
+		menu \"Entry\" \"Toggle Text   F3\" \"toggle_text\"\n\
+		menu \"Entry\" \"--------------\" \"\"\n\
+		menu \"Entry\" \"Expand         +\" \"expand\"\n\
+		menu \"Entry\" \"Collapse       -\" \"collapse\"\n\
+		menu \"Entry\" \"Expand Subtree  \" \"expand --subtree\"\n\
+		menu \"Entry\" \"Collapse Subtree\" \"collapse --subtree\"\n\
+		menu \"Entry\" \"Expand All      \"	\"expand --all\"\n\
+		menu \"Entry\" \"Collapse All    \" \"collapse --all\"\n\
 	##### Planner\n\
 		Planner macros\n\
 			macro define pl_new_act\n\
@@ -642,16 +661,16 @@
 		menu \"Planner\" \"Add Year...     \" \"macro pl_add_yr\"\n\
 	##### level\n\
 		menu \"Level\" \"------------\" \"\"\n\
-		menu \"Level\" \"sort      ^S\" \"sort -a\"\n\
-		menu \"Level\" \"sort (desc.)\" \"sort -d\"\n\
-		menu \"Level\" \"shuffle     \" \"sort -r\"\n\
+		menu \"Level\" \"Sort      ^S\" \"sort -a\"\n\
+		menu \"Level\" \"Sort (desc.)\" \"sort -d\"\n\
+		menu \"Level\" \"Shuffle     \" \"sort -r\"\n\
 #####\n\
 	context main\n\
 	macro define m_about\n\
-		status \"tines - an outliner, planner, organizer, and notebook\n\
+		status \"Tines - an outliner, planner, organizer, and notebook\n\
 		status \"(c) 2015 Larry Kollar (lkollar@gmail.com)\n\
 	end\n\
 	\n\
 	macro m_about\n\
-# vim: ts=4 sw=4\n\
+# vim: tabstop=4 shiftwidth=4\n\
 "

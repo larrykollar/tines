@@ -234,11 +234,12 @@ Node *docmdf (Node *pos, char *format, ...){
 }
 
 
-extern int quit_hnb; /* from evilloop. */
 
 Node *cli (Node *pos)
 {
 	char commandline[4096];
+
+	int quit_hnb=0; /* not exactly from evilloop. */
 
 	fprintf (stderr,
 			 "Welcome to %s %s\ntype ? or help for more information\n",

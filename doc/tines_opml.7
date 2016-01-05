@@ -11,6 +11,9 @@ in the near future
 This manpage describes how Tines maps
 (and intends to map)
 hnb and OPML elements and attributes.
+.LP
+Tines supports OPML 1.0. Any OPML 2.0 elements and attributes
+are silently ignored.
 .
 .SS OPML Head Element
 The hnb format has no analogous section.
@@ -22,16 +25,15 @@ write a placeholder <title> element.
 .
 .SS Attributes
 Tines and \fIhnb\fP
-discard the following OPML attributes on import,
-and do not write them on export:
-.IP \[bu] 4
-isComment
-.IP \[bu] 4
-isBreakpoint
-.IP \[bu] 4
-created
-.IP \[bu] 4
-category
+save OPML attributes on import,
+and write them back on export.
+The CLI commands
+.BR att_get ,
+.BR att_set ,
+.BR att_clear ,
+and
+.BR att_list
+can manipulate attributes if needed.
 .LP
 The OPML "text" attribute and the contents of an hnb <data> element
 are equivalent.
@@ -87,7 +89,7 @@ will be driven through XSLT stylesheets,
 allowing the user to modify or extend conversions.
 .SH "SEE ALSO"
 .BR tines_hnb (7),
-OPML 2.0 definition (http://dev.opml.org/spec2.html)
+OPML 1.0 definition (http://dev.opml.org/spec1.html)
 .SH AUTHOR
 The original \fIhnb\fP was written by
 \[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).

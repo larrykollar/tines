@@ -209,7 +209,7 @@ int main (int argc, char **argv)
 
 	if (!file_check (prefs.rc_file)) {
 		write_default_prefs ();
-		fprintf (stderr, "created %s for hnb preferences file\n",
+		fprintf (stderr, "created %s for preferences file\n",
 				 prefs.rc_file);
 		sleep (1);
 	}
@@ -252,7 +252,7 @@ int main (int argc, char **argv)
 	   	  stat(prefs.db_file, &statbuf);
 		  file_modified=statbuf.st_ctime;
 		  
-		  sprintf(recovery_file, "%s_hnb_rescue", prefs.db_file);
+		  sprintf(recovery_file, "%s_tines_rescue", prefs.db_file);
 		  tfile = fopen(recovery_file, "r");
 		  if(tfile){
 			  char response[1024]="_";
@@ -267,9 +267,9 @@ int main (int argc, char **argv)
 	
 			  fclose(tfile);
 			 while(!got_response){
-				  fprintf(stderr,"hnb recovery file (%s) exists\n\
-This could mean that a prior instance of hnb is still running or that hnb\n\
-was aborted.\n", recovery_file);
+				  fprintf(stderr,"recovery file (%s) exists\n\
+This could mean that a prior instance of tines is still running\n\
+or that tines was aborted.\n", recovery_file);
 				  if(rescue_modified<file_modified)
 					  fprintf(stderr,"\n!!NOTE: original is newer than recovery, be careful.\n");
 				  fprintf(stderr,"\n\
@@ -306,8 +306,8 @@ o)pen read_only\n\
 		}
 		
 		if (!recover && ( 
-		    !strcmp(prefs.format,"hnb") || 
 		    !strcmp(prefs.format,"opml") ||
+		    !strcmp(prefs.format,"hnb") || 
 		    !strcmp(prefs.format,"xml") )
 		   ) {
 
@@ -389,7 +389,7 @@ o)pen read_only\n\
 
 	{
 	    char swapfile[4096]; /* TODO: malloc this */
-	    sprintf(swapfile,"%s_hnb_rescue",prefs.db_file);
+	    sprintf(swapfile,"%s_tines_rescue",prefs.db_file);
 		if(!prefs.readonly)
 			    remove(swapfile);
     }

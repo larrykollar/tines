@@ -294,6 +294,24 @@ static void* toggle_done_cmd (int argc, char **argv, void *data)
 	return pos;
 }
 
+static void* toggle_text_cmd (int argc, char **argv, void *data)
+{
+	Node *pos = (Node *) data;
+
+	/* clear done attribute if we're changing a todo entry */
+	if (node_get(pos, "done")) {
+		node_unset(pos, "done");
+	}
+
+	if (!strcmp(fixnullstring(node_get(pos, "type")), "text")) {
+		node_unset(pos, "type");
+	} else {
+		node_set(pos, "type", "text");
+	}
+
+	return pos;
+}
+
 /*
 !init_tree_todo();
 */
@@ -305,4 +323,7 @@ void init_tree_todo ()
 	cli_add_command ("toggle_done", toggle_done_cmd, "");
 	cli_add_help ("toggle_done",
 				  "Toggles visiblity and usage of the checkbox for the current entry.");
+	cli_add_command ("toggle_text", toggle_text_cmd, "");
+	cli_add_help ("toggle_text",
+					"Toggles visibility of the text marker for the current entry.");
 }

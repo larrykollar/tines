@@ -38,7 +38,7 @@ static void autosave_invoke(Node *pos){
 		{
 			char buf[4096];
 			
-			sprintf (buf, "export_binary %s_hnb_rescue", prefs.db_file);		
+			sprintf (buf, "export_binary %s_tines_rescue", prefs.db_file);		
 			docmd (node_root(pos), buf);
 			cli_outfunf("autosaved, %i nodes changed\n",nodes_changed);
 		}

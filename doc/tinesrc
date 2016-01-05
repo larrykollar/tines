@@ -21,6 +21,9 @@
 		#bullet_todo_parent_done   "[X]"
 		#bullet_todo_parent_undone "[ >"
 		#bullet_todo_parent_done   "[X>"
+		#bullet_textleaf           "t *"
+		#bullet_textparent         "t +"
+		#bullet_textparent_expanded "t -"
 	bullet_leaf            "  *"
 	bullet_parent          "  +"
 	bullet_parent_expanded "  -"
@@ -28,6 +31,9 @@
 	bullet_todo_leaf_done     "[X]"
 	bullet_todo_parent_undone "[ ]"
 	bullet_todo_parent_done   "[X]"
+	bullet_textleaf           "t *"
+	bullet_textparent         "t +"
+	bullet_textparent_expanded "t -"
 	
 ##### user interface
 	##### display format
@@ -60,6 +66,7 @@
 		# set these variables to 0.
 		forced_up 1
 		forced_down 1
+	
 	##### automatically added nodes
 		# To put automatically added nodes at the top of the current leve,
 		# set this variable to 1.
@@ -182,7 +189,7 @@
 	##################################################
 	
 	context main
-		helptext "ESC| menu || |F2| save || |F5| commandline || |return| edit |
+		helptext "ESC| menu || |F2| save || |F3| text || |F5| commandline || |return| edit |
 		bind f1 'status "Take a look at ~/.tinesrc to check out the configuration"'
 		bind .. 'status "there you will also find details about the available keybindings."'
 		bind .. 'status "please feel free to contribute more useful keybindings and helptexts..."'
@@ -190,6 +197,7 @@
 		bind esc menu
 		bind ^Q 'context quitsave'
 		
+		bind f3 'toggle_text'
 		bind f5 'commandline'
 		bind .. 'status --clear'
 		
@@ -536,9 +544,9 @@
 			escdelay 100
 ##### menu definition
 	##### file
-		menu "File" "------------" ""
-		menu "File" "save      F2" "save"
-		menu "File" "save as..   " "macro saveas"
+		menu "File" "-------------" ""
+		menu "File" "Save      F2" "save"
+		menu "File" "Save As...  " "macro saveas"
 			macro define saveas
 				getquery db_file 'file to save'
 				save_state
@@ -546,41 +554,52 @@
 				export_$format $db_file
 				restore_state
 			end
-		menu "File" "revert   " "revert"		
+		menu "File" "Save Branch " "macro savebranch"
+			macro define savebranch
+				getquery 'File to save'
+				save_state
+				export_$format $db_file
+				restore_state
+			end
+		menu "File" "Revert      " "revert"		
 		menu "File" "------------" ""
-		menu "File" "export    ^E" "context export"
-		menu "File" "import    ^L" "context import"
+		menu "File" "Export    ^E" "context export"
+		menu "File" "Import    ^L" "context import"
 		menu "File" "------------" ""
-		menu "File" "spell chk F6" "macro m_spellcheck"
-		menu "File" "expand all"	    "expand --all"
-		menu "File" "collapse all"      "collapse --all"
-		menu "File" "statistics"	"macro stats"
+		menu "File" "Spell Chk F6" "macro m_spellcheck"
+		menu "File" "Statistics  "	"macro stats"
 			macro define stats
 				status "file: \"$db_file\" format:$format"
 				mem
 				stats			
 			end
 		menu "File" "------------" ""
-		menu "File" "exit      ^Q" "context quitsave"
+		menu "File" "Exit      ^Q" "context quitsave"
 	##### edit
 		menu "Edit" "---------" ""
-		menu "Edit" "copy   ^C" "copy"
-		menu "Edit" "cut    ^X" "cut"
-		menu "Edit" "paste  ^V" "paste"
+		menu "Edit" "Copy   ^C" "copy"
+		menu "Edit" "Cut    ^X" "cut"
+		menu "Edit" "Paste  ^V" "paste"
 		menu "Edit" "---------" ""
 		menu "Edit" "Search ^F" "macro m_search"
 	##### entry
 		menu "Entry" "--------------" ""
-		menu "Entry" "edit    return" "edit"
-		menu "Entry" "delete     del" "remove"
+		menu "Entry" "Edit    return" "edit"
+		menu "Entry" "Delete     del" "remove"
 		menu "Entry" "--------------" ""
-		menu "Entry" "do action   ^A" "action"
-		menu "Entry" "indent      >" "indent"
-		menu "Entry" "outdent     <" "outdent"
-		menu "Entry" "toggle todo ^T" "toggle_todo"
-		menu "Entry" "toggle done ^D" "toggle_done"
-		menu "Entry" "expand      +" "expand"
-		menu "Entry" "collapse    -" "collapse"
+		menu "Entry" "Do Action     ^A" "action"
+		menu "Entry" "Indent         >" "indent"
+		menu "Entry" "Outdent        <" "outdent"
+		menu "Entry" "Toggle Todo   ^T" "toggle_todo"
+		menu "Entry" "Toggle Done   ^D" "toggle_done"
+		menu "Entry" "Toggle Text   F3" "toggle_text"
+		menu "Entry" "--------------" ""
+		menu "Entry" "Expand         +" "expand"
+		menu "Entry" "Collapse       -" "collapse"
+		menu "Entry" "Expand Subtree  " "expand --subtree"
+		menu "Entry" "Collapse Subtree" "collapse --subtree"
+		menu "Entry" "Expand All      "	"expand --all"
+		menu "Entry" "Collapse All    " "collapse --all"
 	##### Planner
 		Planner macros
 			macro define pl_new_act
@@ -642,15 +661,15 @@
 		menu "Planner" "Add Year...     " "macro pl_add_yr"
 	##### level
 		menu "Level" "------------" ""
-		menu "Level" "sort      ^S" "sort -a"
-		menu "Level" "sort (desc.)" "sort -d"
-		menu "Level" "shuffle     " "sort -r"
+		menu "Level" "Sort      ^S" "sort -a"
+		menu "Level" "Sort (desc.)" "sort -d"
+		menu "Level" "Shuffle     " "sort -r"
 #####
 	context main
 	macro define m_about
-		status "tines - an outliner, planner, organizer, and notebook
+		status "Tines - an outliner, planner, organizer, and notebook
 		status "(c) 2015 Larry Kollar (lkollar@gmail.com)
 	end
 	
 	macro m_about
-# vim: ts=4 sw=4
+# vim: tabstop=4 shiftwidth=4

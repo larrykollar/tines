@@ -1,7 +1,8 @@
 /*
- * cal.c -- feature to insert a calendar in hnb
+ * cal.c -- feature to insert a calendar in tines
  *
  * Copyright (C) 2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Modified for Tines by Larry Kollar, 2016
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free

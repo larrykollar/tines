@@ -12,9 +12,15 @@ the roadmap, that would be great. (I would particularly like
 to have UTF-8 support as soon as possible, but I'm not sure
 my coding skills are up to the job right now.)
 
-1.9.19alpha (YOU ARE HERE): The fork from hnb 1.9.18pre7.
+1.9.20 (YOU ARE HERE): The fork from hnb 1.9.18pre7.
 This version runs on 64-bit computers and fixes a minor
 bug that caused other outliners to reject hnb's OPML export.
+
+In 1.9.20, Tines now looks for .tines and .tinesrc files
+by default, and creates them if needed. The .tinesrc file
+adds a Planner menu and other new functions, so consider
+keeping it and merging your old .hnbrc customatizations
+into the new config file.
 
 1.9.19 - 2.0:
 * finish renaming (.hnb to .tines, for example)
@@ -28,8 +34,9 @@ bug that caused other outliners to reject hnb's OPML export.
   (we have a working substitute for now, using key bindings -
   use Ctrl-B to insert above)
 * new command: sleep (put the process in the background)
-* move tutorial.inc, etc. into /usr/local/share/tines
-* new attributes (mapped to OPML "type" attribute for import/export)
+* move tutorial.inc, etc. into /usr/local/share/tines (partially complete)
+* new value for type attribute: 'text' (use toggle_text, mapped to F3) (Eone)
+* preserve attributes for OPML import/export
 
 2.0 - 3.0:
 * autoconf

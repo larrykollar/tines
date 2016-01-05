@@ -1,7 +1,8 @@
 /*
- * evilloop.c -- The event loop / heart of execution for hnb
+ * evilloop.c -- The event loop / heart of execution for tines
  *
  * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Modified for Tines by Larry Kollar, 2016
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -41,8 +42,8 @@ static long forced_up = 0;
 static long forced_down = 0;
 static long add_at_top = 0;
 
-int hnb_nodes_down;
-int hnb_nodes_up;
+int tines_nodes_down;
+int tines_nodes_up;
 
 const char *collapse_names[] = {
 	"all (standard)",
@@ -122,11 +123,11 @@ static char *keep_inputbuf[]={
 	NULL
 };
 
-int quit_hnb=0;
+int quit_tines=0;
 
 static void* cmd_quit(int argc,char **argv,void *data){
 	Node *pos=(Node *)data;
-	quit_hnb=1;
+	quit_tines=1;
 
 
 	return pos;
@@ -137,16 +138,16 @@ static void* cmd_quit(int argc,char **argv,void *data){
 */
 void init_quit(){
 	cli_add_command("quit",cmd_quit,"");
-	cli_add_help("quit","quits hnb, no questions asked");
+	cli_add_help("quit","quits tines, no questions asked");
 	cli_add_command("q",cmd_quit,"");
-	cli_add_help("q","quits hnb, no questions asked");
+	cli_add_help("q","quits tines, no questions asked");
 }
 
 Node *evilloop (Node *pos)
 {
 	cli_outfun = set_status;
 
-	while (!quit_hnb) {
+	while (!quit_tines) {
 		Tbinding *binding;
 
 		ui_draw (pos, inputbuf, 0);
@@ -156,7 +157,7 @@ Node *evilloop (Node *pos)
 			switch (binding->action) {
 				case ui_action_quit:
 					remove_temp (&pos);
-					quit_hnb = 1;
+					quit_tines = 1;
 					break;
 				case ui_action_command:
 					if(!string_isoneof(binding->action_param, no_remove_temp_commands))
@@ -207,7 +208,7 @@ Node *evilloop (Node *pos)
 					{
 						int n;
 
-						for (n = 0; n < hnb_nodes_down; n++)
+						for (n = 0; n < tines_nodes_down; n++)
 							if (node_down (pos)) {
 								pos = node_down (pos);
 							}
@@ -219,7 +220,7 @@ Node *evilloop (Node *pos)
 					{
 						int n;
 
-						for (n = 0; n < hnb_nodes_up; n++)
+						for (n = 0; n < tines_nodes_up; n++)
 							if (node_up (pos))
 								pos = node_up (pos);
 					}
