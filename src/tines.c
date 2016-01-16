@@ -45,6 +45,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <locale.h>
+#include <getopt.h>
 
 #include "tree.h"
 
@@ -80,8 +81,8 @@ Options:\n\
 	fprintf (stderr, "\t-s --stylized load stylized xml (using libxml2)\n");
 #endif
 	fprintf (stderr, "\n\
-\t-rc <file>        specify a different config file\n\
-\t-ui <interface>   interface to use, curses (default) or CLI\n\
+\t-rc=<file>        specify a different config file\n\
+\t-ui=<interface>   interface to use, curses (default) or CLI\n\
 \t-e                execute commands\n\
 \n\n");
 }
@@ -102,7 +103,7 @@ int main (int argc, char **argv)
 		int version;
 		int usage;
 		int def_db;
-		char format[64];
+		char format[PREFS_FMT_LEN];
 		int ui;
 		int tutorial;
 		char *dbfile;
@@ -112,98 +113,92 @@ int main (int argc, char **argv)
 			0,					/* version */
 			0,					/* usage */
 			1,					/* load default db */
-			"",					/*format to load by default */
+			"",					/* format to load by default */
 			1,					/* ui */
 			0,					/* tutorial */
 	NULL, NULL, NULL};
 
-/* TODO: replace this with getopt_long() (getopt.h) */
-	{							/*parse commandline */
-		for (argno = 1; argno < argc; argno++) {
-			if (!strcmp (argv[argno], "-h")
-				|| !strcmp (argv[argno], "--help")) {
-				cmdline.usage = 1;
-			} else if (!strcmp (argv[argno], "-v")
-					   || !strcmp (argv[argno], "--version")) {
-				cmdline.version = 1;
-			} else if (!strcmp (argv[argno], "-t")
-					   || !strcmp (argv[argno], "--tutorial")) {
-				cmdline.tutorial = 1;
-			} else if (!strcmp (argv[argno], "-a")
-					   || !strcmp (argv[argno], "--ascii")) {
-				strcpy(cmdline.format,"ascii");
-			} else if (!strcmp (argv[argno], "-hnb")
-					   || !strcmp (argv[argno], "--hnb")) {
-				strcpy(cmdline.format,"hnb");
-			} else if (!strcmp (argv[argno], "-o")
-					   || !strcmp (argv[argno], "-opml")
-					   || !strcmp (argv[argno], "--opml")) {
-				strcpy(cmdline.format,"opml");
-			} else if (!strcmp (argv[argno], "-x")
-					   || !strcmp (argv[argno], "-gx")
-					   || !strcmp (argv[argno], "--xml")) {
-				strcpy(cmdline.format,"xml");
-#ifdef USE_LIBXML
-			} else if (!strcmp (argv[argno], "-s")
-					   || !strcmp (argv[argno], "-sx")
-					   || !strcmp (argv[argno], "--stylized")) {
-				strcpy(cmdline.format,"sxml");
-#endif
-			} else if (!strcmp (argv[argno], "-ui")) {
-				if (!strcmp (argv[++argno], "curses")) {
-					cmdline.ui = 1;
-				} else if (!strcmp (argv[argno], "cli")) {
-					cmdline.ui = 2;
-				} else if (!strcmp (argv[argno], "gtk")
-						   || !strcmp (argv[argno], "gtk+")) {
-					cmdline.ui = 3;
-				} else if (!strcmp (argv[argno], "keygrab")) {
-					cmdline.ui = 4;
-				} else {
-					fprintf (stderr, "unknown interface %s\n", argv[argno]);
-					exit (1);
-				}
-			} else if (!strcmp (argv[argno], "-rc")) {
-				cmdline.rcfile = argv[++argno];
-			} else if (!strcmp (argv[argno], "-e")) {
-				/* actually just a dummy option to specify default db */
-				if (!cmdline.dbfile) {
-					cmdline.def_db = 1;
-					cmdline.dbfile = (char *) -1;
-				}
+	/* args for getopt_long() */
+	int ch;
+	char progname[PREFS_FN_LEN];
+
+	static struct option longopts[] = {
+		{ "help",		no_argument,	NULL,	'h' },
+		{ "version",	no_argument,	NULL,	'v' },
+		{ "tutorial",	no_argument,	NULL,	't' },
+		{ "ascii",		no_argument,	NULL,	'a' },
+		{ "hnb",		no_argument,	NULL,	'H' },
+		{ "opml",		no_argument,	NULL,	'o' },
+		{ "xml",		no_argument,	NULL,	'x' },
+		{ "ui",		required_argument,	NULL,	'u' },
+		{ "rc",		required_argument,	NULL,	'r' },
+		{ NULL,			0,				NULL,	0 }
+	};
+
+	strlcpy(progname, argv[0], PREFS_FN_LEN);
+
+	while ((ch = getopt_long( argc, argv, "hvtaox", longopts, NULL )) != -1) {
+		switch(ch) {
+		case 'h':
+			cmdline.usage = 1;
+			usage (progname);
+			exit (0);
+		case 'v':
+			cmdline.version = 1;
+			fprintf (stderr, "%s %s\n", PACKAGE, VERSION);
+			exit (0);
+		case 't':
+			cmdline.tutorial = 1;
+			break;
+		case 'a':
+			strlcpy(cmdline.format, "ascii", PREFS_FMT_LEN);
+			break;
+		case 'H':
+			strlcpy(cmdline.format, "hnb", PREFS_FMT_LEN);
+			break;
+		case 'o':
+			strlcpy(cmdline.format, "opml", PREFS_FMT_LEN);
+			break;
+		case 'x':
+			strlcpy(cmdline.format, "xml", PREFS_FMT_LEN);
+			break;
+		case 'u':
+			if(!strcmp(optarg, "curses")) {
+				cmdline.ui = 1;
+			} else if(!strcmp(optarg, "cli")) {
+				cmdline.ui = 2;
+			} else if(!strcmp(optarg, "keygrab")) {
+				cmdline.ui = 4;
 			} else {
-				if (argv[argno][0] == '-') {
-					fprintf (stderr, "unknown option %s\n", argv[argno]);
-					exit (1);
-				} else if (!cmdline.dbfile) {
-					cmdline.dbfile = argv[argno];
-					cmdline.def_db = 0;
-				} else {
-					cmdline.cmd = argv[argno];
-					cmdline.ui = 0;
-					argno++;
-					break;		/* stop processing cmd args */
-				}
+				fprintf(stderr, "unknown -ui option: %s\n", optarg);
+				usage( progname );
+				exit(1);
 			}
+			break;
+		case 'r':
+			cmdline.rcfile = malloc(strlen(optarg)+1);
+			strlcpy(cmdline.rcfile, optarg, sizeof(cmdline.rcfile));
+		case ':':
+			fprintf(stderr, "missing value to --rc or --ui option\n");
+			usage( progname );
+			exit(1);
+		case '?':
+		default:
+			fprintf(stderr, "unknown option\n");
+			usage( progname );
+			exit(1);
 		}
 	}
+	argno = optind; /* pick up anything left on the command line */
+
 
 	init_subsystems ();
 
 	setlocale(LC_ALL, "");
 
-	if (cmdline.usage) {
-		usage (argv[0]);
-		exit (0);
-	}
-
-	if (cmdline.version) {
-		fprintf (stderr, "%s %s\n", PACKAGE, VERSION);
-		exit (0);
-	}
 
 	if (cmdline.rcfile) {
-		strcpy (prefs.rc_file, cmdline.rcfile);
+		strlcpy (prefs.rc_file, cmdline.rcfile, PREFS_FN_LEN);
 	}
 
 
@@ -224,7 +219,7 @@ int main (int argc, char **argv)
 	if (cmdline.tutorial)
 		prefs.tutorial = 1;
 	if (cmdline.format[0] ) {	/* format specified */
-		strcpy(prefs.format, cmdline.format);
+		strlcpy(prefs.format, cmdline.format, PREFS_FMT_LEN);
 	}
 
 	if (cmdline.def_db) {
@@ -232,19 +227,21 @@ int main (int argc, char **argv)
 		if (!file_check (prefs.db_file))
 			prefs.tutorial = 2;
 	} else {
-		strcpy (prefs.db_file, cmdline.dbfile);
+		strlcpy (prefs.db_file, cmdline.dbfile, PREFS_FN_LEN);
 	}
 
 	pos = tree_new ();
 
 	if (!prefs.tutorial) {
 		int oldpos = -1;
-		char file_to_load[4096]; /* TODO: malloc this */
+		char file_to_load[PREFS_FN_LEN];
 
-		strcpy(file_to_load, prefs.db_file);	
+		if(strlcpy(file_to_load, prefs.db_file, PREFS_FN_LEN) >= PREFS_FN_LEN) {
+			fprintf(stderr, "Warning: file name exceeded %d characters and was truncated: %s\n", PREFS_FN_LEN, prefs.db_file);
+		}
 		
 		{ /* check for recovery file */
-		  char recovery_file[4096]; /* TODO: malloc this */
+		  char recovery_file[PREFS_FN_LEN];
 		  FILE *tfile;
 		  
 	  	  struct stat statbuf;
@@ -325,7 +322,7 @@ o)pen read_only\n\
 
 
 		{
-			char buf[4096]; /* TODO: malloc this */
+			char buf[PREFS_FN_LEN];
 			if(recover)
 			sprintf (buf, "import_binary %s", file_to_load);
 			else
@@ -388,7 +385,7 @@ o)pen read_only\n\
 	tree_free (pos);
 
 	{
-	    char swapfile[4096]; /* TODO: malloc this */
+	    char swapfile[PREFS_FN_LEN+15];
 	    sprintf(swapfile,"%s_tines_rescue",prefs.db_file);
 		if(!prefs.readonly)
 			    remove(swapfile);

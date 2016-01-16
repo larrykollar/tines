@@ -4,14 +4,20 @@
 
 #define RC_REV 8
 
+/* max length of rc/db file names */
+#define PREFS_FN_LEN 128
+
+/* max length of file format name */
+#define PREFS_FMT_LEN 64
+
 /* global struct used to remeber user preferences
 */
 typedef struct {
-	char format[128];
+	char format[PREFS_FMT_LEN];
 	int tutorial;
-	char rc_file[100];
-	char db_file[100];
-	char default_db_file[100];
+	char rc_file[PREFS_FN_LEN];
+	char db_file[PREFS_FN_LEN];
+	char default_db_file[PREFS_FN_LEN];
 	long showpercent;
 	long fixedfocus;
 	long savepos;
