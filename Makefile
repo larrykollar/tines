@@ -22,7 +22,7 @@ install: src/tines
 	install $(INSTFLAGS) -m444 doc/tines_hnb.7 $(MANDIR)/man7/tines_hnb.7
 	install $(INSTFLAGS) -m444 doc/tines_opml.7 $(MANDIR)/man7/tines_opml.7
 	install $(INSTFLAGS) -m444 doc/tinesrc $(SHAREDIR)/tinesrc
-	install $(INSTFLAGS) -m444 doc/starter.hnb $(SHAREDIR)/starter.hnb
+#	install $(INSTFLAGS) -m444 doc/starter.hnb $(SHAREDIR)/starter.hnb
 #	install $(INSTFLAGS) -m444 doc/default.css $(SHAREDIR)/default.css
 
 clean:
