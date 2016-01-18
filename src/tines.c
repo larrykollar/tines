@@ -137,7 +137,7 @@ int main (int argc, char **argv)
 
 	strlcpy(progname, argv[0], PREFS_FN_LEN);
 
-	while ((ch = getopt_long( argc, argv, "hvtaox", longopts, NULL )) != -1) {
+	while ((ch = getopt_long( argc, argv, "hvtaoxe", longopts, NULL )) != -1) {
 		switch(ch) {
 		case 'h':
 			cmdline.usage = 1;
@@ -178,6 +178,11 @@ int main (int argc, char **argv)
 		case 'r':
 			cmdline.rcfile = malloc(strlen(optarg)+1);
 			strlcpy(cmdline.rcfile, optarg, sizeof(cmdline.rcfile));
+		case 'e': /* one-liner ala sed */
+			if(!cmdline.dbfile) {
+				cmdline.def_db = 1;
+				cmdline.dbfile = (char *) -1;
+			}
 		case ':':
 			fprintf(stderr, "missing value to --rc or --ui option\n");
 			usage( progname );
@@ -189,6 +194,18 @@ int main (int argc, char **argv)
 			exit(1);
 		}
 	}
+	/* anything left is either a file name or -e commands */
+	if(!cmdline.dbfile) {
+		if( argc > optind ) {
+			cmdline.dbfile = argv[optind];
+			cmdline.def_db = 0;
+		}
+	} else {
+		cmdline.cmd = argv[optind++];
+		cmdline.ui = 0;
+	}
+
+	prefs.ui = cmdline.ui;
 	argno = optind; /* pick up anything left on the command line */
 
 
@@ -223,7 +240,7 @@ int main (int argc, char **argv)
 	}
 
 	if (cmdline.def_db) {
-		strcpy (prefs.db_file, prefs.default_db_file);
+		strlcpy (prefs.db_file, prefs.default_db_file, PREFS_FN_LEN);
 		if (!file_check (prefs.db_file))
 			prefs.tutorial = 2;
 	} else {
@@ -349,23 +366,23 @@ o)pen read_only\n\
 	}
 
 	switch (cmdline.ui) {
-		case 1:
+		case 1: /* --ui=curses */
 			pos = evilloop (pos);
 			ui_end ();
 			break;
-		case 0:
+		case 0: /* -e */
 			pos = (Node *) cli_docmd (cmdline.cmd, pos);
 			while (argno < argc) {
 				pos = (Node *) cli_docmd (argv[argno++], pos);
 			}
 			break;
-		case 2:
+		case 2: /* --ui=cli */
 			pos = cli (pos);
 			break;
-		case 3:
+		case 3: /* --ui=(undefined) */
 			printf ("gtk+ interface not implemented\n");
 			break;
-		case 4:
+		case 4: /* --ui=keygrab */
 			ui_init ();
 			{
 				int c = 0;

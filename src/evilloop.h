@@ -8,4 +8,6 @@ Node *evilloop (Node *pos);
 
 extern char inputbuf[BUFFERLENGTH];
 
+extern int quit_tines;
+
 #endif

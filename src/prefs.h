@@ -23,6 +23,7 @@ typedef struct {
 	long savepos;
 	long saveexpand;
 	long readonly;
+	int ui;
 } Tprefs;
 
 extern Tprefs prefs;

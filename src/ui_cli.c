@@ -30,6 +30,8 @@
 #include <string.h>
 #include "ui_cli.h"
 
+extern int quit_tines; /* from evilloop */
+
 /* strips the ending node off a path */
 static char *path_strip (char *path)
 {				/* FIXME add double // escaping when node2path gets it */
@@ -239,8 +241,6 @@ Node *cli (Node *pos)
 {
 	char commandline[4096];
 
-	int quit_hnb=0; /* not exactly from evilloop. */
-
 	fprintf (stderr,
 			 "Welcome to %s %s\ntype ? or help for more information\n",
 			 PACKAGE, VERSION);
@@ -249,9 +249,13 @@ Node *cli (Node *pos)
 		fflush (stdout);
 		fprintf (stdout, "%s>", path_strip (node2path (pos)));
 		fflush (stdout);
-		fgets (commandline, 4096, stdin);
-		commandline[strlen (commandline) - 1] = 0;
-		pos = (Node *) cli_docmd (commandline, pos);
-	} while (!quit_hnb);
+		if (fgets (commandline, 4096, stdin) ) {
+			commandline[strlen (commandline) - 1] = 0;
+			pos = (Node *) cli_docmd (commandline, pos);
+		} else { /* returned NULL, probably EOF but quit anyway */
+			fprintf(stdout, "\n"); /* the royal flush */
+			quit_tines = 1;
+		}
+	} while (!quit_tines);
 	return pos;
 }

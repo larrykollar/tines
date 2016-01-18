@@ -43,6 +43,11 @@ static void* ui_edit_cmd (int argc, char **argv, void *data)
 	char input[BUFFERLENGTH];
 	Node *pos = (Node *) data;
 
+	if(prefs.ui == 2) {
+		cli_outfun( "Cannot do interactive edit in CLI mode" );
+		return data;
+	}
+
 	ui_current_scope = ui_scope_nodeedit;
 
 	memset (input, 0, sizeof (input));

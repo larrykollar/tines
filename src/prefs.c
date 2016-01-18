@@ -34,15 +34,17 @@
 
 
 Tprefs prefs = {
-	"hnb",					/*format; */
-	0,						/*tutorial; */
-	"",						/*rc_file[100]; */
-	"",						/*db_file[100]; */
-	"",						/*default_db_file[100]; */
-	1,						/*showpercent */
-	0,						/*fixed focusbar */
-	0,						/*save position */
-	0						/*readonly */
+	"hnb",					/* format; */
+	0,						/* tutorial; */
+	"",						/* rc_file[100]; */
+	"",						/* db_file[100]; */
+	"",						/* default_db_file[100]; */
+	1,						/* showpercent */
+	0,						/* fixed focusbar */
+	0,						/* save position */
+	0,						/* save expanded state */
+	0,						/* readonly */
+	1						/* curses */
 };
 
 typedef struct {
