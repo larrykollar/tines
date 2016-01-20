@@ -56,36 +56,8 @@ static int action_node (Node *node)
 				 fixnullstring (node_get (node, TEXT)) + 5);
 	} else
 		if ((start =
-			 strstr (fixnullstring (node_get (node, TEXT)), "http://"))) {
-		char url[200];
-		char *dest;
-
-		dest = url;
-		while (*start && !isspace ((unsigned char)*start)) {
-			*dest = *start;
-			dest++;
-			start++;
-		}
-		*dest = 0;
-		{
-			char *cs = web_command;
-			char *cd = cmdline;
-
-			while (*cs) {
-				if (*cs == '*') {
-					strcat (cd, url);
-					strcat (cd, cs + 1);
-					cli_outfunf ("shelling out: %s", cmdline);
-					//strcat(cd,"> /dev/null 2>&1 &");
-					break;
-				} else {
-					*cd = *cs;
-					*(++cd) = '\0';
-				}
-				cs++;
-			}
-		}
-	} else if ((start =
+			 strstr (fixnullstring (node_get (node, TEXT)), "http://"))|| 
+			(start = 
 			 strstr (fixnullstring (node_get (node, TEXT)), "https://"))) {
 		char url[200];
 		char *dest;
