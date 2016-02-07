@@ -56,7 +56,9 @@ static int action_node (Node *node)
 				 fixnullstring (node_get (node, TEXT)) + 5);
 	} else
 		if ((start =
-			 strstr (fixnullstring (node_get (node, TEXT)), "http://"))) {
+			 strstr (fixnullstring (node_get (node, TEXT)), "http://"))|| 
+			(start = 
+			 strstr (fixnullstring (node_get (node, TEXT)), "https://"))) {
 		char url[200];
 		char *dest;
 

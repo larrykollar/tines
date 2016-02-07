@@ -56,6 +56,15 @@
 #include "file.h"
 #include "evilloop.h"
 
+/* This is an evil kludge until Linux gets proper strlcpy()/strlcat()
+ * functions. You could also "sudo apt-get install libbsd-dev" and add:
+ *	#include <bsd/string.h>
+ * then add -lbsd to src/Makefile.
+ */
+#ifdef __linux__
+#define strlcpy(dest,src,max) strncpy(dest,src,(max>sizeof(src)?sizeof(src):max));
+#endif
+
 static void usage (const char *av0)
 {
 	fprintf (stderr,
@@ -253,9 +262,17 @@ int main (int argc, char **argv)
 		int oldpos = -1;
 		char file_to_load[PREFS_FN_LEN];
 
+#ifdef __linux__
+/* our evil kludge returns a string pointer instead of length, so... */
+		strlcpy(file_to_load, prefs.db_file, PREFS_FN_LEN);
+		if(sizeof(prefs.db_file)>=PREFS_FN_LEN) {
+			fprintf(stderr, "Warning: file name exceeded %d characters and was truncated: %s\n", PREFS_FN_LEN, prefs.db_file);
+		}
+#else
 		if(strlcpy(file_to_load, prefs.db_file, PREFS_FN_LEN) >= PREFS_FN_LEN) {
 			fprintf(stderr, "Warning: file name exceeded %d characters and was truncated: %s\n", PREFS_FN_LEN, prefs.db_file);
 		}
+#endif
 		
 		{ /* check for recovery file */
 		  char recovery_file[PREFS_FN_LEN];
