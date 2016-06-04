@@ -31,21 +31,25 @@
 #include "query.h"
 
 #define indent(count,char)	{int j;for(j=0;j<count;j++)fprintf(file,char);}
+#define TAB_WIDTH 8;
 
 static long ascii_margin = -1;
 
 static void* import_ascii (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
 	int level;
 	import_state_t ist;
 	char cdata[bufsize];
 	FILE *file;
 
+	/* glob the file name to resolve ~/foo etc */
+	filename = fn_expand( argc==2?argv[1]:"", 0 );
+
 	file = fopen (filename, "r");
 	if (file == NULL) {
-		cli_outfunf ("ascii import, unable to open \"%s\"", filename);
+		cli_outfunf ("ASCII import, unable to open \"%s\"", filename);
 		return node;
 	}
 
@@ -54,7 +58,7 @@ static void* import_ascii (int argc, char **argv, void *data)
 	while (fgets (cdata, bufsize, file) != NULL) {
 		level = 0;
 
-		/*strip newlines and carrier return  */
+		/* strip newlines and carriage return  */
 		while (cdata[strlen (cdata) - 1] == 13
 			   || cdata[strlen (cdata) - 1] == 10)
 			cdata[strlen (cdata) - 1] = 0;
@@ -70,7 +74,7 @@ static void* import_ascii (int argc, char **argv, void *data)
 	if (node_getflag (node, F_temp))
 		node = node_remove (node);	/* remove temporary node, if tree was empty */
 
-	cli_outfunf ("ascii import, imported \"%s\"", filename);
+	cli_outfunf ("ASCII import, imported \"%s\"", filename);
 
 
 	return node;
@@ -78,8 +82,12 @@ static void* import_ascii (int argc, char **argv, void *data)
 
 static void ascii_export_node (FILE * file, int level, int flags, char *data)
 {
+	int lead_width = level * TAB_WIDTH;
+	int i;
+	char *s;
 
 	indent (level, "\t");
+
 #if 0
 	if (flags & F_todo) {		/* print the flags of the current node */
 		if (flags & F_done)
@@ -88,9 +96,11 @@ static void ascii_export_node (FILE * file, int level, int flags, char *data)
 			fprintf (file, "[ ]");
 	}
 #endif
+
 	if (ascii_margin < 0) {		/* no wrap */
 		fprintf (file, "%s\n", data);
 	} else {
+		/* TODO: implement wrapping */
 		fprintf (file, "%s\n", data);
 	}
 }
@@ -98,18 +108,20 @@ static void ascii_export_node (FILE * file, int level, int flags, char *data)
 static void *export_ascii (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
 	Node *tnode;
 	int level, flags, startlevel;
 	char *cdata;
 	FILE *file;
 
-	if (!strcmp (filename, "-"))
+	filename = fn_expand( argc>=2?argv[1]:"", 1 );
+
+	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
 	else
 		file = fopen (filename, "w");
 	if (!file) {
-		cli_outfunf ("ascii export, unable to open \"%s\"", filename);
+		cli_outfunf ("ASCII export, unable to open \"%s\"", filename);
 		return node;
 	}
 	startlevel = nodes_left (node);
@@ -128,7 +140,7 @@ static void *export_ascii (int argc, char **argv, void *data)
 	if (file != stdout)
 		fclose (file);
 
-	cli_outfunf ("ascii export, wrote output to \"%s\"", filename);
+	cli_outfunf ("ASCII export, wrote output to \"%s\"", filename);
 
 	return node;
 }
@@ -141,6 +153,8 @@ void init_file_ascii ()
 {
 	cli_add_command ("export_ascii", export_ascii, "<filename>");
 	cli_add_command ("import_ascii", import_ascii, "<filename>");
+	cli_add_help ("export_ascii", "Exports the current level as tab-indented ASCII.");
+	cli_add_help ("import_ascii", "Imports the named tab-indented ASCII file at the current position.");
 	cli_add_int ("ascii_margin", &ascii_margin,
-				 "the margin that ascii export wraps at (-1=no wrap)");
+		 "The margin that ASCII export wraps at (-1=no wrap)");
 }

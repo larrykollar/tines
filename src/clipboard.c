@@ -88,11 +88,11 @@ void init_clipboard ()
 {
 	cli_add_command ("copy", copy_cmd, "");
 	cli_add_help ("copy",
-				  "Stores the current node, and it's subtree in the clipboard");
+		"Stores the current node and its subtree in the Tines clipboard.");
 	cli_add_command ("cut", cut_cmd, "");
 	cli_add_help ("cut",
-				  "Moves the current node, and it's subtree to the clipboard");
+		"Moves the current node and its subtree to the Tines clipboard.");
 	cli_add_command ("paste", paste_cmd, "");
 	cli_add_help ("paste",
-				  "Inserts the contents of the clipboard at the current position in the tree.");
+		"Inserts the contents of the clipboard at the current position in the tree.");
 }

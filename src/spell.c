@@ -1,7 +1,7 @@
 /*
  * spell.c -- spell checking for hnb
  *
- * Copyright (C) 2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -102,7 +102,7 @@ void init_spell ()
 {
 	cli_add_command ("spell", spell_cmd, "[-r]");
 	cli_add_help ("spell",
-				  "Spellchecks the current node, or all children and following siblings recursively (if -r specified), using the command defined in 'spell_command'");
+		"Spellchecks the current node, or all children and following siblings recursively (if -r specified), using the command defined in 'spell_command'. A temporary file is written and passed as an argument.");
 	cli_add_string ("spell_command", spell_command,
-					"Command executed when spell checking a node, a temporary file is written and passed as an argument");
+		"The command executed when spellchecking a node.");
 }

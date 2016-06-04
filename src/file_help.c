@@ -45,11 +45,13 @@ static char *helpquote[]={
 static void* export_help (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
 	Node *tnode;
 	int level, flags, startlevel, lastlevel, cnt;
 	char *cdata;
 	FILE *file;
+
+	filename = fn_expand( argc==2?argv[1]:"", 1	);
 
 	file = fopen (filename, "w");
 	if (!file) {
@@ -74,8 +76,7 @@ static void* export_help (int argc, char **argv, void *data)
 		for (cnt = 0; cnt < level; cnt++)
 			fprintf (file, "\t");
 
-		fprintf (file, "i(%i,\"%s\",%i);\n", level, quoted,
-				 flags);
+		fprintf (file, "i(%i,\"%s\",%i);\n", level, quoted, flags);
 
 		free(quoted);
 		lastlevel = level;
@@ -109,5 +110,9 @@ static void* import_help (int argc, char **argv, void *data)
 void init_file_help ()
 {
 	cli_add_command ("export_help", export_help, "<filename>");
+	cli_add_help ("export_help",
+		"Exports the current level to help format.");
 	cli_add_command ("import_help", import_help, "<filename>");
+	cli_add_help ("import_help",
+		"Imports the embedded tutorial to the tree.");
 }

@@ -73,7 +73,7 @@ static int findchar (char *haystack, char *needles)
 	return 0;
 }
 
-static void xml_export_nodes (FILE * file, Node *node, int level)
+static void xml_export_nodes (FILE * file, Node *node, int level, int saveall)
 {
 	char tag[bufsize];
 	char *data;
@@ -86,7 +86,7 @@ static void xml_export_nodes (FILE * file, Node *node, int level)
 		tag[0] = 0;
 		data = fixnullstring (node_get (node, TEXT));
 
-		indent (level, "  ");
+		indent (level, "\t");
 
 		if (data[0] == '<') {	/* calculate start tag, if any */
 			strcpy (tag, data);
@@ -114,7 +114,7 @@ static void xml_export_nodes (FILE * file, Node *node, int level)
 
 		if (node_right (node)) {
 			fprintf (file, "\n");
-			xml_export_nodes (file, node_right (node), level + 1);
+			xml_export_nodes (file, node_right (node), level + 1, 0);
 			indent (level, "  ");
 			if (data[0] == '<') {
 				if (data[1] == '!' && data[2] == '-') {
@@ -141,17 +141,24 @@ static void xml_export_nodes (FILE * file, Node *node, int level)
 			no_quote--;
 		}
 
-		node = node_down (node);
+		/* needs to only export one branch at level 0 */
+		if( level || saveall )
+			node = node_down (node);
+		else
+			break;
 	}
 }
 
 static void* export_xml (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
+	int saveall;
 	FILE *file;
 
-	if (!strcmp (filename, "-"))
+	filename = fn_expand( argc==2?argv[1]:"", 1	);
+
+	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
 	else
 		file = fopen (filename, "w");
@@ -160,7 +167,10 @@ static void* export_xml (int argc, char **argv, void *data)
 		return node;
 	}
 
-	xml_export_nodes (file, node, 0);
+	/* saveall = 0 if we're only saving the branch */
+	saveall = strcmp(argv[0], "export_xml_branch");
+
+	xml_export_nodes (file, node, 0, saveall);
 
 	if (file != stdout)
 		fclose (file);
@@ -203,7 +213,7 @@ static Node *xml_cuddle_nodes (Node *node)
 static void* import_xml (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
 	char *rdata;
 	int type;
 	int level = 0;
@@ -215,6 +225,8 @@ static void* import_xml (int argc, char **argv, void *data)
 	FILE *file;
 
 	nodedata[0] = 0;
+
+	filename = fn_expand( argc==2?argv[1]:"", 0	);
 
 	file = fopen (filename, "r");
 	if (!file) {
@@ -335,12 +347,13 @@ static void* import_xml (int argc, char **argv, void *data)
 void init_file_xml ()
 {
 	cli_add_command ("export_xml", export_xml, "<filename>");
+	cli_add_command ("export_xml_branch", export_xml, "<filename>");
 	cli_add_command ("import_xml", import_xml, "<filename>");
 	cli_add_help ("export_xml",
-				  "Exports the current node, it's siblings and all sublevels to 'filename' as if it was xml markup.\
-(load an xml file with import_xml or hnb -x file.xml to see how it should be inside hnb.");
+		"Exports the current level to 'filename' as if it was XML markup. \
+(Load an XML file with import_xml or tines -x file.xml to see how it should be inside Tines.");
 	cli_add_help ("import_xml",
-				  "Imports 'filename' and inserts it's contents at the current level.");
+		"Imports the specified XML file below the current entry.");
 	cli_add_int ("xml_cuddle", &xml_cuddle,
-				 "join the data with nodes if no tags within tag");
+		"If true, join the data with nodes if there are no child elements.");
 }

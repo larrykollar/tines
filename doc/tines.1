@@ -3,11 +3,12 @@
 Tines \- outliner, planner, organizer, notebook
 .SH SYNOPSIS
 .B tines
-.RI [ file ]
 .RI [ options ]
+.RI [ file ]
 .RI [ command
 .RI [ command ]
 \&\.\.\.]
+.
 .SH DESCRIPTION
 Tines is an ncurses-based outliner
 with planning and organizing capabilities.
@@ -26,9 +27,10 @@ Tines can import and export OPML and indented text files,
 and additionally can export to HTML and PostScript.
 .LP
 Running Tines without specifying a file
-loads the default ~/.hnb file.
+loads the default ~/.tines file.
 If the file does not exist, Tines creates the file
 and populates it with example data.
+.
 .SH OPTIONS
 Tines can be invoked with the following options:
 .TP 4
@@ -41,10 +43,25 @@ Shows the version of Tines on your system.
 .B \-t, \-\-tutorial
 Loads an example database instead of a file.
 .TP
-.BR \-rc \ <\fIfile\fP>
-Loads the specified config file (the default is ~/.hnbrc).
+.B \-a, \-\-ascii
+Loads the file as indented plain text.
 .TP
-.BR \-ui \ < curses | cli >
+.B \-\-hnb
+Loads the file as hnb format (default).
+.TP
+.B \-o, \-\-opml
+Loads the file as OPML format.
+.TP
+.B \-x, \-\-xml
+Loads the file as XML format.
+.TP
+.BR \-\-rc= <\fIfile\fP>
+Loads the specified config file (the default is ~/.tinesrc).
+This syntax applies to versions 1.9.21 and newer;
+older versions use
+.BR \-rc <\fIfile\fP>.
+.TP
+.BR \--ui =< curses | cli >
 Specifies the user interface to use.
 The default is
 .BR curses .
@@ -52,23 +69,46 @@ The
 .B cli
 option is useful for scripting Tines,
 or debugging and testing.
+This syntax applies to versions 1.9.21 and newer;
+older versions use
+.BR \-ui <\fItype\fP>.
 .TP
 .B \-e
 Runs CLI commands in noninteractive mode.
 In this mode, Tines starts in CLI mode.
 Type `help' to get more information.
-.SH FILES
+.
+.SH EXAMPLES
+.TP 4
+Work on an existing OPML outline:
+tines --opml newdoc.opml
 .TP
-~/.hnb
+Load an alternate rc file:
+tines --rc /usr/local/share/tines/xslxport.rc
+.TP
+Display items under today's calendar entry:
+tines -e 'today' 'go right' 'ls'
+.TP
+Print a quick reference of commands and variables:
+tines -e 'help' 'show_vars'
+.
+.SH FILES
+.TP 4
+~/.tines
 The default file for your notes.
 To use a different file, specify its name on the command line.
 .TP
-~/.hnbrc
-The default configuration file. To load an other config file than default,
+~/.tinesrc
+The default configuration file.
+To load an other config file than default,
 use the
-.B -rc
+.B --rc
 command-line option.
+.
 .SH SEE ALSO
+.BR tines_hnb (7),
+.BR tines_opml (7)
+.LP
 For more information on the usage of the program,
 load the tutorial or
 press
@@ -84,6 +124,7 @@ https://github.com/larrykollar/tines/wiki
 .LP
 To get the latest version of Tines, see
 https://github.com/larrykollar/tines/
+.
 .SH AUTHOR
 The original
 .I hnb

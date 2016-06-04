@@ -1,7 +1,8 @@
 .\" t
-.TH TINES_OPML 7 "29 Dec 2015"
+.TH TINES_OPML 7 "26 Jan 2016"
 .SH NAME
 tines_opml \- Interactions/conversions between Tines and OPML format
+.
 .SH DESCRIPTION
 Outline Processor Markup Language (OPML)
 is a standard interchange format for outliners,
@@ -12,19 +13,24 @@ This manpage describes how Tines maps
 (and intends to map)
 hnb and OPML elements and attributes.
 .LP
-Tines supports OPML 1.0. Any OPML 2.0 elements and attributes
+Tines supports OPML 1.0.
+Any OPML 2.0 elements and attributes
 are silently ignored.
 .
 .SS OPML Head Element
 The hnb format has no analogous section.
-Tines and \fIhnb\fP silently discard any information
+Tines and
+.I hnb
+silently discard any information
 in the OPML <head> element on import.
 .LP
-On export, Tines and \fIhnb\fP
+On export, Tines and
+.I hnb
 write a placeholder <title> element.
 .
 .SS Attributes
-Tines and \fIhnb\fP
+Tines and
+.I hnb
 save OPML attributes on import,
 and write them back on export.
 The CLI commands
@@ -45,53 +51,67 @@ Tines must insert a token text string when exporting blank entries.
 .LP
 hnb format has two attributes:
 .TP 6
-\fItype\fP
+.I type
 A freeform text attribute.
-If set to "todo," Tines and \fIhnb\fP render the entry
-with a checkbox (indicating the entry is a to-do item).
+If set to "todo," Tines and
+.I hnb
+render the entry with a checkbox
+(indicating the entry is a to-do item).
+Tines also supports a value of "text"
+to mark entries that should be rendered as body text on export.
 .TP 6
-\fIdone\fP
+.I done
 When
-.BI type= \[dq]todo\[dq]\c
-, this is the state of the item.
+.BR type= \[dq]todo\[dq],
+this is the state of the item.
 If
-.BI done= \[dq]yes\[dq]\c
-, Tines and \fIhnb\fP render the entry with a checked checkbox.
+.BR done= \[dq]yes\[dq],
+Tines and
+.I hnb
+render the entry with a checked checkbox.
 Otherwise, the checkbox is blank.
 .LP
-In contrast, OPML has only the "type" attribute.
-The OPML specification
+In contrast, the OPML defines only the "type" attribute.
+The specification
 defers the implementation of "type" and its values
 to the application.
-\fIhnb\fP makes no attempt to map its own attributes to OPML's,
-either on import or export.
+.I hnb
+simply imports and exports attributes to OPML verbatim.
+As OPML has no
+.B done
+attribute, an exported OPML file may not validate properly.
 .LP
-In the near future, Tines will use the following mapping:
-.TS
-cb cb s
-cb cb cb
-l  l  l .
-OPML	hnb
-type	type	done
-_
-text	text	-
-todo	todo	no
-done	todo	yes
-.TE
-.LP
-By marking entries as
-.BI type= \[dq]text\[dq]\c
-, Tines can distinguish between heading and body entries
-when exporting to formats such as HTML and PostScript.
+Some OPML-based outliners define a "_note" attribute;
+Tines preserves this information as well.
+You can use the "att_get _note" CLI command
+to display the value of this attribute
+if it exists.
 .LP
 In Tines 2.0, all import/export actions
 will be driven through XSLT stylesheets,
 allowing the user to modify or extend conversions.
+The planned attribute mapping is:
+.TS
+cb | cb s
+cb | cb cb
+l  | l  l .
+OPML    hnb
+type    type    done
+_
+text    text    -
+todo    todo    no
+done    todo    yes
+.TE
+.
 .SH "SEE ALSO"
 .BR tines_hnb (7),
 OPML 1.0 definition (http://dev.opml.org/spec1.html)
+.
 .SH AUTHOR
-The original \fIhnb\fP was written by
+The original
+.I hnb
+was written by
 \[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).
 .LP
-\fItines\fP is now maintained by Larry Kollar, who also wrote this manpage.
+.I tines
+is now maintained by Larry Kollar, who also wrote this manpage.

@@ -214,7 +214,7 @@
 			macro define m_search\n\
 				context search\n\
 				save_state\n\
-				getquery \"enter keyword to search for\"\n\
+				getquery \"Enter keyword to search for:\"\n\
 				search -f \"$query\"\n\
 			end\n\
 		\n\
@@ -298,6 +298,9 @@
 		bind home bol\n\
 		bind ^E   eol\n\
 		bind end  eol\n\
+\n\
+		bind ^W   skipword\n\
+		bind ^B   bskipword\n\
 		\n\
 		bind del  delete\n\
 		\n\
@@ -388,7 +391,7 @@
 			macro define m_export_ascii\n\
 				save_state\n\
 				go root\n\
-				getquery 'what file should I save the ASCII output in?'\n\
+				getquery 'ASCII output file:'\n\
 				export_ascii $query\n\
 				restore_state\n\
 				context main\n\
@@ -396,7 +399,7 @@
 			macro define m_export_html\n\
 				save_state\n\
 				go root\n\
-				getquery 'what file should I save the HTML output in?'\n\
+				getquery 'HTML output file:'\n\
 				export_html $query\n\
 				context main\n\
 				restore_state\n\
@@ -404,7 +407,7 @@
 			macro define m_export_htmlcss\n\
 				save_state\n\
 				go root\n\
-				getquery 'what file should I save the HTML/CSS output in?'\n\
+				getquery 'HTML/CSS output file:'\n\
 				export_htmlcss $query\n\
 				context main\n\
 				restore_state\n\
@@ -412,7 +415,7 @@
 			macro define m_export_opml\n\
 				save_state\n\
 				go root\n\
-				getquery 'what file should I save the OPML output in?'\n\
+				getquery 'OPML output file:'\n\
 				export_opml $query\n\
 				context main\n\
 				restore_state\n\
@@ -420,7 +423,7 @@
 			macro define m_export_ps\n\
 				save_state\n\
 				go root\n\
-				getquery 'what file should I save the PostScript output in?'\n\
+				getquery 'PostScript output file:'\n\
 				export_ps $query\n\
 				context main\n\
 				restore_state\n\
@@ -443,27 +446,27 @@
 		bind esc ..\n\
 			bind .. \"context main\"\n\
 		bind A ..\n\
-			bind .. 'getquery \"what file should I import ASCII from?\"'\n\
+			bind .. 'getquery \"ASCII input file:\"\n\
 			bind .. 'import_ascii \"$query\"'\n\
 			bind .. 'context main'\n\
 		bind a ..\n\
-			bind .. 'getquery \"what file should I import ASCII from?\"'\n\
+			bind .. 'getquery \"ASCII input file:\"\n\
 			bind .. 'import_ascii \"$query\"'\n\
 			bind .. 'context main'\n\
 		bind O ..\n\
-			bind .. 'getquery \"what file should I import OPML from?\"'\n\
+			bind .. 'getquery \"OPML input file:\"\n\
 			bind .. 'import_opml \"$query\"'\n\
 			bind .. 'context main'\n\
 		bind o ..\n\
-			bind .. 'getquery \"what file should I import OPML from?\"'\n\
+			bind .. 'getquery \"OPML input file:\"\n\
 			bind .. 'import_opml \"$query\"'\n\
 			bind .. 'context main'\n\
 		bind H ..\n\
-			bind .. 'getquery \"what file should I import HNB data from?\"'\n\
+			bind .. 'getquery \"HNB input file:\"\n\
 			bind .. 'import_hnb \"$query\"'\n\
 			bind .. 'context main'\n\
 		bind h ..\n\
-			bind .. 'getquery \"what file should I import HNB data from?\"'\n\
+			bind .. 'getquery \"HNB input file:\"\n\
 			bind .. 'import_hnb \"$query\"'\n\
 			bind .. 'context main'\n\
 		\n\
@@ -518,10 +521,10 @@
 		\n\
 	context user_browser\n\
 		helptext \"Browser action: | |F1| w3m replace hnb  |F2| w3m in rxvt  |F3| Opera, new tab  |F4| Mozilla new window\"\n\
-		bind f1 'browser_command \"w3m *\"'\n\
+		bind f1 'web_command \"w3m *\"'\n\
 		bind .. 'context main'\n\
 		\n\
-		bind f2 'web_commend \"xterm -T \\\"w3m spawned from hnb\\\" -fn fixed -rv +sb -e w3m * > /dev/null 2>&1 &\"'\n\
+		bind f2 'web_command \"xterm -T \\\"w3m spawned from hnb\\\" -fn fixed -rv +sb -e w3m * > /dev/null 2>&1 &\"'\n\
 		bind .. 'context main'\n\
 		\n\
 		bind f3 'web_command \"opera -remote 'openURL(*,new-window)' > /dev/null 2>&1 &\"'\n\
@@ -532,7 +535,7 @@
 		\n\
 		bind esc 'context main'\n\
 		bind any unbound\n\
-		\n\
+	# insert all but the 1st line of extras/export_xslt.rc here if you want it\n\
 			\n\
 	##### key related options\n\
 		##### escdelay\n\
@@ -543,20 +546,20 @@
 			#\n\
 			escdelay 100\n\
 ##### menu definition\n\
-	##### file\n\
-		menu \"File\" \"-------------\" \"\"\n\
+	##### File menu\n\
+		menu \"File\" \"------------\" \"\"\n\
 		menu \"File\" \"Save      F2\" \"save\"\n\
 		menu \"File\" \"Save As...  \" \"macro saveas\"\n\
 			macro define saveas\n\
-				getquery db_file 'file to save'\n\
+				getquery 'File to save:'\n\
 				save_state\n\
 				go root\n\
-				export_$format $db_file\n\
+				export_$format $query\n\
 				restore_state\n\
 			end\n\
 		menu \"File\" \"Save Branch \" \"macro savebranch\"\n\
 			macro define savebranch\n\
-				getquery 'File to save'\n\
+				getquery 'File to save:'\n\
 				save_state\n\
 				export_$format $db_file\n\
 				restore_state\n\
@@ -565,6 +568,7 @@
 		menu \"File\" \"------------\" \"\"\n\
 		menu \"File\" \"Export    ^E\" \"context export\"\n\
 		menu \"File\" \"Import    ^L\" \"context import\"\n\
+		# insert the 1st line of extras/export_xslt.rc here if you want it\n\
 		menu \"File\" \"------------\" \"\"\n\
 		menu \"File\" \"Spell Chk F6\" \"macro m_spellcheck\"\n\
 		menu \"File\" \"Statistics  \"	\"macro stats\"\n\
@@ -583,17 +587,17 @@
 		menu \"Edit\" \"---------\" \"\"\n\
 		menu \"Edit\" \"Search ^F\" \"macro m_search\"\n\
 	##### entry\n\
-		menu \"Entry\" \"--------------\" \"\"\n\
-		menu \"Entry\" \"Edit    return\" \"edit\"\n\
-		menu \"Entry\" \"Delete     del\" \"remove\"\n\
-		menu \"Entry\" \"--------------\" \"\"\n\
+		menu \"Entry\" \"----------------\" \"\"\n\
+		menu \"Entry\" \"Edit      return\" \"edit\"\n\
+		menu \"Entry\" \"Delete       del\" \"remove\"\n\
+		menu \"Entry\" \"----------------\" \"\"\n\
 		menu \"Entry\" \"Do Action     ^A\" \"action\"\n\
 		menu \"Entry\" \"Indent         >\" \"indent\"\n\
 		menu \"Entry\" \"Outdent        <\" \"outdent\"\n\
 		menu \"Entry\" \"Toggle Todo   ^T\" \"toggle_todo\"\n\
 		menu \"Entry\" \"Toggle Done   ^D\" \"toggle_done\"\n\
 		menu \"Entry\" \"Toggle Text   F3\" \"toggle_text\"\n\
-		menu \"Entry\" \"--------------\" \"\"\n\
+		menu \"Entry\" \"----------------\" \"\"\n\
 		menu \"Entry\" \"Expand         +\" \"expand\"\n\
 		menu \"Entry\" \"Collapse       -\" \"collapse\"\n\
 		menu \"Entry\" \"Expand Subtree  \" \"expand --subtree\"\n\
@@ -601,7 +605,7 @@
 		menu \"Entry\" \"Expand All      \"	\"expand --all\"\n\
 		menu \"Entry\" \"Collapse All    \" \"collapse --all\"\n\
 	##### Planner\n\
-		Planner macros\n\
+		# Planner macros\n\
 			macro define pl_new_act\n\
 				add \"Next Actions: \"\n\
 				go bottom\n\
@@ -638,20 +642,24 @@
 			macro define pl_add_yr\n\
 				getquery \"Year (4 digits)\"\n\
 				add \"$query Calendar\"\n\
+				go bottom\n\
 				insert_below\n\
 				movenode right\n\
-				insert_cal 1 $query\n\
-				insert_cal 2 $query\n\
-				insert_cal 3 $query\n\
-				insert_cal 4 $query\n\
-				insert_cal 5 $query\n\
-				insert_cal 6 $query\n\
-				insert_cal 7 $query\n\
-				insert_cal 8 $query\n\
-				insert_cal 9 $query\n\
-				insert_cal 10 $query\n\
-				insert_cal 11 $query\n\
 				insert_cal 12 $query\n\
+				insert_cal 11 $query\n\
+				insert_cal 10 $query\n\
+				insert_cal 9 $query\n\
+				insert_cal 8 $query\n\
+				insert_cal 7 $query\n\
+				insert_cal 6 $query\n\
+				insert_cal 5 $query\n\
+				insert_cal 4 $query\n\
+				insert_cal 3 $query\n\
+				insert_cal 2 $query\n\
+				insert_cal 1 $query\n\
+				# needed to remove the blank node at top of cal\n\
+				go top\n\
+				remove\n\
 			end\n\
 		menu \"Planner\" \"----------------\" \"\"\n\
 		menu \"Planner\" \"New Actions List\" \"macro pl_new_act\"\n\

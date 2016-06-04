@@ -1,7 +1,7 @@
 /*
  * file.c -- utility functions for import/export tines
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  * Modified for Tines by Larry Kollar, 2016
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -27,10 +27,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <glob.h>
+#include <libgen.h>
+#include <sys/param.h>
 
 #include "tree.h"
 #include "file.h"
 #include "prefs.h"
+#include "cli.h"
 #include "ui_cli.h"
 
 void init_import (import_state_t * is, Node *node)
@@ -150,13 +154,79 @@ int file_check (char *filename)
 	return 1;
 }
 
+/* globs a user-entered file name, returns the expanded path/file */
+char* fn_expand( char* s, int globdironly )
+{
+	glob_t g;
+	int n;
+	int flags = GLOB_TILDE | GLOB_NOSORT;
+	char *dname;
+	char *fname;
+	static char expanded[MAXPATHLEN];
+	
+	g.gl_offs = 0;
+	if( globdironly ) {
+		/* output file, only the directory is assumed to exist */
+		dname = dirname(s);
+		fname = basename(s);
+		n = glob( dname, flags, NULL, &g );
 
-static void* cmd_save (int argc,char **argv, void *data)
+		switch(n) {
+			case 0:
+				if( g.gl_pathc > 1 ) {
+					cli_outfunf( "%s matches more than one directory, using %s\n", dname, g.gl_pathv[0] );
+				}
+				strcpy( expanded, g.gl_pathv[0] );
+				strncat( expanded, "/", 1 );
+				if( strlen(expanded) + strlen(fname) + 1 > MAXPATHLEN ) {
+						cli_outfunf( "Path name too long! %s%s\n", expanded, fname );
+						return "";
+				} else {
+					strncat( expanded, fname, strlen(fname)+1 );
+					return expanded;
+				}
+				break;
+
+			case GLOB_NOMATCH:
+				cli_outfunf( "Could not find directory %s\n", dname );
+				return "";
+				break;
+
+			default:
+				cli_outfunf( "Problem, glob returned: %d\n", n );
+				return "";
+		}
+	} else {
+		/* input file, the entire path must already exist */
+		n = glob( s, flags, NULL, &g );
+
+		switch( n ) {
+			case 0:
+				if( g.gl_pathc > 1 ) {
+					cli_outfunf( "%s matches more than one file, using %s\n", s, g.gl_pathv[0] );
+				}
+				return g.gl_pathv[0];
+				break;
+
+			case GLOB_NOMATCH:
+				cli_outfunf( "Could not match %s\n", s );
+				return "";
+				break;
+
+			default:
+				cli_outfunf( "Problem, glob returned: %d\n", n );
+				return "";
+		}
+	}
+}
+
+
+static void* cmd_save (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
 
 	if(prefs.readonly){
-		docmd (pos, "status \"readonly mode, not writing to disk\"\n");
+		docmd (pos, "status \"Read-only mode, not writing to disk.\"\n");
 		return pos;
 	}
 	
@@ -169,7 +239,8 @@ static void* cmd_save (int argc,char **argv, void *data)
 			/* remove(swapfile); when not removing it works as a lockfile */
 			docmd (pos, "autosave_threshold_nodes_changed 0");
 
-			if (!strcmp(prefs.format,"hnb") || !strcmp(prefs.format,"opml")) {
+			if (!strcmp(prefs.format,"hnb") || !strcmp(prefs.format,"opml") ||
+				!strcmp(prefs.format,"xml")) {
 				sprintf (buf, "export_%s %s %i", prefs.format, prefs.db_file,
 						 node_no (pos) - 1);
 			} else {
@@ -208,10 +279,8 @@ static void* cmd_revert (int argc,char **argv, void *data)
 void init_file ()
 {
 	cli_add_command ("save", cmd_save, "");
-	cli_add_help ("save", "Saves the data");
+	cli_add_help ("save", "Saves the open tree.");
 
 	cli_add_command ("revert", cmd_revert, "");
-	cli_add_help ("revert", "Revert to last saved version");
+	cli_add_help ("revert", "Reverts to the last saved version.");
 }
-
-

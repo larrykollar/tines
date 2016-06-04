@@ -79,10 +79,12 @@ static void binary_export_nodes (FILE * file, Node *node, int level)
 static void* export_binary (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc>=2?argv[1]:"";
+	char *filename;
 	FILE *file;
 
-	if (!strcmp (filename, "-"))
+	filename = fn_expand( argc>=2?argv[1]:"", 1	);
+
+	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
 	else
 		file = fopen (filename, "w");
@@ -106,13 +108,15 @@ static void* export_binary (int argc, char **argv, void *data)
 static void* import_binary (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
 	import_state_t ist;
 	int moredata=1;
 
 
 
 	FILE *file;
+
+	filename = fn_expand( argc==2?argv[1]:"", 0	);
 
 	file = fopen (filename, "r");
 	if (!file) {
@@ -175,5 +179,9 @@ static void* import_binary (int argc, char **argv, void *data)
 void init_file_binary ()
 {
 	cli_add_command ("export_binary", export_binary, "<filename>");
+	cli_add_help ("export_binary",
+		"Exports the current entry, following siblings, and child entries in binary format.");
 	cli_add_command ("import_binary", import_binary, "<filename>");
+	cli_add_help ("import_binary",
+		"Imports a binary-fomatted file below the current entry.");
 }

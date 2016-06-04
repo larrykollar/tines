@@ -17,13 +17,20 @@ src/tines: src/*.c src/*.h doc/*.inc
 	(cd src;make)
 
 install: src/tines
-	install $(INSTFLAGS) src/tines $(BINDIR)/tines
-	install $(INSTFLAGS) -m444 doc/tines.1 $(MANDIR)/man1/tines.1
-	install $(INSTFLAGS) -m444 doc/tines_hnb.7 $(MANDIR)/man7/tines_hnb.7
-	install $(INSTFLAGS) -m444 doc/tines_opml.7 $(MANDIR)/man7/tines_opml.7
-	install $(INSTFLAGS) -m444 doc/tinesrc $(SHAREDIR)/tinesrc
-#	install $(INSTFLAGS) -m444 doc/starter.hnb $(SHAREDIR)/starter.hnb
-#	install $(INSTFLAGS) -m444 doc/default.css $(SHAREDIR)/default.css
+	install $(INSTFLAGS) $(BINDIR)
+	install $(INSTFLAGS) $(SHAREDIR)
+	install $(INSTFLAGS) $(MANDIR)/man1
+	install $(INSTFLAGS) $(MANDIR)/man7
+	install src/tines $(BINDIR)/tines
+	install -m444 doc/tines.1 $(MANDIR)/man1/tines.1
+	install -m444 doc/tines_hnb.7 $(MANDIR)/man7/tines_hnb.7
+	install -m444 doc/tines_opml.7 $(MANDIR)/man7/tines_opml.7
+	install -m444 doc/tinesrc $(SHAREDIR)/tinesrc
+	install -m444 doc/init.hnb $(SHAREDIR)/init.hnb
+	install -m444 doc/tinesdoc.hnb $(SHAREDIR)/tinesdoc.hnb
+	install -m444 extras/hnb2md.xsl $(SHAREDIR)/hnb2md.xsl
+	install -m444 extras/hnb2ms.xsl $(SHAREDIR)/hnb2ms.xsl
+#	install -m444 doc/default.css $(SHAREDIR)/default.css
 
 clean:
 	(cd src;make clean)
@@ -31,13 +38,13 @@ clean:
 	rm -f *~
 
 rcupdate: updaterc
-updaterc: doc/tinesrc.inc
+updaterc: doc/minimal.inc
 
-doc/tinesrc.inc: doc/tinesrc
+doc/minimal.inc: doc/minimal.rc
 	(cd util;make)
-	$(ECHO) -n "\"">doc/tinesrc.inc
-	cat doc/tinesrc | util/asc2c >> doc/tinesrc.inc
-	$(ECHO) "\"">>doc/tinesrc.inc
+	$(ECHO) -n "\"">doc/minimal.inc
+	cat doc/minimal.rc | util/asc2c >> doc/minimal.inc
+	$(ECHO) "\"">>doc/minimal.inc
 
 tar: updaterc clean config.h
 	(cd ..;mkdir tines-`cat tines/VERSION`)

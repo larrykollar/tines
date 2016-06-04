@@ -1,7 +1,7 @@
 /*
  * tines.c -- the main loop of tines, an outliner/planner/organizer/notebook
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  * hnb forked by Larry Kollar, Dec 2015, renamed Tines
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -23,10 +23,10 @@
 	TODO: noder som forsvinner ved:
 		std. oppretting
 		redigering
-		gå til parent
+		gÃ¥ til parent
 		
 		--
-		sannsynlig grunn: feil håndtering av temporary attributte
+		sannsynlig grunn: feil hÃ¥ndtering av temporary attributte
 
  (Google Translate says this means:
 
@@ -44,6 +44,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <locale.h>
 #include <getopt.h>
 
@@ -55,15 +56,8 @@
 #include "prefs.h"
 #include "file.h"
 #include "evilloop.h"
+#include "file_copy.h"
 
-/* This is an evil kludge until Linux gets proper strlcpy()/strlcat()
- * functions. You could also "sudo apt-get install libbsd-dev" and add:
- *	#include <bsd/string.h>
- * then add -lbsd to src/Makefile.
- */
-#ifdef __linux__
-#define strlcpy(dest,src,max) strncpy(dest,src,(max>sizeof(src)?sizeof(src):max));
-#endif
 
 static void usage (const char *av0)
 {
@@ -144,7 +138,7 @@ int main (int argc, char **argv)
 		{ NULL,			0,				NULL,	0 }
 	};
 
-	strlcpy(progname, argv[0], PREFS_FN_LEN);
+	strcpy(progname, argv[0]);
 
 	while ((ch = getopt_long( argc, argv, "hvtaoxe", longopts, NULL )) != -1) {
 		switch(ch) {
@@ -160,16 +154,16 @@ int main (int argc, char **argv)
 			cmdline.tutorial = 1;
 			break;
 		case 'a':
-			strlcpy(cmdline.format, "ascii", PREFS_FMT_LEN);
+			strcpy(cmdline.format, "ascii");
 			break;
 		case 'H':
-			strlcpy(cmdline.format, "hnb", PREFS_FMT_LEN);
+			strcpy(cmdline.format, "hnb");
 			break;
 		case 'o':
-			strlcpy(cmdline.format, "opml", PREFS_FMT_LEN);
+			strcpy(cmdline.format, "opml");
 			break;
 		case 'x':
-			strlcpy(cmdline.format, "xml", PREFS_FMT_LEN);
+			strcpy(cmdline.format, "xml");
 			break;
 		case 'u':
 			if(!strcmp(optarg, "curses")) {
@@ -186,14 +180,16 @@ int main (int argc, char **argv)
 			break;
 		case 'r':
 			cmdline.rcfile = malloc(strlen(optarg)+1);
-			strlcpy(cmdline.rcfile, optarg, sizeof(cmdline.rcfile));
+			strcpy(cmdline.rcfile, optarg);
+			break;
 		case 'e': /* one-liner ala sed */
 			if(!cmdline.dbfile) {
 				cmdline.def_db = 1;
 				cmdline.dbfile = (char *) -1;
 			}
+			break;
 		case ':':
-			fprintf(stderr, "missing value to --rc or --ui option\n");
+			fprintf(stderr, "Missing value for --rc or --ui option\n");
 			usage( progname );
 			exit(1);
 		case '?':
@@ -222,16 +218,32 @@ int main (int argc, char **argv)
 
 	setlocale(LC_ALL, "");
 
+	/* init has set prefs.rc_file & prefs.default_db_file */
 
-	if (cmdline.rcfile) {
-		strlcpy (prefs.rc_file, cmdline.rcfile, PREFS_FN_LEN);
+	/* rc file logic:
+	 * 1) --rc specifed on command line?
+	 * 2) No (or it doesn't exist): ~/.tinesrc exists?
+	 * 3) No: try copying SHAREDIR/RCFILEIN (to named rc file if named)
+	 * 4) Step 3 fails: Generate minimal rc file (to named rc file if named)
+	 */
+	if (cmdline.rcfile && (strlen(cmdline.rcfile)<PREFS_FN_LEN)
+			&& file_check(cmdline.rcfile) ) {
+		strcpy (prefs.rc_file, cmdline.rcfile);
 	}
 
-
+	/* no --rc or bad file. If no .tinesrc, create it */
 	if (!file_check (prefs.rc_file)) {
-		write_default_prefs ();
-		fprintf (stderr, "created %s for preferences file\n",
-				 prefs.rc_file);
+		/* No .tinesrc... see if there's a sharedir */
+		char defpref[PREFS_FN_LEN];
+		snprintf(defpref, PREFS_FN_LEN, "%s%s", SHAREDIR, RCFILEIN);
+		if( file_check(defpref) ) {
+			cp_file(prefs.rc_file, defpref);
+			fprintf( stderr, "Created %s from %s\n", prefs.rc_file, defpref );
+		} else {
+			write_default_prefs ();
+			fprintf (stderr, "Created %s from fallback prefs\n",
+					 prefs.rc_file);
+		}
 		sleep (1);
 	}
 
@@ -245,15 +257,16 @@ int main (int argc, char **argv)
 	if (cmdline.tutorial)
 		prefs.tutorial = 1;
 	if (cmdline.format[0] ) {	/* format specified */
-		strlcpy(prefs.format, cmdline.format, PREFS_FMT_LEN);
+		strcpy(prefs.format, cmdline.format);
 	}
 
 	if (cmdline.def_db) {
-		strlcpy (prefs.db_file, prefs.default_db_file, PREFS_FN_LEN);
+		if( strlen(prefs.default_db_file)<PREFS_FN_LEN )
+			strcpy (prefs.db_file, prefs.default_db_file);
 		if (!file_check (prefs.db_file))
 			prefs.tutorial = 2;
 	} else {
-		strlcpy (prefs.db_file, cmdline.dbfile, PREFS_FN_LEN);
+		strcpy (prefs.db_file, cmdline.dbfile);
 	}
 
 	pos = tree_new ();
@@ -262,17 +275,7 @@ int main (int argc, char **argv)
 		int oldpos = -1;
 		char file_to_load[PREFS_FN_LEN];
 
-#ifdef __linux__
-/* our evil kludge returns a string pointer instead of length, so... */
-		strlcpy(file_to_load, prefs.db_file, PREFS_FN_LEN);
-		if(sizeof(prefs.db_file)>=PREFS_FN_LEN) {
-			fprintf(stderr, "Warning: file name exceeded %d characters and was truncated: %s\n", PREFS_FN_LEN, prefs.db_file);
-		}
-#else
-		if(strlcpy(file_to_load, prefs.db_file, PREFS_FN_LEN) >= PREFS_FN_LEN) {
-			fprintf(stderr, "Warning: file name exceeded %d characters and was truncated: %s\n", PREFS_FN_LEN, prefs.db_file);
-		}
-#endif
+		strcpy(file_to_load, prefs.db_file);
 		
 		{ /* check for recovery file */
 		  char recovery_file[PREFS_FN_LEN];
@@ -283,7 +286,7 @@ int main (int argc, char **argv)
 	   	  stat(prefs.db_file, &statbuf);
 		  file_modified=statbuf.st_ctime;
 		  
-		  sprintf(recovery_file, "%s_tines_rescue", prefs.db_file);
+		  snprintf(recovery_file, PREFS_FN_LEN, "%s_tines_rescue", prefs.db_file);
 		  tfile = fopen(recovery_file, "r");
 		  if(tfile){
 			  char response[1024]="_";
@@ -298,12 +301,12 @@ int main (int argc, char **argv)
 	
 			  fclose(tfile);
 			 while(!got_response){
-				  fprintf(stderr,"recovery file (%s) exists\n\
-This could mean that a prior instance of tines is still running\n\
+				  fprintf(stderr, "A recovery file (%s) exists.\n\
+This could mean that a prior instance of Tines is still running\n\
 or that tines was aborted.\n", recovery_file);
 				  if(rescue_modified<file_modified)
-					  fprintf(stderr,"\n!!NOTE: original is newer than recovery, be careful.\n");
-				  fprintf(stderr,"\n\
+					  fprintf(stderr, "\n!!NOTE: original is newer than recovery, be careful.\n");
+				  fprintf(stderr, "\n\
 a)bort\n\
 d)elete recovery file\n\
 r)recover\n\
@@ -358,9 +361,28 @@ o)pen read_only\n\
 		{
 			char buf[PREFS_FN_LEN];
 			if(recover)
-			sprintf (buf, "import_binary %s", file_to_load);
-			else
-			sprintf (buf, "import_%s %s", prefs.format,  file_to_load);
+				sprintf (buf, "import_binary %s", file_to_load);
+			else {
+				/* File specified on command line:
+				 *   exists: load it
+				 *   does not exist: empty tree
+				 * File not specified on command line:
+				 *   ~/.tines exists: load it
+				 *   does not exist: load the starter db or a mini. */
+				if(file_check(file_to_load)) {
+					sprintf (buf, "import_%s \'%s\'", prefs.format, file_to_load);
+				} else {
+					char tmp[MAXPATHLEN];
+
+					sprintf (tmp, "%s%s", SHAREDIR, DATFILEIN);
+					if(file_check(tmp) && !cmdline.dbfile) {
+						/* copy default DB */
+						if(cp_file(file_to_load, tmp) == -1)
+							fprintf(stderr, "File copy error: %d\n", errno);
+					}
+					sprintf (buf, "import_%s \'%s\'", prefs.format, file_to_load);
+				}
+			}
 
 			pos = docmd (pos, buf);
 		}
@@ -371,15 +393,26 @@ o)pen read_only\n\
 		}
 	}
 
-/* TODO: this should load a default read-only db from SHAREDIR
- * and set the readonly flag.
- */
 	if (prefs.tutorial) {
-		if (prefs.tutorial != 2)
-			prefs.db_file[0] = (char) 255;	/* disable saving */
-		pos = docmd (pos, "import_help");
-		pos = docmd (pos, "status ''");
-		pos = docmd (pos, "status 'navigate the documentation with your cursor keys'");
+		char tmp[MAXPATHLEN];
+		char buf[MAXPATHLEN];
+
+		sprintf (tmp, "%s%s", SHAREDIR, DATFILEIN);
+		if(file_check(tmp)) {
+			/* copy default DB */
+			if(cp_file(prefs.db_file, tmp) == -1)
+				fprintf(stderr, "File copy error: %d\n", errno);
+			sprintf (buf, "import_%s \'%s\'", prefs.format, prefs.db_file);
+			fprintf(stderr, "Created default db %s from %s\n", prefs.db_file, tmp);
+			pos = docmd (pos, buf);
+			pos = docmd (pos, "status 'Loaded default welcome database.'");
+		} else {
+			if (prefs.tutorial != 2)
+				prefs.db_file[0] = (char) 255;	/* disable saving */
+			pos = docmd (pos, "import_help");
+			pos = docmd (pos, "status ''");
+			pos = docmd (pos, "status 'Navigate the documentation with your cursor keys.'");
+		}
 	}
 
 	switch (cmdline.ui) {

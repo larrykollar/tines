@@ -1,7 +1,7 @@
 /*
  * ui_binding.c -- management of keybindings
  *
- * Copyright (C) 2001,2001 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001,2001 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -404,54 +404,54 @@ void init_ui_binding ()
 {
 	cli_add_command ("bind", ui_bind_cmd, "<key> <action> [parameter]");
 	cli_add_help ("bind",
-				  "Binds the action, to the specified key, subsequent actions my be bound by using the virtual key '..' thus chaining them together into a small script.");
+		"Binds the action to the specified key. Subsequent actions may be bound by using the virtual key '..' to chain them together into a small script.");
 	cli_add_command ("context", ui_context_cmd, "<context>");
 	cli_add_help ("context",
-				  "Changes context, context may be one of 'main', 'lineedit', 'nodeedit', 'confirm' or any other userdefined context.");
+		"Changes the context. Context may be one of 'main', 'lineedit', 'nodeedit', 'confirm', or any user-defined context.");
 
 /* dummy commands to show the 'builtins' */
 /*	cli_add_command ("backspace", dummy_cmd, "");
-	cli_add_help ("backspace", "erase the preceding character");
+	cli_add_help ("backspace", "Erases the preceding character.");
 	cli_add_command ("delete", dummy_cmd, "");
-	cli_add_help ("delete", "erase the following character");
+	cli_add_help ("delete", "Erases the following character.");
 
 	cli_add_command ("down", dummy_cmd, "");
 	cli_add_command ("left", dummy_cmd, "");
 	cli_add_command ("right", dummy_cmd, "");
 	cli_add_command ("up", dummy_cmd, "");
-	cli_add_help ("down", "moves the cursor or selection down");
-	cli_add_help ("left", "moves the cursor or selection left");
-	cli_add_help ("right", "moves the cursor or selection right");
-	cli_add_help ("up", "moves the cursor or selection up");
+	cli_add_help ("down", "Moves the cursor or selection down.");
+	cli_add_help ("left", "Moves the cursor or selection left.");
+	cli_add_help ("right", "Moves the cursor or selection right.");
+	cli_add_help ("up", "Moves the cursor or selection up.");
 
 	cli_add_command ("bkill_word", dummy_cmd, "");
 	cli_add_command ("kill_word", dummy_cmd, "");
-	cli_add_help ("bkill_word", "erases the preceding word");
-	cli_add_help ("kill_word", "erases the following word");
+	cli_add_help ("bkill_word", "Erases the preceding word.");
+	cli_add_help ("kill_word", "Erases the following word.");
 
 	cli_add_command ("bol", dummy_cmd, "");
-	cli_add_help ("bol", "move cursor to beginning of line");
+	cli_add_help ("bol", "Moves the cursor to beginning of line.");
 
 	cli_add_command ("top", dummy_cmd, "");
 	cli_add_command ("bottom", dummy_cmd, "");
-	cli_add_help ("top", "move to the topmost sibling of the current entry");
+	cli_add_help ("top", "Moves to the topmost sibling of the current entry.");
 	cli_add_help ("bottom",
-				  "move to the bottommost sibling of the current entry");
+				  "Moves to the bottommost sibling of the current entry.");
 
 	cli_add_command ("bskipword", dummy_cmd, "");
 	cli_add_command ("cancel", dummy_cmd, "");
 
 	cli_add_command ("complete", dummy_cmd, "");
 	cli_add_help ("complete",
-				  "output possible completions of entered command or variable");
+				  "Show possible completions of the partially-entered command or variable.");
 
 	cli_add_command ("confirm", dummy_cmd, "");
 	cli_add_help ("confirm",
-				  "confirm the question posed, (used in dialogs asking for the users' consent)");
+				  "Confirms the question posed. Used in dialogs asking for the user's consent.");
 
 
 	cli_add_command ("eol", dummy_cmd, "");
-	cli_add_help ("eol", "move to the end of the line");
+	cli_add_help ("eol", "Moves to the end of the line.");
 
 	cli_add_command ("ignore", dummy_cmd, "");
 
@@ -459,12 +459,12 @@ void init_ui_binding ()
 	cli_add_command ("split", dummy_cmd, "");
 
 	cli_add_help ("join",
-				  "join the currently edited node with the following sibling");
+			  "Joins the current node with the sibling following.");
 	cli_add_help ("split",
-				  "split the currently edited node at the cursor location");
+			  "Splits the current node at the cursor location.");
 
 	cli_add_command ("kill_line", dummy_cmd, "");
-	cli_add_help ("kill_line", "erase the currently edited line");
+	cli_add_help ("kill_line", "Erases the current line.");
 
 	cli_add_command ("kill_to_bol", dummy_cmd, "");
 	cli_add_command ("kill_to_eol", dummy_cmd, "");
@@ -476,6 +476,6 @@ void init_ui_binding ()
 
 	cli_add_command ("unbound", dummy_cmd, "");
 	cli_add_help ("unbound",
-				  "give a message indicating that the pressed key is not bound in the current context");
+		"Displays a message indicating that the pressed key is not bound in the current context.");
 */
 }

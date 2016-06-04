@@ -62,8 +62,8 @@ static void* go_mark(int argc, char **argv, void *data)
 void init_marks()
 {
     cli_add_command ("set_mark", set_mark,"<mark number>");
-    cli_add_help ("set_mark", "define a location for use with 'go_mark'");
+    cli_add_help ("set_mark", "Defines a location for use with 'go_mark'.");
     cli_add_command ("go_mark",  go_mark, "<mark_number>");
-    cli_add_help ("go_mark", "goto a location saved with 'set_mark'");
+    cli_add_help ("go_mark", "Jumps to the location saved with 'set_mark'.");
 }
 

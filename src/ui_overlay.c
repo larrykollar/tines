@@ -1,7 +1,7 @@
 /*
  * ui_overlay.c -- help and status display for hnb
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -210,11 +210,12 @@ void init_ui_overlay ()
 {
 	cli_add_command ("helptext", ui_helptext_cmd, "<help for context>");
 	cli_add_help ("helptext",
-				  "Defines the helptext for the current context, the character | alternates between the menuitem and the menutext styles, || is the escape sequence for a single pipe.");
+		"Defines the help text for the current context. The character | alternates between the menuitem and the menutext styles. Use || for a single pipe.");
 	cli_add_command ("status", ui_status_cmd, "<-c|--clear|message>");
 	cli_add_command ("echo", ui_status_cmd, "<-c|--clear|message>");
-	cli_add_help ("status", "Adds 'message' as the newest status line, if -c or --clear\
- is specified, all pending status messages will be cleared off the screen");
-	cli_add_help("echo","alias for status");
+	cli_add_help ("status",
+		"Adds 'message' as the newest status line. Use -c or --clear \
+instead of a message to clear pending status messages off the screen.");
+	cli_add_help("echo", "Alias for status.");
 
 }

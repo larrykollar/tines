@@ -237,4 +237,8 @@ void init_file_html ()
 {
 	cli_add_command ("export_html", export_html, "<filename>");
 	cli_add_command ("export_htmlcss", export_htmlcss, "<filename>");
+	cli_add_help ("export_html",
+		"Exports the current level as HTML. Entries are displayed as unordered lists.");
+	cli_add_help ("export_htmlcss",
+		"Exports the current level as HTML. Entries are displayed as divs, formatted by a CSS stylesheet.");
 }

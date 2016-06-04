@@ -1,7 +1,7 @@
 /*
  * ui_draw.c -- drawing of a nodes and trees using curses
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -868,21 +868,21 @@ void init_ui_draw ()
 {
 	cli_add_command ("display_format", display_format_cmd, "<format string>");
 	cli_add_help ("display_format", "\
-defines how each node is displayed, the display string syntax is \
+Defines how each node is displayed. The display string syntax is \
 interpreted as follows: \
-spaces turn into real spaces, i means indentation, - means bullet, \
+Spaces become real spaces, i means indentation, - means bullet, \
 d means the real data of the node, x is a temporary placeholder for \
-upcoming columntypes. (for debugging only) \
+upcoming columntypes (for debugging only). \
 i and x can take an argument specifying how many characters wide \
-the field should be");
-	cli_add_string ("bullet_leaf", bullet_leaf, "");
-	cli_add_string ("bullet_parent", bullet_parent, "");
-	cli_add_string ("bullet_parent_expanded", bullet_parent_expanded, "");
-	cli_add_string ("bullet_todo_parent_undone", bullet_todo_parent_undone, "");
-	cli_add_string ("bullet_todo_parent_done", bullet_todo_parent_done, "");
-	cli_add_string ("bullet_todo_leaf_undone", bullet_todo_leaf_undone, "");
-	cli_add_string ("bullet_todo_leaf_done", bullet_todo_leaf_done, "");
-	cli_add_string ("bullet_textleaf", bullet_textleaf, "");
-	cli_add_string ("bullet_textparent", bullet_textparent, "");
+the field should be.");
+	cli_add_string ("bullet_leaf", bullet_leaf, "Marker for an entry with no sub-entries.");
+	cli_add_string ("bullet_parent", bullet_parent, "Marker for a collapsed parent entry.");
+	cli_add_string ("bullet_parent_expanded", bullet_parent_expanded, "Marker for an expanded parent entry.");
+	cli_add_string ("bullet_todo_parent_undone", bullet_todo_parent_undone, "Marker for an uncompleted todo entry with children.");
+	cli_add_string ("bullet_todo_parent_done", bullet_todo_parent_done, "Marker for a completed todo entry with children.");
+	cli_add_string ("bullet_todo_leaf_undone", bullet_todo_leaf_undone, "Marker for an uncompleted todo entry with no children.");
+	cli_add_string ("bullet_todo_leaf_done", bullet_todo_leaf_done, "Marker for a completed todo entry with no children.");
+	cli_add_string ("bullet_textleaf", bullet_textleaf, "Marker for a text entry with no children.");
+	cli_add_string ("bullet_textparent", bullet_textparent, "Marker for a text entry with children.");
 	cli_add_string ("bullet_textparent_expanded", bullet_textparent_expanded, "");
 }

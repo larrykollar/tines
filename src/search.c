@@ -2,7 +2,7 @@
  * search.c -- recursive search for hnb
  *             
  *
- * Copyright (C) 2001,2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001,2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -68,5 +68,5 @@ static void* search(int argc,char **argv,void *data){
 void init_search ()
 {
 	cli_add_command ("search",search,"[-b|-f] <string>");
-	cli_add_help("search","searches either -b(ackwards) or -f(orwards) in the tree for the next entry with a substring matching the specified string");
+	cli_add_help("search", "Searches either -b(ackward) or -f(orward) in the tree for the next entry with a substring matching the specified string.");
 }

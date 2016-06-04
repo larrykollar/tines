@@ -1,7 +1,7 @@
 /*
  * file_ascii.c -- hnb XML-dtd import and export filters for hnb
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -62,7 +62,7 @@ static char *xmlunquote[]={
 /* *INDENT-ON* */
 
 
-static void hnb_export_nodes (FILE * file, Node *node, int level)
+static void hnb_export_nodes (FILE * file, Node *node, int level, int saveall)
 {
 	while (node) {
 		char *data = fixnullstring (node_get (node, TEXT));
@@ -95,7 +95,7 @@ static void hnb_export_nodes (FILE * file, Node *node, int level)
 		}
 
 		if (node_right (node)) {
-			hnb_export_nodes (file, node_right (node), level + 1);
+			hnb_export_nodes (file, node_right (node), level + 1, 0);
 			fprintf (file, "\n");
 			indent (level, "\t");
 			fprintf (file, "</node>");
@@ -103,17 +103,28 @@ static void hnb_export_nodes (FILE * file, Node *node, int level)
 			fprintf (file, "</node>");
 		}
 
-		node = node_down (node);
+		/* needs to only export one branch at level 0 */
+		if( level || saveall)
+			node = node_down (node);
+		else
+			break;
 	}
 }
 
 static void* export_hnb (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc>=2?argv[1]:"";
+	char *filename;
+	int saveall;
 	FILE *file;
 
-	if (!strcmp (filename, "-"))
+	/* argv[0]: name used to invoke this command
+	 * argv[1]: file name
+	 * argv[2]: node position */
+
+	filename = fn_expand( argc>=2?argv[1]:"", 1	);
+
+	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
 	else
 		file = fopen (filename, "w");
@@ -135,10 +146,13 @@ static void* export_hnb (int argc, char **argv, void *data)
 	          expanded (yes|no) #IMPLIED\n\
 	>]>\n\
 \n\
-<tree>", (argc==3)?argv[2]:"",
+<tree>", (argc>=3)?argv[2]:"",
 			 VERSION);
 
-	hnb_export_nodes (file, node, 0);
+	/* saveall = 0 if we're only saving the branch */
+	saveall = strcmp(argv[0], "export_hnb_branch");
+
+	hnb_export_nodes (file, node, 0, saveall);
 
 	fprintf (file, "\n</tree>\n");
 	if (file != stdout)
@@ -153,7 +167,7 @@ static void* export_hnb (int argc, char **argv, void *data)
 static void* import_hnb (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
 	char *rdata;
 	int type;
 	int in_tree = 0;
@@ -169,6 +183,8 @@ static void* import_hnb (int argc, char **argv, void *data)
 
 
 	FILE *file;
+
+	filename = fn_expand( argc==2?argv[1]:"", 0	);
 
 	file = fopen (filename, "r");
 	if (!file) {
@@ -282,5 +298,12 @@ static void* import_hnb (int argc, char **argv, void *data)
 void init_file_hnb ()
 {
 	cli_add_command ("export_hnb", export_hnb, "<filename>");
+	cli_add_command ("export_hnb_branch", export_hnb, "<filename>");
+	cli_add_help ("export_hnb",
+		"Exports the current entry, following siblings, and child entries in hnb format.");
+	cli_add_help ("export_hnb_branch",
+		"Exports the current entry and child entries in hnb format.");
 	cli_add_command ("import_hnb", import_hnb, "<filename>");
+	cli_add_help ("import_hnb",
+			"Imports an hnb-formatted file below the current entry.");
 }

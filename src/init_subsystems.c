@@ -29,6 +29,7 @@ void init_query();
 void init_quit();
 void init_remove();
 void init_search();
+void init_sigs();
 void init_sort();
 void init_spell();
 void init_stats();
@@ -72,6 +73,7 @@ void init_subsystems(){
  init_quit();
  init_remove();
  init_search();
+ init_sigs();
  init_sort();
  init_spell();
  init_stats();

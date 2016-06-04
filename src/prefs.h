@@ -1,11 +1,12 @@
 #ifndef PREFS_H
 #define PREFS_H
 
+#include <sys/param.h>
 
 #define RC_REV 8
 
 /* max length of rc/db file names */
-#define PREFS_FN_LEN 128
+#define PREFS_FN_LEN MAXPATHLEN
 
 /* max length of file format name */
 #define PREFS_FMT_LEN 64
@@ -27,6 +28,7 @@ typedef struct {
 } Tprefs;
 
 extern Tprefs prefs;
+extern long pid;
 
 /*	initializes preferences with default values
 */

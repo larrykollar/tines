@@ -80,13 +80,15 @@ void init_autosave ()
 {
 	cli_add_command ("tree_changed", tree_changed_cmd, "[increment]");
 	cli_add_help ("tree_changed",
-				  "used internally to drive the autosave functionality, for severe changes, pass a high number(1000), to make sure the radical changes are saved _NOW_, otherwise don't pass an increment");
-	cli_add_command ("autosave_check_timeout", autosave_check_timeout, "Checks the timeout counter and autosaves if necessary.");
-	cli_add_int ("autosave_timeout", &autosave_timeout, "number of ticks before autosaving after change");
-	cli_add_int ("autosave_sync", &autosave_sync, "whether the filesystem should be synced after autosave");
-	cli_add_int ("autosave_timer", &autosave_timer, "number of ticks since unsaved change");
+				  "Used internally to drive the autosave functionality. For severe changes, pass a high number(1000), to make sure the radical changes are saved immediately. Otherwise, don't pass an increment.");
+	cli_add_command ("autosave_check_timeout", autosave_check_timeout, "");
+	cli_add_help ("autosave_check_timeout",
+			"Checks the timeout counter and autosaves if necessary.");
+	cli_add_int ("autosave_timeout", &autosave_timeout, "The number of ticks before autosaving after a change.");
+	cli_add_int ("autosave_sync", &autosave_sync, "True if the filesystem should be synced after autosave.");
+	cli_add_int ("autosave_timer", &autosave_timer, "The number of ticks since the first unsaved change.");
 	cli_add_int ("autosave_threshold", &autosave_threshold,
-					"save for evrery autosave_threshold nodes changed");
+		"Automatically save after this many nodes are changed.");
 	cli_add_int ("autosave_threshold_nodes_changed", &nodes_changed,
-					"counter for number of changes since save");
+		"A counter for the number of changes since the last save.");
 }

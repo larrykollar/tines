@@ -1,7 +1,7 @@
 /*
  * ui.c -- management of colors and attributes for hnb
  *
- * Copyright (C) 2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -178,8 +178,8 @@ void init_ui_style ()
 	cli_add_command ("style", ui_style_cmd,
 					 "<element> <foreground/background> <attributes>");
 	cli_add_help ("style",
-				  "Changes the drawing style of 'element' available colors: \
-black, blue, cyan, red, green, magenta, yellow, white and default which uses the standard colors \
-of the terminal. Attrbutes are one or more of: standout, underline, reverse, blink, dim and bold. \
-Available elements are: menuitem, menutext, parentnode, node, bullet, selected, parentselected and background.");
+		"Changes the drawing style of the specified element. Available colors: \
+black, blue, cyan, red, green, magenta, yellow, white, and default (the standard colors \
+of the terminal). Attrbutes are one or more of: standout, underline, reverse, blink, dim, and bold. \
+Available elements are: menuitem, menutext, parentnode, node, bullet, selected, parentselected, and background.");
 }

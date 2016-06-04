@@ -244,5 +244,5 @@ void init_file_ps ()
 {
 	cli_add_command ("export_ps", export_ps, "<filename>");
 	cli_add_help ("export_ps",
-				  "Exports the current node, it's siblings and all sublevels to a postscript file suitable for printing");
+		"Exports the current level to a PostScript file suitable for printing.");
 }

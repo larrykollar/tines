@@ -128,6 +128,6 @@ static void* cmd_macro (int argc, char **argv, void *data)
 */
 void init_cli_macro (void)
 {
-		cli_add_command ("macro", cmd_macro, "");
-		cli_add_help ("macro", "");
+		cli_add_command ("macro", cmd_macro, "[define] name");
+		cli_add_help ("macro", "Executes the named macro. If the first argument is 'define', defines the macro.");
 }

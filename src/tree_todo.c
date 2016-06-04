@@ -1,7 +1,7 @@
 /*
  * tree_todo.c -- functions relating to completion calculations
  *
- * Copyright (C) 2002,2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2002,2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -319,11 +319,11 @@ void init_tree_todo ()
 {
 	cli_add_command ("toggle_todo", toggle_todo_cmd, "");
 	cli_add_help ("toggle_todo",
-				  "Toggles visiblity and usage of the checkbox for the current entry.");
+		"Toggles visiblity and usage of the checkbox for the current entry.");
 	cli_add_command ("toggle_done", toggle_done_cmd, "");
 	cli_add_help ("toggle_done",
-				  "Toggles visiblity and usage of the checkbox for the current entry.");
+		"Toggles visiblity and usage of the checkbox for the current entry.");
 	cli_add_command ("toggle_text", toggle_text_cmd, "");
 	cli_add_help ("toggle_text",
-					"Toggles visibility of the text marker for the current entry.");
+		"Toggles visibility of the text marker for the current entry.");
 }

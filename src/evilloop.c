@@ -138,9 +138,9 @@ static void* cmd_quit(int argc,char **argv,void *data){
 */
 void init_quit(){
 	cli_add_command("quit",cmd_quit,"");
-	cli_add_help("quit","quits tines, no questions asked");
+	cli_add_help("quit","Quits Tines, without prompting to save.");
 	cli_add_command("q",cmd_quit,"");
-	cli_add_help("q","quits tines, no questions asked");
+	cli_add_help("q","Quits Tines, without prompting to save.");
 }
 
 Node *evilloop (Node *pos)
@@ -351,9 +351,9 @@ Node *evilloop (Node *pos)
 void init_evilloop ()
 {
 	cli_add_int ("forced_up", &forced_up,
-				 "whether movement upwards is forced beyond first sibling");
+		"True if movement upwards can proceed beyond the first sibling.");
 	cli_add_int ("forced_down", &forced_down,
-				 "whether movement downwards is forced beyond last sibling");
+		"True if movement downwards can proceed beyond the last sibling.");
 	cli_add_int ("add_at_top", &add_at_top,
-				 "whether items inserted automatically are added at the top (default 0, at the bottom)");
+		"True if items inserted automatically are added at the top (default 0, at the bottom).");
 }

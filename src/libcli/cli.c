@@ -1,5 +1,5 @@
 /* libcli -- a small commandline interpreter libraray
- * Copyright (C) 2002 Øyvind Kolås
+ * Copyright (C) 2002 Ã˜yvind KolÃ¥s
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,8 +88,8 @@ static void default_output(char *data){
 	free(tbuf);
 }
 
-static void default_unknown_command (int argc,char **argv, void *data){
-	cli_outfunf ("unknown command '%s' type '?' to see allowed commands.\n",argv[0]);
+static void default_unknown_command (int argc, char **argv, void *data){
+	cli_outfunf ("Unknown command: '%s' Use '?' to see valid commands.\n",argv[0]);
 }
 
 void (*cli_outfun) (char *) = default_output;
@@ -221,8 +221,8 @@ void cli_cleanup(void){
 
 static void init_cli (void)
 {
-	cli_add_command ("?", help, "? - this listing");
-	cli_add_command ("show_vars", vars, "show all variables");
+	cli_add_command ("?", help, "Displays this listing.");
+	cli_add_command ("show_vars", vars, "Shows all variables and values.");
 	cli_add_string  ("temp_str", tempstr, "A temporary variable for use in macros." );
 	inited = 1;
 }
@@ -388,6 +388,8 @@ char *cli_complete (const char *commandline)
 
 static void* help (int argc, char **argv, void *data)
 {
+	int lines = 0;
+
 	if (argc == 1) {		/* show all help */
 		ItemT *titem = items;
 
@@ -397,8 +399,15 @@ static void* help (int argc, char **argv, void *data)
 		#ifdef HIDE_NULL_HELP
 			if(titem->usage)
 		#endif
-			if (is_command (titem))
+			if (is_command (titem)) {
 				cli_outfunf ("%14s %s", titem->name, titem->usage);
+				++lines;
+			}
+			if(titem->help[0]) {
+				cli_outfun(titem->help);
+				++lines;
+			}
+
 			titem = titem->next;
 		};
 	} else {					/* show help for specified command */
@@ -410,10 +419,9 @@ static void* help (int argc, char **argv, void *data)
 			if (is_command (titem)) {
 				if (!strcmp (argv[1], titem->name)) {
 					cli_outfunf ("usage: %s %s", titem->name, titem->usage);
-					if(titem->help[0]){
-						cli_outfun ("");
+					if(titem->help[0])
 						cli_outfun(titem->help);
-					}
+					
 					return data;
 				}
 			}
@@ -428,7 +436,7 @@ static void* vars (int argc, char **argv, void *data)
 {
 	ItemT *titem = items;
 
-	cli_outfunf ("all variables:");
+	cli_outfunf ("All variables:");
 
 	while (titem) {
 		#ifdef HIDE_NULL_HELP
@@ -444,6 +452,7 @@ static void* vars (int argc, char **argv, void *data)
 			} else {
 				cli_outfunf ("%s\tis a broken variable", titem->name);
 			}
+
 		}
 		titem = titem->next;
 	}

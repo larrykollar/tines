@@ -1,7 +1,7 @@
 /*
  * prefs.c -- preferences and global variable mangement of tines
  *
- * Copyright (C) 2001,2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001,2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  * modified for tines project by Larry Kollar (lkollar@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -23,7 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <curses.h>
+#include <unistd.h>
 
+#include "config.h"
 #include "tree.h"
 #include "ui.h"
 #include "path.h"
@@ -31,6 +33,7 @@
 #include "cli.h"
 #include "ui_cli.h"
 #include "file.h"
+#include "file_copy.h"
 
 
 Tprefs prefs = {
@@ -46,6 +49,8 @@ Tprefs prefs = {
 	0,						/* readonly */
 	1						/* curses */
 };
+
+long pid;
 
 typedef struct {
 	char name[4];
@@ -66,40 +71,52 @@ void init_prefs ()
 	sprintf (prefs.default_db_file, "C:\\tines_data");
 #endif
 	
+	pid = getpid();
+
 	cli_add_string ("format", prefs.format, "The format of the current file.");
 	cli_add_string ("rc_file", prefs.rc_file, "The path and name of the current rc file.");
 	cli_add_string ("db_file", prefs.db_file, "The path and name of the current database file.");
 	cli_add_string ("default_db_file", prefs.default_db_file, "The path and name of the default database file.");
 
-	cli_add_int ("showpercent", &prefs.showpercent, "");
-	cli_add_int ("fixedfocus", &prefs.fixedfocus, "");
-	cli_add_int ("savepos", &prefs.savepos, "");
-	cli_add_int ("saveexpand", &prefs.saveexpand, "");
-	cli_add_int ("readonly", &prefs.readonly, "");
+	cli_add_int ("showpercent", &prefs.showpercent, "If true, a todo entry with children shows the percentage of children done.");
+	cli_add_int ("fixedfocus", &prefs.fixedfocus, "If true, anchors the selection bar about 1/3 of the way down the screen.");
+	cli_add_int ("savepos", &prefs.savepos, "If true, saves the current position.");
+	cli_add_int ("saveexpand", &prefs.saveexpand, "If true, saves the current expansion state.");
+	cli_add_int ("readonly", &prefs.readonly, "If true, the database is read-only.");
+	cli_add_int ("pid", &pid, "The process ID for this instance of Tines.");
 
 #ifdef NCURSES_VERSION 
 	cli_add_int ("escdelay", (long *)&ESCDELAY,
-				 "How long curses waits before it decides ESC is ESC and not a coded key sequence.");
+		"How long curses waits before it decides ESC is ESC and not a coded key sequence.");
 #endif
 }
 
 void write_default_prefs ()
 {
 	FILE *file;
+	char infile[MAXPATHLEN];
 
-	file = fopen (prefs.rc_file, "w");
-	fprintf (file,
-#include "../doc/tinesrc.inc"
+	/* set up path to master rc file */
+	snprintf(infile, MAXPATHLEN, "%s%s", SHAREDIR, RCFILEIN);
+
+	if (file_check(infile)) {
+		cp_file(infile, prefs.rc_file);
+	} else {
+		/* use minimal rc file */
+		file = fopen (prefs.rc_file, "w");
+		fprintf (file,
+#include "../doc/minimal.inc"
 		);
-	fclose (file);
+		fclose (file);
+	}
 }
 
 void load_prefs (void)
 {
 	if (xml_check (prefs.rc_file)) {
 		printf
-			("seems like your current ~/.hnbrc is outdated (it's xml the new format\n\
-is plain text,.. remove it and let tines make a new default\n");
+			("Your current ~/.hnbrc is outdated (it's XML; the new format\n\
+is plain text... remove it and let Tines make a new default)\n");
 		exit (0);
 	}
 	cli_load_file (prefs.rc_file);

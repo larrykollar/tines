@@ -1,0 +1,509 @@
+# Minimal configuration file for Tines
+# Comments & default settings deleted to save space in the binary
+
+display_format "i4- d"
+
+web_command "lynx *"
+mail_command "mutt *"
+spell_command "ispell -x"
+
+savepos	"1"
+saveexpand "1"
+
+autosave_threshold "15"
+autosave_threshold_nodes_changed "0"
+autosave_timeout    "50"
+autosave_timer     "0"
+
+style menuitem       default/default reverse
+style menutext       blue/default    normal
+style parentnode     default/default bold
+style node           default/default normal
+style bullet         cyan/default    normal
+style selected       yellow/red      bold
+style parentselected yellow/red      bold
+style background     default/default normal
+
+context main
+helptext "ESC| menu || |F2| save || |F3| text || |F5| commandline || |return| edit |"
+bind f1 'status "This is the minimal configuration, loaded if you did not do make install."'
+bind .. 'status "Delete this ~/.tinesrc and replace it with the one in the doc directory."'
+
+bind esc menu
+bind ^Q 'context quitsave'
+
+bind f3 'toggle_text'
+bind f5 'commandline'
+bind .. 'status --clear'
+
+bind f6 'macro m_spellcheck'
+macro define m_spellcheck
+context spellcheck
+save_state
+spell
+end
+
+bind ^E 'context export'
+bind ^L 'context import'
+bind ^F 'macro m_search'
+macro define m_search
+context search
+save_state
+getquery "Search for:"
+search -f "$query"
+end
+
+bind f9  menu
+bind f10 'context user'
+
+bind ^G 'context grab'
+bind .. 'save_state'
+
+bind ^A 'action'
+bind up    up
+bind down  down
+bind left  left
+bind right right
+bind npage pagedown
+bind ppage pageup
+bind home  "go root"
+
+bind return edit
+bind del    remove
+
+bind ins    insert_below
+bind .. edit
+
+bind ^O     insert_below
+bind .. edit
+
+# temporary kludge until we implement insert_above
+bind ^B insert_below
+bind .. "movenode up"
+bind .. edit
+
+bind tab complete
+bind ^T  toggle_todo
+bind ^D  toggle_done
+bind >   indent
+bind <   outdent
+bind f2  save
+
+bind ^X save_state
+bind .. cut
+
+bind ^C copy
+
+bind ^V paste
+bind .. down
+
+bind ^S save_state
+bind .. sort
+
+bind backspace	backspace
+bind backspace2	backspace
+
+bind sleft "movenode left"
+bind sright	 "movenode right"
+bind sprevious "movenode up"
+bind snext "movenode down"
+
+bind + expand
+bind - collapse
+
+bind ^Z stop
+
+context nodeedit
+helptext "editing node |  |ESC| revert || |return| confirm"
+bind up    up
+bind down  down
+bind left  left
+bind right right
+
+bind return  confirm
+bind esc     cancel
+
+bind ^S  split
+bind ^J  join
+
+bind backspace  backspace
+bind backspace2 backspace
+
+bind ^A   bol
+bind home bol
+bind ^E   eol
+bind end  eol
+
+bind ^W   skipword
+bind ^B   bskipword
+
+bind del  delete
+
+context lineedit
+helptext lineedit
+
+bind up      up
+bind down    down
+bind left    left
+bind right   right
+
+bind return  confirm
+bind esc     cancel
+bind tab     complete
+
+bind backspace backspace
+bind backspace2 backspace
+bind del        delete
+
+bind ^A   bol
+bind home bol
+bind ^E   eol
+bind end  eol
+
+context confirm
+helptext " y | | j | |return| confirm || |any key| cancel"
+
+bind y      confirm
+bind j      confirm
+bind return confirm
+
+bind any    cancel
+
+context quitsave
+helptext "Save on exit? |    | Y |es | J |a || | N |o || |ESC| cancel"
+bind Y  save
+bind .. quit
+
+bind y  save
+bind .. quit
+
+bind J  save
+bind .. quit
+
+bind j  save
+bind .. quit
+
+bind N  quit
+bind n  quit
+
+bind esc "context main"
+bind any unbound
+
+context spellcheck
+helptext "Spellchecking |   |Space| next node |ESC| cancel |F6,Return| confirm changes"
+
+bind space "go recurse"
+bind ..    spell
+
+bind down "go recurse"
+bind ..   spell
+
+bind up   "go backrecurse"
+bind ..   spell
+
+bind return "context main"
+bind f6 "context main"
+
+bind esc restore_state
+bind .. "context main"
+
+bind any unbound
+
+context grab
+helptext "Node grabbed |  |return| |space| drop here || |ESC| cancel"
+bind esc    restore_state
+bind ..     "context main"
+bind return "context main"
+bind space  "context main"
+bind left   "movenode left"
+bind right  "movenode right"
+bind up     "movenode up"
+bind down   "movenode down"
+bind any    unbound
+
+context export
+helptext "Export |  | A |scii || | H |tml  html| C |ss  | P |ostscript  | O |PML  |ESC| cancel "
+macro define m_export_ascii
+save_state
+go root
+getquery 'What file should I save the ASCII output in?'
+export_ascii $query
+restore_state
+context main
+end
+macro define m_export_html
+save_state
+go root
+getquery 'What file should I save the HTML output in?'
+export_html $query
+context main
+restore_state
+end
+macro define m_export_htmlcss
+save_state
+go root
+getquery 'What file should I save the HTML/CSS output in?'
+export_htmlcss $query
+context main
+restore_state
+end
+macro define m_export_opml
+save_state
+go root
+getquery 'What file should I save the OPML output in?'
+export_opml $query
+context main
+restore_state
+end
+macro define m_export_ps
+save_state
+go root
+getquery 'What file should I save the PostScript output in?'
+export_ps $query
+context main
+restore_state
+end
+bind esc "context main"
+bind A	"macro m_export_ascii"
+bind a	"macro m_export_ascii"
+bind H  "macro m_export_html"
+bind h  "macro m_export_html"
+bind C  "macro m_export_htmlcss"
+bind c  "macro m_export_htmlcss"
+bind O  "macro m_export_opml"
+bind o  "macro m_export_opml"
+bind P  "macro m_export_ps"
+bind p  "macro m_export_ps"		
+bind any unbound
+context import
+helptext "Import |  | A |scii | O |PML  | H |hnb   |ESC| cancel "
+
+bind esc "context main"
+bind A ..
+bind .. 'getquery "What file should I import ASCII from?"'
+bind .. 'import_ascii "$query"'
+bind .. 'context main'
+bind a ..
+bind .. 'getquery "What file should I import ASCII from?"'
+bind .. 'import_ascii "$query"'
+bind .. 'context main'
+bind O ..
+bind .. 'getquery "What file should I import OPML from?"'
+bind .. 'import_opml "$query"'
+bind .. 'context main'
+bind o ..
+bind .. 'getquery "What file should I import OPML from?"'
+bind .. 'import_opml "$query"'
+bind .. 'context main'
+bind H ..
+bind .. 'getquery "What file should I import HNB data from?"'
+bind .. 'import_hnb "$query"'
+bind .. 'context main'
+bind h ..
+bind .. 'getquery "What file should I import HNB data from?"'
+bind .. 'import_hnb "$query"'
+bind .. 'context main'
+
+bind any unbound
+
+context search
+helptext "Searching |  |ESC| cancel || | n |ext || | p |revious || |space|/|return| go"
+bind down   'search -f "$query"'
+bind up     'search -b "$query"'
+bind P      'search -b "$query"'
+bind p      'search -b "$query"'
+bind n      'search -f "$query"'
+bind N      'search -f "$query"'
+
+bind return "context main"
+
+bind esc    "context main"
+bind ..     restore_state
+
+bind any    unbound
+
+context user
+helptext "Usermenu | |ESC| cancel |F1| ispell language |F2| browser command |F3| expand all  |F4|  collapse all"
+bind esc "context main"
+
+bind f1  "context user_ispell"
+bind f2  "context user_browser"
+bind f3  "expand --all"
+bind ..  "context main"
+
+bind f4  "collapse --all"
+bind ..  "context main"
+
+bind any "unbound"
+
+context user_ispell
+helptext "Language for ispell: | |F1| Br.english  |F2| Am.english  |F3| Norwegian bokmål  |F4| Norwegian nynorsk"
+bind f1  'spell_command "ispell -x -damerican"'
+bind ..  'context main'
+
+bind f2  'spell_command "ispell -x -dbritish"'
+bind ..  'context main'
+
+bind f3  'spell_command "ispell -x -dbokmål"'
+bind ..  'context main'
+
+bind f4  'spell_command "ispell -x -dnynorsk"'
+bind ..  'context main'
+
+bind esc 'context main'
+bind any unbound
+
+context user_browser
+helptext "Browser action: | |F1| w3m replace hnb  |F2| w3m in rxvt  |F3| Opera, new tab  |F4| Mozilla new window"
+bind f1 'browser_command "w3m *"'
+bind .. 'context main'
+
+bind f2 'web_commend "xterm -T \"w3m spawned from hnb\" -fn fixed -rv +sb -e w3m * > /dev/null 2>&1 &"'
+bind .. 'context main'
+
+bind f3 'web_command "opera -remote 'openURL(*,new-window)' > /dev/null 2>&1 &"'
+bind .. 'context main'
+
+bind f4 'web_command "mozilla -remote 'openURL(*,new-window)'	> /dev/null 2>&1 &"'
+bind .. 'context main'
+
+bind esc 'context main'
+bind any unbound
+
+
+##### file
+menu "File" "------------" ""
+menu "File" "Save      F2" "save"
+menu "File" "Save As...  " "macro saveas"
+macro define saveas
+getquery 'File to save:'
+save_state
+go root
+export_$format $query
+restore_state
+end
+menu "File" "Save Branch " "macro savebranch"
+macro define savebranch
+getquery 'File to save:'
+save_state
+export_$format $query
+restore_state
+end
+menu "File" "Revert      " "revert"		
+menu "File" "------------" ""
+menu "File" "Export    ^E" "context export"
+menu "File" "Import    ^L" "context import"
+menu "File" "------------" ""
+menu "File" "Spell Chk F6" "macro m_spellcheck"
+menu "File" "Statistics  "	"macro stats"
+macro define stats
+status "File: \"$db_file\" Format: $format"
+mem
+stats			
+end
+menu "File" "------------" ""
+menu "File" "Exit      ^Q" "context quitsave"
+##### edit
+menu "Edit" "---------" ""
+menu "Edit" "Copy   ^C" "copy"
+menu "Edit" "Cut    ^X" "cut"
+menu "Edit" "Paste  ^V" "paste"
+menu "Edit" "---------" ""
+menu "Edit" "Search ^F" "macro m_search"
+##### entry
+menu "Entry" "----------------" ""
+menu "Entry" "Edit      return" "edit"
+menu "Entry" "Delete       del" "remove"
+menu "Entry" "----------------" ""
+menu "Entry" "Do Action     ^A" "action"
+menu "Entry" "Indent         >" "indent"
+menu "Entry" "Outdent        <" "outdent"
+menu "Entry" "Toggle Todo   ^T" "toggle_todo"
+menu "Entry" "Toggle Done   ^D" "toggle_done"
+menu "Entry" "Toggle Text   F3" "toggle_text"
+menu "Entry" "----------------" ""
+menu "Entry" "Expand         +" "expand"
+menu "Entry" "Collapse       -" "collapse"
+menu "Entry" "Expand Subtree  " "expand --subtree"
+menu "Entry" "Collapse Subtree" "collapse --subtree"
+menu "Entry" "Expand All      "	"expand --all"
+menu "Entry" "Collapse All    " "collapse --all"
+##### Planner
+# Planner macros
+macro define pl_new_act
+add "Next Actions: "
+go bottom
+add "Action..."
+go down
+movenode right
+toggle_todo
+end
+macro define pl_new_proj
+add "Project: "
+go bottom
+toggle_todo
+add "Objective: "
+go down
+movenode right
+add "Actions..."
+go down
+toggle_todo
+end
+macro define pl_new_wait
+add "Waiting For: "
+go bottom
+add "Items..."
+go down
+movenode right
+toggle_todo
+end
+macro define pl_add_cal
+getquery "Month (1-12)"
+temp_str $query
+getquery "Year (4 digits)"
+insert_cal $temp_str $query
+end
+macro define pl_add_yr
+getquery "Year (4 digits)"
+add "$query Calendar"
+go bottom
+insert_below
+movenode right
+insert_cal 12 $query
+insert_cal 11 $query
+insert_cal 10 $query
+insert_cal 9 $query
+insert_cal 8 $query
+insert_cal 7 $query
+insert_cal 6 $query
+insert_cal 5 $query
+insert_cal 4 $query
+insert_cal 3 $query
+insert_cal 2 $query
+insert_cal 1 $query
+# needed to remove the blank node at top of cal
+go top
+remove
+end
+menu "Planner" "----------------" ""
+menu "Planner" "New Actions List" "macro pl_new_act"
+menu "Planner" "New Waiting List" "macro pl_new_wait"
+menu "Planner" "New Project List" "macro pl_new_proj"
+menu "Planner" "Add Month...    " "macro pl_add_cal"
+menu "Planner" "Add Year...     " "macro pl_add_yr"
+menu "Planner" "----------------" ""
+menu "Planner" "Today's Agenda  " "today"
+##### level
+menu "Level" "------------" ""
+menu "Level" "Sort      ^S" "sort -a"
+menu "Level" "Sort (desc.)" "sort -d"
+menu "Level" "Shuffle     " "sort -r"
+
+context main
+macro define m_about
+status "Tines - an outliner, planner, organizer, and notebook
+status "(c) 2015-2016 Larry Kollar (lkollar@gmail.com)
+end
+
+macro m_about
+# vim: tabstop=4 shiftwidth=4

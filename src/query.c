@@ -2,7 +2,7 @@
  * query.c -- querying the user for input
  *             
  *
- * Copyright (C) 2001,2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001,2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -25,7 +25,7 @@
 #include "ui.h"
 #include "libcli/cli.h"
 
-static char query[100];
+static char query[PREFS_FN_LEN];
 
 static void* getquery_cmd (int argc, char **argv, void *data)
 {
@@ -35,7 +35,7 @@ static void* getquery_cmd (int argc, char **argv, void *data)
 	if(argc==2)
 		ui_getstr (argv[1], &query[0]);
 	else
-		ui_getstr ("enter string", &query[0]);
+		ui_getstr ("Enter string:", &query[0]);
 	return pos;
 }
 
@@ -46,7 +46,7 @@ void init_query ()
 {
 	cli_add_command ("getquery", getquery_cmd, "<prompt>");
 	cli_add_help ("getquery",
-				  "Input a string from the user (put into the variable query, used by amongst other function the search function, and at least some of the export/import functions");
+		"Inputs a string from the user into the variable $query.");
 	cli_add_string ("query", query,
-					"last query (also settable as a variable)");
+		"The input from the last query (also settable as a variable).");
 }

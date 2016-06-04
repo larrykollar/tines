@@ -1,6 +1,7 @@
-.TH TINES_HNB 7 "29 Dec 2015"
+.TH TINES_HNB 7 "26 Jan 2016"
 .SH NAME
 tines_hnb \- hnb/Tines outliner format
+.
 .SH DESCRIPTION
 The default file format for \fIhnb\fP is a simple XML document type.
 The Tines outliner supports it as a legacy format,
@@ -11,11 +12,17 @@ The top-level element is <tree>, which contains one or more <node> elements.
 .LP
 Each <node> element can have three optional attributes:
 .IP \[bu] 4
-\fItype\fP is a text string describing the node type.
-Currently, Tines supports only the "todo" type.
+.I type
+is a text string describing the node type.
+.I hnb
+supports only the "todo" type.
+Tines supports both "todo" and "text" types.
 .IP \[bu] 4
 .I done
-is a text string that can take the values "yes" or "no".
+is a text string that can take the values
+.B yes
+or
+.BR no .
 It is used in conjunction with
 .BR type= \[dq]todo\[dq]
 to indicate whether the to-do entry is checked or not.
@@ -23,8 +30,16 @@ to indicate whether the to-do entry is checked or not.
 .I expanded
 .RI ( lhnb
 extension, adopted by Tines):
-A text string that can take the values "yes" or "no".
+A text string that can take the values
+.B yes
+or
+.BR no .
 It is used to indicate the saved expansion state of nodes with children.
+.IP \[bu] 4
+Users can use the
+.B att_set
+command to set custom attributes and values.
+Tines preserves these when reading and writing hnb files.
 .LP
 The DTD is embedded in each hnb file.
 .RS
@@ -43,10 +58,12 @@ The DTD is embedded in each hnb file.
 .LP
 In addition, the processing instruction <?hnb pos="\fIn\fP" ?>
 stores which entry was selected when the file was last closed.
+.
 .SH SEE ALSO
 .BR tines (1),
 .BR tines_opml (1),
 .BR hnb (1)
+.
 .SH AUTHOR
 The original \fIhnb\fP was written by
 \[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).

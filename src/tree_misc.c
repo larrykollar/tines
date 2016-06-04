@@ -2,7 +2,7 @@
  * tree_misc.c -- various functions bindable/callable from hnb, should be seperated
  *                out into seperate files
  *
- * Copyright (C) 2001,2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001,2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -78,6 +78,7 @@ static void* cmd_movenode (int argc, char **argv, void *data)
 void init_movenode ()
 {
 	cli_add_command ("movenode", cmd_movenode, "<up|left|right|down>");
+	cli_add_help ("movenode", "Moves the node in the specified direction.");
 }
 
 static void* cmd_go(int argc, char **argv, void *data){
@@ -131,7 +132,7 @@ static void* cmd_go(int argc, char **argv, void *data){
 void init_go ()
 {
 	cli_add_command ("go", cmd_go, "<up|down|left|right|recurse|backrecurse|root|top|bottom>");
-	cli_add_help ("go", "change current position in the tree");
+	cli_add_help ("go", "Changes the current position in the tree.");
 }
 
 #include "evilloop.h"
@@ -237,10 +238,10 @@ void init_outdent_indent ()
 {
 	cli_add_command ("outdent", cmd_outdent, "");
 	cli_add_help ("outdent",
-				  "moves the active item and the following siblings one level to the left");
+		"Moves the current entry and any following siblings one level to the left.");
 	cli_add_command ("indent", cmd_indent, "");
 	cli_add_help ("indent",
-				  "moves the active item and the following siblings one level to the right");
+		"Moves the current entry and any following siblings one level to the right.");
 }
 
 static void* remove_cmd (int argc, char **argv, void *data)
@@ -280,7 +281,7 @@ void init_remove ()
 {
 	cli_add_command ("remove", remove_cmd, "");
 	cli_add_help ("remove",
-				  "Removes the active node, if it has children a confirmation dialog pops up.");
+		"Removes the active node. If it has children, Tines confirms you want to delete it.");
 }
 
 
@@ -293,7 +294,7 @@ static void* commandline_cmd (int argc, char **argv, void *data)
 	do {
 		strcpy (commandline, "");
 		ui_draw (pos, "", 0);
-		ui_getstr ("commandline interface, enter blank command to cancel",
+		ui_getstr ("Commandline interface, enter blank command to exit",
 				   commandline);
 
 		if (commandline[0])
@@ -309,7 +310,7 @@ void init_commandline ()
 {
 	cli_add_command ("commandline", commandline_cmd, "");
 	cli_add_help ("commandline",
-				  "Invokes the interactive commandline in curses mode.");
+		"Starts an interactive commandline from curses mode.");
 }
 
 static void* insert_below_cmd (int argc, char **argv, void *data)
@@ -326,8 +327,11 @@ static void* insert_below_cmd (int argc, char **argv, void *data)
 		pos = node_insert_down (pos);
 		if (node_left (pos))
 			if (!strcmp(fixnullstring(node_get(node_left(pos),"type")),"todo")){
-				node_set (pos, "type","todo");
-				node_set (pos, "done","no");
+				node_set (pos, "type", "todo");
+				node_set (pos, "done", "no");
+			}
+			if (!strcmp(fixnullstring(node_get(node_left(pos),"type")),"text")){
+				node_set (pos, "type", "text");
 			}
 	}
 	inputbuf[0] = 0;
@@ -342,7 +346,7 @@ void init_insertbelow ()
 {
 	cli_add_command ("insert_below", insert_below_cmd, "");
 	cli_add_help ("insert_below",
-				  "Adds a new node immediatly below the active");
+		"Adds a new entry immediatly below the current entry. The new entry has the same attributes as the current entry.");
 }
 
 /*

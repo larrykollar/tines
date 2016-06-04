@@ -1,0 +1,31 @@
+<html>
+<head>
+    <title>INIT-02</title>
+    <link rel="stylesheet" href="testcase.css" type="text/css" />
+</head>
+    <body>
+    <b>Tines</b>
+        <h1>INIT-02</h1>
+        <table border="thin" width="100%">
+        <tr><td><b>Test Case ID</b>: INIT-02</td><td><b>Test Designed by</b>: Larry Kollar</td></tr>
+            <tr><td><b>Priority</b>: high</td><td><b>Date Designed</b>: 2016-05-24</td></tr>
+            <tr><td><b>Module</b>: tines</td><td><b>Executed by</b>: </td></tr>
+            <tr><td><b>Title</b>: Default Data Loads</td><td><b>Execution date</b>: </td></tr>
+            <tr><td colspan="2"><b>Description</b>: Make sure Tines populates a new install with its default RC and data files.</td></tr>
+        </table>
+        <p><b>Pre-conditions</b>: Tines must be compiled and installed (or only installed, if from a package).</p>
+        <p><b>Dependencies</b>: INIT-01</p>
+        <table border="1" width="100%">
+        <tr><th width="5%">Step</th><th width="20%">Action</th><th>Data</th><th>Expected Result</th><th>Actual Result</th><th>Pass/Fail</th><th>Notes</th></tr>
+            <tr><td class="step">1</td><td>Open a Terminal window.</td><td>none</td><td>A window, running a shell, should now be visible.</td><td><textarea rows="4" cols="25"></textarea></td><td class="pf"><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+            <tr><td class="step">2</td><td>Remove/rename existing:<ul><li>data file <code>~/.tines</code></li><li>config file <code>~/.tinesrc</code></li></ul></td><td>none</td><td>Shell prompt with no errors.</td><td><textarea rows="4" cols="25"></textarea></td><td><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+            <tr><td class="step">3</td><td>Start Tines: type <code>tines</code> at the shell prompt.</td><td>none</td><td>Tines should open and display the default database.</td><td><textarea rows="4" cols="25"></textarea></td><td><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+            <tr><td class="step">4</td><td>Press the <b>ESC</b> key.</td><td>none</td><td>Tines should display the default menus.</td><td><textarea rows="4" cols="25"></textarea></td><td class="pf"><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+            <tr><td class="step">5</td><td>Press <b>Ctrl-Q</b>.</td><td>none</td><td>Tines asks if you want to save.</td><td><textarea rows="4" cols="25"></textarea></td><td><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+            <tr><td class="step">6</td><td>Press <b>Y</b>.</td><td>none</td><td>Tines saves and quits, returning to the shell prompt.</td><td><textarea rows="4" cols="25"></textarea></td><td class="pf"><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+            <tr><td class="step">7</td><td>Open a Terminal window.</td><td>none</td><td>A window, running a shell, should now be visible.</td><td><textarea rows="4" cols="25"></textarea></td><td class="pf"><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+            <tr><td class="step">8</td><td>Verify the files <code>~/.tines</code> and <code>~/.tinesrc</code> exist and are populated. <code>cat&nbsp~/.tines</code>, for example, is sufficient.</td><td>none</td><td>A window, running a shell, should now be visible.</td><td><textarea rows="4" cols="25"></textarea></td><td class="pf"><select><option>select…</option><option>Pass</option><option>Fail</option></select></td><td><textarea rows="4" cols="25"></textarea></td></tr>
+        </table>
+        <p><b>Post-conditions</b>: Default data and config files are in place. They may be replaced with your personal data and config files, if desired.</p>
+    </body>
+</html>

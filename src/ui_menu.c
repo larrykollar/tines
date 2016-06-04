@@ -151,7 +151,9 @@ static void* cmd_menu(int argc,char **argv,void *data){
 !init_ui_menu();
 */
 void init_ui_menu(void){
-	cli_add_command("menu",cmd_menu,"");
+	cli_add_command("menu", cmd_menu, "<menu name> <entry text> <cmd>");
+	cli_add_help("menu",
+		"Adds the specified menu entry and associated command or macro.");
 	memset(menu,0,sizeof(menu));
 }
 

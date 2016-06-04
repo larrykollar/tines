@@ -2,7 +2,7 @@
 /*
  * node.c -- definition of hnb's nodes
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -65,8 +65,7 @@ void node_free (Node *node)
 }
 
 
-/* returns pointer to character data of attribute NULL if it isn't
-   set */
+/* returns pointer to character data of attribute, or NULL if it isn't set */
 char *node_get (Node *node,char *name)
 {
 	Node_AttItem *att;

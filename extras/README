@@ -1,0 +1,18 @@
+Some useful features you can add to Tines. Feel free to modify
+these for your own use, and contribute your own extras.
+
+Files with a .rc extension are snippets you can add to your own
+~/.tinesrc or other configuration file. You may need to modify
+them for your own setup.
+
+export_xslt.rc:
+(new context) Prompts for a format and destination file. Tines
+saves the current branch as an hnb file in /tmp/tines-tmp and
+runs xsltproc on the branch. Two example XSLT files are included:
+
+	hnb2md.xsl: converts the branch to Markdown format.
+	hnb2ms.xsl: converts the brance to Groff -ms format.
+
+You need to adjust the location of the XSLT files in the context
+macros to point to their actual locations on your system before
+using this context.

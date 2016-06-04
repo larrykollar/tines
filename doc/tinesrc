@@ -214,7 +214,7 @@
 			macro define m_search
 				context search
 				save_state
-				getquery "enter keyword to search for"
+				getquery "Enter keyword to search for:"
 				search -f "$query"
 			end
 		
@@ -298,6 +298,9 @@
 		bind home bol
 		bind ^E   eol
 		bind end  eol
+
+		bind ^W   skipword
+		bind ^B   bskipword
 		
 		bind del  delete
 		
@@ -388,7 +391,7 @@
 			macro define m_export_ascii
 				save_state
 				go root
-				getquery 'what file should I save the ASCII output in?'
+				getquery 'ASCII output file:'
 				export_ascii $query
 				restore_state
 				context main
@@ -396,7 +399,7 @@
 			macro define m_export_html
 				save_state
 				go root
-				getquery 'what file should I save the HTML output in?'
+				getquery 'HTML output file:'
 				export_html $query
 				context main
 				restore_state
@@ -404,7 +407,7 @@
 			macro define m_export_htmlcss
 				save_state
 				go root
-				getquery 'what file should I save the HTML/CSS output in?'
+				getquery 'HTML/CSS output file:'
 				export_htmlcss $query
 				context main
 				restore_state
@@ -412,7 +415,7 @@
 			macro define m_export_opml
 				save_state
 				go root
-				getquery 'what file should I save the OPML output in?'
+				getquery 'OPML output file:'
 				export_opml $query
 				context main
 				restore_state
@@ -420,7 +423,7 @@
 			macro define m_export_ps
 				save_state
 				go root
-				getquery 'what file should I save the PostScript output in?'
+				getquery 'PostScript output file:'
 				export_ps $query
 				context main
 				restore_state
@@ -443,27 +446,27 @@
 		bind esc ..
 			bind .. "context main"
 		bind A ..
-			bind .. 'getquery "what file should I import ASCII from?"'
+			bind .. 'getquery "ASCII input file:"
 			bind .. 'import_ascii "$query"'
 			bind .. 'context main'
 		bind a ..
-			bind .. 'getquery "what file should I import ASCII from?"'
+			bind .. 'getquery "ASCII input file:"
 			bind .. 'import_ascii "$query"'
 			bind .. 'context main'
 		bind O ..
-			bind .. 'getquery "what file should I import OPML from?"'
+			bind .. 'getquery "OPML input file:"
 			bind .. 'import_opml "$query"'
 			bind .. 'context main'
 		bind o ..
-			bind .. 'getquery "what file should I import OPML from?"'
+			bind .. 'getquery "OPML input file:"
 			bind .. 'import_opml "$query"'
 			bind .. 'context main'
 		bind H ..
-			bind .. 'getquery "what file should I import HNB data from?"'
+			bind .. 'getquery "HNB input file:"
 			bind .. 'import_hnb "$query"'
 			bind .. 'context main'
 		bind h ..
-			bind .. 'getquery "what file should I import HNB data from?"'
+			bind .. 'getquery "HNB input file:"
 			bind .. 'import_hnb "$query"'
 			bind .. 'context main'
 		
@@ -518,10 +521,10 @@
 		
 	context user_browser
 		helptext "Browser action: | |F1| w3m replace hnb  |F2| w3m in rxvt  |F3| Opera, new tab  |F4| Mozilla new window"
-		bind f1 'browser_command "w3m *"'
+		bind f1 'web_command "w3m *"'
 		bind .. 'context main'
 		
-		bind f2 'web_commend "xterm -T \"w3m spawned from hnb\" -fn fixed -rv +sb -e w3m * > /dev/null 2>&1 &"'
+		bind f2 'web_command "xterm -T \"w3m spawned from hnb\" -fn fixed -rv +sb -e w3m * > /dev/null 2>&1 &"'
 		bind .. 'context main'
 		
 		bind f3 'web_command "opera -remote 'openURL(*,new-window)' > /dev/null 2>&1 &"'
@@ -532,7 +535,7 @@
 		
 		bind esc 'context main'
 		bind any unbound
-		
+	# insert all but the 1st line of extras/export_xslt.rc here if you want it
 			
 	##### key related options
 		##### escdelay
@@ -543,20 +546,20 @@
 			#
 			escdelay 100
 ##### menu definition
-	##### file
-		menu "File" "-------------" ""
+	##### File menu
+		menu "File" "------------" ""
 		menu "File" "Save      F2" "save"
 		menu "File" "Save As...  " "macro saveas"
 			macro define saveas
-				getquery db_file 'file to save'
+				getquery 'File to save:'
 				save_state
 				go root
-				export_$format $db_file
+				export_$format $query
 				restore_state
 			end
 		menu "File" "Save Branch " "macro savebranch"
 			macro define savebranch
-				getquery 'File to save'
+				getquery 'File to save:'
 				save_state
 				export_$format $db_file
 				restore_state
@@ -565,6 +568,7 @@
 		menu "File" "------------" ""
 		menu "File" "Export    ^E" "context export"
 		menu "File" "Import    ^L" "context import"
+		# insert the 1st line of extras/export_xslt.rc here if you want it
 		menu "File" "------------" ""
 		menu "File" "Spell Chk F6" "macro m_spellcheck"
 		menu "File" "Statistics  "	"macro stats"
@@ -583,17 +587,17 @@
 		menu "Edit" "---------" ""
 		menu "Edit" "Search ^F" "macro m_search"
 	##### entry
-		menu "Entry" "--------------" ""
-		menu "Entry" "Edit    return" "edit"
-		menu "Entry" "Delete     del" "remove"
-		menu "Entry" "--------------" ""
+		menu "Entry" "----------------" ""
+		menu "Entry" "Edit      return" "edit"
+		menu "Entry" "Delete       del" "remove"
+		menu "Entry" "----------------" ""
 		menu "Entry" "Do Action     ^A" "action"
 		menu "Entry" "Indent         >" "indent"
 		menu "Entry" "Outdent        <" "outdent"
 		menu "Entry" "Toggle Todo   ^T" "toggle_todo"
 		menu "Entry" "Toggle Done   ^D" "toggle_done"
 		menu "Entry" "Toggle Text   F3" "toggle_text"
-		menu "Entry" "--------------" ""
+		menu "Entry" "----------------" ""
 		menu "Entry" "Expand         +" "expand"
 		menu "Entry" "Collapse       -" "collapse"
 		menu "Entry" "Expand Subtree  " "expand --subtree"
@@ -601,7 +605,7 @@
 		menu "Entry" "Expand All      "	"expand --all"
 		menu "Entry" "Collapse All    " "collapse --all"
 	##### Planner
-		Planner macros
+		# Planner macros
 			macro define pl_new_act
 				add "Next Actions: "
 				go bottom
@@ -638,20 +642,24 @@
 			macro define pl_add_yr
 				getquery "Year (4 digits)"
 				add "$query Calendar"
+				go bottom
 				insert_below
 				movenode right
-				insert_cal 1 $query
-				insert_cal 2 $query
-				insert_cal 3 $query
-				insert_cal 4 $query
-				insert_cal 5 $query
-				insert_cal 6 $query
-				insert_cal 7 $query
-				insert_cal 8 $query
-				insert_cal 9 $query
-				insert_cal 10 $query
-				insert_cal 11 $query
 				insert_cal 12 $query
+				insert_cal 11 $query
+				insert_cal 10 $query
+				insert_cal 9 $query
+				insert_cal 8 $query
+				insert_cal 7 $query
+				insert_cal 6 $query
+				insert_cal 5 $query
+				insert_cal 4 $query
+				insert_cal 3 $query
+				insert_cal 2 $query
+				insert_cal 1 $query
+				# needed to remove the blank node at top of cal
+				go top
+				remove
 			end
 		menu "Planner" "----------------" ""
 		menu "Planner" "New Actions List" "macro pl_new_act"

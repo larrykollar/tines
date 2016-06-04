@@ -23,8 +23,8 @@ extern Node *import_node_text (import_state_t * is, int level, char *data);
 extern Node *import_node (import_state_t * is, int level, Node *node);
 
 
-
-
+/* glob file names to catch ~/foo */
+char* fn_expand( char *s, int globdironly );
 
 
 int xml_check (char *filename);

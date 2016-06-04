@@ -1,7 +1,7 @@
 /*
  * actions.c -- binding of external applications according to nodedata
  *
- * Copyright (C) 2001,2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001,2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -165,18 +165,23 @@ static void* cmd_action (int argc, char **argv, void *data)
 void init_exec_cmd ()
 {
 	cli_add_command ("system", cmd_system, "<commandline>");
-
+	cli_add_help ("system", "Executes the specifed shell command.");
 	cli_add_command ("action", cmd_action, "");
 	cli_add_help ("action",
-				  "executes an external shell according to node content, it first checks the direct children \
-then the current node. If it contains an http:// url, the command described in browser_command is executed, if it \
-contains a '@' the characters surrounding it is interpreted as an mail address and the mail_command is executed \
-and if the data starts with 'exec' the rest of the data is executed verbatim.");
+		"Executes an external shell according to node content. \
+It first checks the direct children, then the current node. \
+If it contains an http:// URL, the command described in the \
+web_command string is executed. If it contains a '@', the \
+surrounding characters are interpreted as an email address \
+and the mail_command is executed. If the data starts with \
+'exec', the rest of the data is executed verbatim.");
 
 	cli_add_string ("web_command", web_command,
-					"Command executed when opening url's * is subsituted with the url");
+		"Command executed when the action command detects an URL. \
+The URL replaces a * in the string.");
 	cli_add_string ("mail_command", mail_command,
-					"Command executed when sending mail to a mailaddress * is substituted with the address");
-/*	cli_add_string("url",url,"url used as parameter for webcommand");
-	cli_add_string("address",address,"email address used as parameter for mail_command);
-*/}
+		"Command executed when the action command detects an email \
+address. The address replaces a * in the command string.");
+/*	cli_add_string("url",url,"The URL used as the parameter for web_command.");
+	cli_add_string("address",address,"The email address used as the parameter for mail_command); */
+}

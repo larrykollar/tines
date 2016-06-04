@@ -73,7 +73,7 @@ static int  opml_left         = 20; /* windowLeft */
 static int  opml_bot          = 660; /* windowBottom */
 static int  opml_right        = 660; /* windowRight */
 
-static void opml_export_nodes (FILE * file, Node *node, int level)
+static void opml_export_nodes (FILE * file, Node *node, int level, int saveall)
 {
 	int done = -1; /* -1 = no done attribute; 0 = "no"; 1 = "yes" */
 	int todo = 0;  /*  1 if type="todo" */
@@ -115,7 +115,7 @@ static void opml_export_nodes (FILE * file, Node *node, int level)
 		if (node_right (node)) {
 			fprintf (file, ">");
 
-			opml_export_nodes (file, node_right (node), level + 1);
+			opml_export_nodes (file, node_right (node), level+1, 0);
 			fprintf (file, "\n");
 			indent (level, "\t");
 			fprintf (file, "</outline>");
@@ -123,17 +123,28 @@ static void opml_export_nodes (FILE * file, Node *node, int level)
 			fprintf (file, " />");
 		}
 
-		node = node_down (node);
+		/* needs to only export one branch at level 0 */
+		if( level || saveall )
+			node = node_down (node);
+		else
+			break;
 	}
 }
 
 static void* export_opml (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc>=2?argv[1]:"";
+	char *filename;
+	int saveall;
 	FILE *file;
 
-	if (!strcmp (filename, "-"))
+	/* argv[0]: name used to invoke this command
+	 * argv[1]: file name
+	 * argv[2]: node position */
+
+	filename = fn_expand( argc>=2?argv[1]:"", 1	);
+
+	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
 	else
 		file = fopen (filename, "w");
@@ -165,7 +176,10 @@ static void* export_opml (int argc, char **argv, void *data)
 			opml_title, opml_created, opml_mod, opml_owner, opml_email,
 			opml_exp, opml_scroll, opml_top, opml_left, opml_bot, opml_right);
 
-	opml_export_nodes (file, node, 0);
+	/* saveall = 0 if we're only saving the branch */
+	saveall = strcmp(argv[0], "export_opml_branch");
+
+	opml_export_nodes (file, node, 0, saveall);
 
 	fprintf (file, "\n</body>\n</opml>\n");
 	if (file != stdout)
@@ -179,7 +193,7 @@ static void* export_opml (int argc, char **argv, void *data)
 static void* import_opml (int argc, char **argv, void *data)
 {
 	Node *node = (Node *) data;
-	char *filename = argc==2?argv[1]:"";
+	char *filename;
 	char *rdata;
 	int type;
 	int in_body = 0;
@@ -191,6 +205,8 @@ static void* import_opml (int argc, char **argv, void *data)
 
 	Node *tempnode=NULL;
 	FILE *file;
+
+	filename = fn_expand( argc==2?argv[1]:"", 0	);
 
 	file = fopen (filename, "r");
 	if (!file) {
@@ -276,5 +292,12 @@ static void* import_opml (int argc, char **argv, void *data)
 void init_file_opml ()
 {
 	cli_add_command ("export_opml", export_opml, "<filename>");
+	cli_add_command ("export_opml_branch", export_opml, "<filename>");
+	cli_add_help ("export_opml",
+		"Exports the current entry, following siblings, and child entries in OPML format.");
+	cli_add_help ("export_opml_branch",
+		"Exports the current entry and child entries in OPML format.");
 	cli_add_command ("import_opml", import_opml, "<filename>");
+	cli_add_help ("import_opml",
+		"Imports the specified OPML file below the current entry.");
 }

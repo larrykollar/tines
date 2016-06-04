@@ -1,7 +1,7 @@
 /*
  * ui_cli.c -- the glue that binds various modules into the interpreter
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -201,14 +201,16 @@ void init_ui_cli (void)
 		cli_precmd = pre_command;
 		cli_add_command ("add", add, "<string>");
 		cli_add_command ("ls", ls, "");
-		cli_add_help("ls", "lists the nodes at the current level");
+		cli_add_help("ls", "Lists the nodes at the current level.");
 
-		cli_add_help("add","inserts an new entry at the current position");
+		cli_add_help("add", "Inserts a new entry at the current position.");
 		cli_add_command ("addc", addc, "<parent> <string>");
-		cli_add_help("addc","inserts a new entry under the node named parent, with the text in string");
+		cli_add_help("addc",
+			"Inserts a new entry under the named node, with the text in string.");
 		cli_add_command ("cd", cd, "<path>");
+		cli_add_help ("cd", "Moves to the node at the specified path.");
 		cli_add_command ("pwd", pwd, "");
-		cli_add_help ("pwd", "echoes the current path");
+		cli_add_help ("pwd", "Echoes the current path.");
 	}
 }
 

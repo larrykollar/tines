@@ -1,7 +1,7 @@
 /*
  * state.c -- a simplistic undo/redo kind of system
  *
- * Copyright (C) 2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -84,8 +84,8 @@ void init_keepstate ()
 {
 	cli_add_command ("save_state", save_state_cmd, "");
 	cli_add_help ("save_state",
-				  "Saves a copy of the current tree and selected node in memory");
+		"Saves a copy of the current tree and selected node in memory.");
 	cli_add_command ("restore_state", restore_state_cmd, "");
 	cli_add_help ("restore_state",
-				  "Restores the copy of the tree saved with save_state");
+		"Restores the copy of the tree saved with save_state.");
 }

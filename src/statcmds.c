@@ -1,7 +1,7 @@
 /*
  * statcmds.c -- commands that output various statistics
  *
- * Copyright (C) 2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -74,7 +74,7 @@ void init_mem ()
 {
 #ifndef WIN32
 	cli_add_command ("mem", mem_cmd, "");
-	cli_add_help ("mem", "Reports memory usage of application");
+	cli_add_help ("mem", "Reports memory usage.");
 #endif
 }
 
@@ -124,5 +124,5 @@ void init_stats ()
 {
 	cli_add_command ("stats", stats_cmd, "");
 	cli_add_help ("stats",
-				  "Reports number of items, leaf items and total number of words in tree");
+		"Displays the number of items, leaf items, and total number of words in the tree.");
 }

@@ -121,9 +121,9 @@ void init_expanded ()
 	cli_add_help ("expand",
 				  "Expands the current entry, showing its subentries. If the \
 parameter -a|--all is given, expands all entries in the tree. \
-If the parameter -h|--here is given, expands all descendents of the current \
-entry. If the parameter --subtree is given, expands all descendants of the \
-current entry.");
+If the parameter -h|--here is given, expands all direct children of the \
+current entry. If the parameter --subtree is given, expands all descendants \
+of the current entry.");
 	cli_add_command ("collapse", cmd_collapse, "[--all|-a|--subtree]");
 	cli_add_help ("collapse",
 				  "Collapses the current entry's subentries. If the \
