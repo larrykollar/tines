@@ -1,5 +1,5 @@
 /*
- * tines.c -- the main loop of tines, an outliner/planner/organizer/notebook
+ * tines.c -- the main loop of Tines, an outliner/planner/organizer/notebook
  *
  * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
  * hnb forked by Larry Kollar, Dec 2015, renamed Tines
@@ -179,8 +179,8 @@ int main (int argc, char **argv)
 			}
 			break;
 		case 'r':
-			cmdline.rcfile = malloc(strlen(optarg)+1);
-			strcpy(cmdline.rcfile, optarg);
+			cmdline.rcfile = malloc(MAXPATHLEN);
+			strcpy(cmdline.rcfile, fn_expand(optarg, 0));
 			break;
 		case 'e': /* one-liner ala sed */
 			if(!cmdline.dbfile) {
