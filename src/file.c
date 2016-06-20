@@ -167,7 +167,9 @@ char* fn_expand( char* s, int globdironly )
 	g.gl_offs = 0;
 	if( globdironly ) {
 		/* output file, only the directory is assumed to exist */
-		dname = dirname(s);
+		char s1[MAXPATHLEN]; /* POSIX dirname()/basename() can muck with s */
+		strcpy(s1, s);
+		dname = dirname(s1);
 		fname = basename(s);
 		n = glob( dname, flags, NULL, &g );
 
@@ -176,7 +178,9 @@ char* fn_expand( char* s, int globdironly )
 				if( g.gl_pathc > 1 ) {
 					cli_outfunf( "%s matches more than one directory, using %s\n", dname, g.gl_pathv[0] );
 				}
-				strcpy( expanded, g.gl_pathv[0] );
+				snprintf(expanded, MAXPATHLEN, "%s/%s", g.gl_pathv[0], fname);
+				return expanded;
+				/* strcpy( expanded, g.gl_pathv[0] );
 				strncat( expanded, "/", 1 );
 				if( strlen(expanded) + strlen(fname) + 1 > MAXPATHLEN ) {
 						cli_outfunf( "Path name too long! %s%s\n", expanded, fname );
@@ -184,7 +188,7 @@ char* fn_expand( char* s, int globdironly )
 				} else {
 					strncat( expanded, fname, strlen(fname)+1 );
 					return expanded;
-				}
+				} */
 				break;
 
 			case GLOB_NOMATCH:
@@ -233,7 +237,7 @@ static void* cmd_save (int argc, char **argv, void *data)
 	if (prefs.db_file[0] != (char) 255) { /* magic value of tutorial */
 		{
 			char buf[4096];
-			char swapfile[4096];
+			char swapfile[MAXPATHLEN];
 
 			sprintf(swapfile,"%s_tines_rescue",prefs.db_file);
 			/* remove(swapfile); when not removing it works as a lockfile */
@@ -241,10 +245,10 @@ static void* cmd_save (int argc, char **argv, void *data)
 
 			if (!strcmp(prefs.format,"hnb") || !strcmp(prefs.format,"opml") ||
 				!strcmp(prefs.format,"xml")) {
-				sprintf (buf, "export_%s %s %i", prefs.format, prefs.db_file,
+				sprintf (buf, "export_%s \'%s\' %i", prefs.format, prefs.db_file,
 						 node_no (pos) - 1);
 			} else {
-				sprintf (buf, "export_%s %s", prefs.format, prefs.db_file);
+				sprintf (buf, "export_%s \'%s\'", prefs.format, prefs.db_file);
 			}
 			docmd (node_root (pos), buf);
 		}
