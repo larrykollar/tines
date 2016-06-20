@@ -1,0 +1,70 @@
+.TH TINES 1 "19 Jun 2016"
+.SH NAME
+topml \- Tines OPML-centric mode
+.SH SYNOPSIS
+.B topml
+.RI [ options ]
+.RI [ file ]
+.RI [ command
+.RI [ command ]
+\&\.\.\.]
+.
+.SH DESCRIPTION
+.I topml
+starts Tines with a special rc file
+modified for working with OPML files.
+It modifies the default behavior of Tines
+in the following ways:
+.IP \[bu] 4
+A file specified on the command line
+is assumed to be OPML format
+unless overridden by a format specification option
+such as
+.BR --hnb .
+.IP \[bu]
+If you do not specify a file,
+Tines opens or creates Untitled.opml
+in the current directory.
+.LP
+See
+.BR tines (1)
+for basic Tines information.
+.
+.SH FILES
+.TP 4
+Untitled.opml
+The default file for your notes.
+To use a different file, specify its name on the command line.
+.TP
+/usr/local/share/opml.rc
+The OPML configuration file.
+You can modify this file to customize Tines or
+.IR topml \&.
+.
+.SH SEE ALSO
+.BR tines (1),
+.BR tines_opml (7)
+.LP
+For more information on the usage of the program,
+load the tutorial or
+press
+.B F1
+while running Tines.
+.LP
+Tines is a fork of the
+.I hnb
+outliner,
+written by \[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).
+For information about Tines, see
+https://github.com/larrykollar/tines/wiki
+.LP
+To get the latest version of Tines, see
+https://github.com/larrykollar/tines/
+.
+.SH AUTHOR
+The original
+.I hnb
+was written by
+\[/O]yvind Kol\[:a]s (pippin@users.sourceforge.net).
+.LP
+Tines is now maintained by Larry Kollar.

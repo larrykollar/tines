@@ -82,7 +82,7 @@
 			#spell_command "ispell -x"
 			#spell_command "ispell -x -damerican"
 			#spell_command "ispell -x -dbritish"
-			#spell_command "ispell -x -dbokmål"
+			#spell_command "ispell -x -dbokmÃ¥l"
 			#spell_command "ispell -x -dnynorsk"
 		spell_command "ispell -x"
 		
@@ -213,6 +213,7 @@
 		bind >   indent
 		bind <   outdent
 		bind f2  save
+		bind ^N  "macro edit_note"
 		
 		bind ^X save_state
 		bind .. cut
@@ -258,6 +259,8 @@
 		bind home bol
 		bind ^E   eol
 		bind end  eol
+		bind ^B   bskipword
+		bind ^W   skipword
 		
 		bind del  delete
 		
@@ -281,6 +284,8 @@
 		bind home bol
 		bind ^E   eol
 		bind end  eol
+		bind ^B   bskipword
+		bind ^W   skipword
 		
 	context confirm
 		helptext " y | | j | |return| confirm || |any key| cancel"
@@ -349,7 +354,7 @@
 				save_state
 				go root
 				getquery 'Save to ASCII file:'
-				export_ascii $query
+				export_ascii '$query'
 				restore_state
 				context main
 			end
@@ -357,7 +362,7 @@
 				save_state
 				go root
 				getquery 'Save to HTML file:'
-				export_html $query
+				export_html '$query'
 				context main
 				restore_state
 			end
@@ -365,7 +370,7 @@
 				save_state
 				go root
 				getquery 'Save to HTML/CSS file:'
-				export_htmlcss $query
+				export_htmlcss '$query'
 				context main
 				restore_state
 			end
@@ -373,7 +378,7 @@
 				save_state
 				go root
 				getquery 'Save to OPML file:'
-				export_opml $query
+				export_opml '$query'
 				context main
 				restore_state
 			end
@@ -381,7 +386,7 @@
 				save_state
 				go root
 				getquery 'Save to PostScript file:'
-				export_ps $query
+				export_ps '$query'
 				context main
 				restore_state
 			end
@@ -401,27 +406,27 @@
 		helptext "Export branch: |  | A |scii || | H |tml  html| C |ss  | P |ostscript  | O |PML  |ESC| cancel "
 			macro define m_export_ascii_branch
 				getquery 'Export branch to ASCII file:'
-				export_ascii $query
+				export_ascii '$query'
 				context main
 			end
 			macro define m_export_html_branch
 				getquery 'Export branch to HTML file:'
-				export_html $query
+				export_html '$query'
 				context main
 			end
 			macro define m_export_htmlcss_branch
 				getquery 'Export branch to HTML/CSS file:'
-				export_htmlcss $query
+				export_htmlcss '$query'
 				context main
 			end
 			macro define m_export_opml_branch
 				getquery 'Export branch to OPML file:'
-				export_opml $query
+				export_opml '$query'
 				context main
 			end
 			macro define m_export_ps_branch
 				getquery 'Export branch to PostScript file:'
-				export_ps $query
+				export_ps '$query'
 				context main
 			end
 		bind esc "context main"
@@ -499,14 +504,14 @@
 		bind any "unbound"
 		
 	context user_ispell
-		helptext "Language for ispell: | |F1| Br.english  |F2| Am.english  |F3| Norwegian bokmål  |F4| Norwegian nynorsk"
+		helptext "Language for ispell: | |F1| Br.english  |F2| Am.english  |F3| Norwegian bokmÃ¥l  |F4| Norwegian nynorsk"
 		bind f1  'spell_command "ispell -x -damerican"'
 		bind ..  'context main'
 		
 		bind f2  'spell_command "ispell -x -dbritish"'
 		bind ..  'context main'
 		
-		bind f3  'spell_command "ispell -x -dbokmål"'
+		bind f3  'spell_command "ispell -x -dbokmÃ¥l"'
 		bind ..  'context main'
 		
 		bind f4  'spell_command "ispell -x -dnynorsk"'
@@ -549,13 +554,13 @@
 				getquery 'Save file as:'
 				save_state
 				go root
-				export_$format $query
+				export_$format '$query'
 				restore_state
 			end
 			macro define savebranch
 				getquery 'Save branch as:'
 				save_state
-				export_$format $query
+				export_$format '$query'
 				restore_state
 			end
 		menu "File" "Revert      " "revert"		
@@ -593,7 +598,7 @@
 		menu "Entry" "Toggle Done   ^D" "toggle_done"
 		menu "Entry" "Toggle Text   F3" "toggle_text"
 		menu "Entry" "Show Attributes " "att_list"
-		menu "Entry" "Edit _note...   " "macro edit_note"
+		menu "Entry" "Edit _note... ^N" "macro edit_note"
 			macro define edit_note
 				getquery "Set _note to:"
 				att_set "_note" "$query"

@@ -22,6 +22,7 @@ install: src/tines
 	install $(INSTFLAGS) $(MANDIR)/man1
 	install $(INSTFLAGS) $(MANDIR)/man7
 	install src/tines $(BINDIR)/tines
+	install extras/topml $(BINDIR)/topml
 	install -m444 doc/tines.1 $(MANDIR)/man1/tines.1
 	install -m444 doc/tines_hnb.7 $(MANDIR)/man7/tines_hnb.7
 	install -m444 doc/tines_opml.7 $(MANDIR)/man7/tines_opml.7
@@ -30,6 +31,7 @@ install: src/tines
 	install -m444 doc/tinesdoc.hnb $(SHAREDIR)/tinesdoc.hnb
 	install -m444 extras/hnb2md.xsl $(SHAREDIR)/hnb2md.xsl
 	install -m444 extras/hnb2ms.xsl $(SHAREDIR)/hnb2ms.xsl
+	install -m644 extras/opml.rc $(SHAREDIR)/opml.rc
 #	install -m444 doc/default.css $(SHAREDIR)/default.css
 
 clean:
