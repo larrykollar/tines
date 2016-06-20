@@ -2,7 +2,6 @@
 #
 # topml - start Tines as an OPML editor - see topml(1) for details
 BINDIR=/usr/local/bin
-SHAREDIR=~/Projects/tines/extras
-# SHAREDIR=/usr/local/share
+SHAREDIR=/usr/local/share/tines
 
 $BINDIR/tines --rc=$SHAREDIR/opml.rc "$@"
