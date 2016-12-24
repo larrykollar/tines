@@ -47,9 +47,9 @@
 		# * is substituted for the URL
 		#
 		# the X ones have their error and standard output redirected to dev/null
-		# and are put into the background to keep hnb running afterwards
+		# and are put into the background to keep Tines running afterwards
 		##### samples
-			#web_command "opera -remote 'openURL(*)'			> /dev/null 2>&1 &"
+			#web_command "opera -remote 'openURL(*)'		> /dev/null 2>&1 &"
 			#web_command "netscape -remote 'openURL(*)'		> /dev/null 2>&1 &"
 			#web_command "netscape -remote 'openURL(*,new-window)'	> /dev/null 2>&1 &"
 			#web_command "mozilla -remote 'openURL(*)'		> /dev/null 2>&1 &"
@@ -57,10 +57,11 @@
 			#web_command "konqueror *				> /dev/null 2>&1 &"
 			#web_command "galeon -n					> /dev/null 2>&1 &"
 			#web_command "w3m *"
-			web_command "lynx *"
+			#web_command "lynx *"
 			#web_commend "rxvt -fn fixed -rv +sb -e w3m *		> /dev/null 2>&1 &"
 			#web_command "opera -remote 'openURL(*,new-window)'	> /dev/null 2>&1 &"
 			#web_command "links *"
+		web_command "open *"
 		
 	##### mail@handler
 		# what command is executed when a user wants a action performed on a
@@ -72,7 +73,8 @@
 			#mail_command "xterm -rv pine *				> /dev/null 2>&1 &"
 			#mail_command "xterm -rv +sb -e mutt *			> /dev/null 2>&1 &"
 			#mail_command "pine *"
-		mail_command "mutt *"
+			#mail_command "mutt *"
+		mail_command "open mailto:*"
 		
 	##### spell checking
 		# the spell-checker used
@@ -116,7 +118,7 @@
 	# colors are: blue, cyan, green, red, magenta, yellow, black and white
 	# attributes are: normal, reverse, bold, underline
 	
-	macro define 'style_standard'	
+	macro define 'style_standard'
 		style menuitem       default/default reverse
 		style menutext       cyan/default    normal
 		style parentnode     green/default   bold
@@ -126,7 +128,7 @@
 		style parentselected green/default   reverse,bold
 		style background     default/default normal
 		end
-	macro define 'style_white_bg'	
+	macro define 'style_white_bg'
 		style menuitem       red/white normal
 		style menutext       black/white    normal
 		style parentnode     default/default bold
@@ -137,7 +139,8 @@
 		style background     default/default normal
 		end
 	
-	macro style_standard
+	# macro style_standard
+	macro style_white_bg
 ##### key-bindings
 	#
 	# syntax: 
@@ -149,10 +152,10 @@
 	##################################################
 	
 	context main
-		helptext "ESC| menu || |F2| save || |F3| text || |F5| commandline || |return| edit |
-		bind f1 'status "Take a look at ~/.tinesrc to check out the configuration"'
-		bind .. 'status "there you will also find details about the available keybindings."'
-		bind .. 'status "please feel free to contribute more useful keybindings and helptexts..."'
+		helptext "ESC| Menu || |^S| Save || |F3| Text || |^N| Edit note || |F5| Commandline || |return| Edit |
+		bind f1 'status "See /usr/local/share/tines/opml.rc to check out the configuration."'
+		bind .. 'status "The RC file also provides details about the available keybindings."'
+		bind .. 'status "Please feel free to contribute more useful keybindings and help text."'
 		
 		bind esc menu
 		bind ^Q 'context quitsave'
@@ -213,6 +216,7 @@
 		bind >   indent
 		bind <   outdent
 		bind f2  save
+		bind ^S  save
 		bind ^N  "macro edit_note"
 		
 		bind ^X save_state
@@ -222,9 +226,6 @@
 		
 		bind ^V paste
 		bind .. down
-		
-		bind ^S save_state
-		bind .. sort
 		
 		bind backspace	backspace
 		bind backspace2	backspace
@@ -240,7 +241,7 @@
 		bind ^Z stop
 		
 	context nodeedit
-		helptext "editing node |  |ESC| revert || |return| confirm"
+		helptext "Editing node:|  |ESC| revert || |return| confirm"
 		bind up    up
 		bind down  down
 		bind left  left
@@ -297,7 +298,7 @@
 		bind any    cancel
 		
 	context quitsave
-		helptext "Save on exit? |    | Y |es | J |a || | N |o || |ESC| cancel"
+		helptext "Save on exit?|    | Y |es | J |a || | N |o || |ESC| cancel"
 		bind Y  save
 		bind .. quit
 		
@@ -317,7 +318,7 @@
 		bind any unbound
 		
 	context spellcheck
-		helptext "Spellchecking |   |Space| next node |ESC| cancel |F6,Return| confirm changes"
+		helptext "Spellchecking|   |Space| next node |ESC| cancel |F6,Return| confirm changes"
 		
 		bind space "go recurse"
 		bind ..    spell
@@ -400,13 +401,13 @@
 		bind O  "macro m_export_opml"
 		bind o  "macro m_export_opml"
 		bind P  "macro m_export_ps"
-		bind p  "macro m_export_ps"		
+		bind p  "macro m_export_ps"
 		bind any unbound
 	context export_branch
 		helptext "Export branch: |  | A |scii || | H |tml  html| C |ss  | P |ostscript  | O |PML  |ESC| cancel "
 			macro define m_export_ascii_branch
 				getquery 'Export branch to ASCII file:'
-				export_ascii '$query'
+				export_ascii_branch '$query'
 				context main
 			end
 			macro define m_export_html_branch
@@ -421,7 +422,7 @@
 			end
 			macro define m_export_opml_branch
 				getquery 'Export branch to OPML file:'
-				export_opml '$query'
+				export_opml_branch '$query'
 				context main
 			end
 			macro define m_export_ps_branch
@@ -444,30 +445,23 @@
 	context import
 		helptext "Import |  | A |scii | O |PML  | H |hnb   |ESC| cancel "
 		
-		bind esc ..
-			bind .. "context main"
-		bind A ..
-			bind .. 'getquery "Import ASCII from:"'
+		bind esc "context main"
+		bind A 'getquery "Import ASCII from:"'
 			bind .. 'import_ascii "$query"'
 			bind .. 'context main'
-		bind a ..
-			bind .. 'getquery "Import ASCII from:"'
+		bind a 'getquery "Import ASCII from:"'
 			bind .. 'import_ascii "$query"'
 			bind .. 'context main'
-		bind O ..
-			bind .. 'getquery "Import OPML from:"'
+		bind O 'getquery "Import OPML from:"'
 			bind .. 'import_opml "$query"'
 			bind .. 'context main'
-		bind o ..
-			bind .. 'getquery "Import OPML from:"'
+		bind o 'getquery "Import OPML from:"'
 			bind .. 'import_opml "$query"'
 			bind .. 'context main'
-		bind H ..
-			bind .. 'getquery "Import HNB data from:"'
+		bind H 'getquery "Import HNB data from:"'
 			bind .. 'import_hnb "$query"'
 			bind .. 'context main'
-		bind h ..
-			bind .. 'getquery "Import HNB data from?:'
+		bind h 'getquery "Import HNB data from?:'
 			bind .. 'import_hnb "$query"'
 			bind .. 'context main'
 		
@@ -488,20 +482,6 @@
 		bind ..     restore_state
 		
 		bind any    unbound
-
-	context user
-		helptext "Usermenu | |ESC| cancel |F1| ispell language |F2| browser command |F3| expand all  |F4|  collapse all"
-		bind esc "context main"
-		
-		bind f1  "context user_ispell"
-		bind f2  "context user_browser"
-		bind f3  "expand --all"
-		bind ..  "context main"
-		
-		bind f4  "collapse --all"
-		bind ..  "context main"
-		
-		bind any "unbound"
 		
 	context user_ispell
 		helptext "Language for ispell: | |F1| Br.english  |F2| Am.english  |F3| Norwegian bokmål  |F4| Norwegian nynorsk"
@@ -537,6 +517,41 @@
 		bind esc 'context main'
 		bind any unbound
 		
+	# export through XSLT
+	context export_xslt
+		helptext "Export -> XSLT |  | G |roff -ms || | M |arkdown || |ESC| cancel"
+			
+			macro define x_xslt_groffms
+				temp_str "/usr/local/share/tines/hnb2ms.xsl"
+				# temp_str "/usr/local/share/xslt/hnb2ms.xsl"
+				# temp_str "/Library/XSLT/hnb2ms.xsl"
+				# temp_str "~/Library/XSL/hnb2ms.xsl"
+				getquery "Save Groff -ms to file:"
+				export_hnb /tmp/tines.$pid
+				system "xsltproc \"$temp_str\" /tmp/tines.$pid > \"$query\"; rm /tmp/tines.$pid"
+				status "Exported and converted branch to $query."
+				context main
+			end
+			
+			macro define x_xslt_markdown
+				temp_str "/usr/local/share/tines/hnb2md.xsl"
+				# temp_str "/usr/local/share/xslt/hnb2md.xsl"
+				# temp_str "/Library/XSLT/hnb2md.xsl"
+				# temp_str "~/Library/XSL/hnb2md.xsl"
+				getquery "Save Markdown to file:"
+				export_hnb /tmp/tines.$pid
+				system "xsltproc \"$temp_str\" /tmp/tines.$pid > \"$query\"; rm /tmp/tines.$pid"
+				status "Exported and converted branch to $query."
+				context main
+			end
+			
+			bind esc "context main"
+			bind G "macro x_xslt_groffms"
+			bind g "macro x_xslt_groffms"
+			bind M "macro x_xslt_markdown"
+			bind m "macro x_xslt_markdown"
+			bind any unbound
+			
 	##### key related options
 		##### escdelay
 			# how long the program should wait before accepting that ESC(27d) is the
@@ -547,9 +562,9 @@
 			escdelay 100
 ##### menu definition
 	##### file
-		menu "File" "------------" ""
-		menu "File" "Save      F2" "save"
-		menu "File" "Save As...  " "macro saveas"
+		menu "File" "-------------" ""
+		menu "File" "Save       ^S" "save"
+		menu "File" "Save As...   " "macro saveas"
 			macro define saveas
 				getquery 'Save file as:'
 				save_state
@@ -560,24 +575,26 @@
 			macro define savebranch
 				getquery 'Save branch as:'
 				save_state
-				export_$format '$query'
+				export_$format_branch '$query'
 				restore_state
 			end
-		menu "File" "Revert      " "revert"		
-		menu "File" "------------" ""
-		menu "File" "Export    ^E" "context export"
-		menu "File" "Import    ^L" "context import"
-		menu "File" "------------" ""
-		menu "File" "Spell Chk F6" "macro m_spellcheck"
-		menu "File" "Statistics  "	"macro stats"
+		menu "File" "Revert       " "revert"
+		menu "File" "-------------" ""
+		menu "File" "Import     ^L" "context import"
+		menu "File" "Export     ^E" "context export"
+		menu "File" "Export Branch" "context export_branch"
+		menu "File" "Export->XSLT " "context export_xslt"
+		menu "File" "-------------" ""
+		menu "File" "Spell Chk  F6" "macro m_spellcheck"
+		menu "File" "Statistics   " "macro stats"
 			macro define stats
 				status "file: \"$db_file\" format: $format"
 				mem
-				stats			
+				stats
 			end
-		menu "File" "------------" ""
-		menu "File" "Suspend   ^Z" "stop"
-		menu "File" "Exit      ^Q" "context quitsave"
+		menu "File" "-------------" ""
+		menu "File" "Suspend    ^Z" "stop"
+		menu "File" "Exit       ^Q" "context quitsave"
 	##### edit
 		menu "Edit" "---------" ""
 		menu "Edit" "Copy   ^C" "copy"
@@ -586,12 +603,10 @@
 		menu "Edit" "---------" ""
 		menu "Edit" "Search ^F" "macro m_search"
 	##### entry
-		menu "Entry" "---------------" ""
-		menu "Entry" "Edit     return" "edit"
-		menu "Entry" "Delete      del" "remove"
-		menu "Entry" "Export Branch  " "context export_branch"
 		menu "Entry" "----------------" ""
-		menu "Entry" "Do Action     ^A" "action"
+		menu "Entry" "Edit      return" "edit"
+		menu "Entry" "Delete       del" "remove"
+		menu "Entry" "----------------" ""
 		menu "Entry" "Indent         >" "indent"
 		menu "Entry" "Outdent        <" "outdent"
 		menu "Entry" "Toggle Todo   ^T" "toggle_todo"
@@ -608,7 +623,7 @@
 		menu "Entry" "Collapse       -" "collapse"
 		menu "Entry" "Expand Subtree  " "expand --subtree"
 		menu "Entry" "Collapse Subtree" "collapse --subtree"
-		menu "Entry" "Expand All      "	"expand --all"
+		menu "Entry" "Expand All      " "expand --all"
 		menu "Entry" "Collapse All    " "collapse --all"
 	##### Planner
 		Planner macros
@@ -648,20 +663,24 @@
 			macro define pl_add_yr
 				getquery "Year (4 digits)"
 				add "$query Calendar"
+				go bottom
 				insert_below
 				movenode right
-				insert_cal 1 $query
-				insert_cal 2 $query
-				insert_cal 3 $query
-				insert_cal 4 $query
-				insert_cal 5 $query
-				insert_cal 6 $query
-				insert_cal 7 $query
-				insert_cal 8 $query
-				insert_cal 9 $query
-				insert_cal 10 $query
-				insert_cal 11 $query
 				insert_cal 12 $query
+				insert_cal 11 $query
+				insert_cal 10 $query
+				insert_cal 9 $query
+				insert_cal 8 $query
+				insert_cal 7 $query
+				insert_cal 6 $query
+				insert_cal 5 $query
+				insert_cal 4 $query
+				insert_cal 3 $query
+				insert_cal 2 $query
+				insert_cal 1 $query
+				# remove blank node at top
+				go top
+				remove
 			end
 		menu "Planner" "----------------" ""
 		menu "Planner" "New Actions List" "macro pl_new_act"
@@ -677,8 +696,9 @@
 #####
 	context main
 	macro define m_about
-		status "Tines - an outliner, planner, organizer, and notebook
-		status "(c) 2015 Larry Kollar (lkollar@gmail.com)
+		status "Tines - an outliner, planner, organizer, and notebook"
+		status "(c) 2015-2016 Larry Kollar (lkollar@gmail.com)"
+		status "Using OPML configuration file."
 	end
 	
 	macro m_about

@@ -1,4 +1,6 @@
 *.[oa]
+*.so
 *~
 asc2c
 tines
+test.*

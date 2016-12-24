@@ -561,7 +561,7 @@
 			macro define savebranch
 				getquery 'File to save:'
 				save_state
-				export_$format $db_file
+				export_$format $query
 				restore_state
 			end
 		menu "File" "Revert      " "revert"		

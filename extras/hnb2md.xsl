@@ -26,26 +26,32 @@
 	<xsl:choose>
 <xsl:when test="count(ancestor::node)=0"># <xsl:value-of select="./data/text()" />
 <xsl:text>
+
 </xsl:text>
 </xsl:when>
 <xsl:when test="count(ancestor::node)=1">## <xsl:value-of select="./data/text()" />
 <xsl:text>
+
 </xsl:text>
 </xsl:when>
 <xsl:when test="count(ancestor::node)=2">### <xsl:value-of select="./data/text()" />
 <xsl:text>
+
 </xsl:text>
 </xsl:when>
 <xsl:when test="count(ancestor::node)=3">#### <xsl:value-of select="./data/text()" />
 <xsl:text>
+
 </xsl:text>
 </xsl:when>
 <xsl:when test="count(ancestor::node)=4">##### <xsl:value-of select="./data/text()" />
 <xsl:text>
+
 </xsl:text>
 </xsl:when>
 <xsl:otherwise>###### <xsl:value-of select="./data/text()" />
 <xsl:text>
+
 </xsl:text>
 </xsl:otherwise>
 	</xsl:choose>
