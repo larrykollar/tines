@@ -216,7 +216,8 @@ static int string2scope (char *str)
 		scope_count++;
 		return j;
 	}
-	printf ("scope limit exceeded\n");
+	fprintf ( stderr, "Too many contexts defined (max: %d)\n", MAX_SCOPES );
+    ui_end ();
 	exit (0);
 }
 
