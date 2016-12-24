@@ -1,7 +1,7 @@
 /*
  * cli_tokenize.c -- tokenizer for libcli
  *
- * Copyright (C) 2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -129,6 +129,8 @@ static void init_state_table(void){
 	a(s_wvar,	s_wvar,		NULL,	'A','Z',	a_varstore+a_eat,0);
 	a(s_wvar,	s_wvar,		NULL,	'0','9',	a_varstore+a_eat,0);
 	a(s_wvar,	s_wvar,		NULL,	'_','_',	a_varstore+a_eat,0);
+	a(s_wvar,	s_wvar,		NULL,	'(','(',	a_eat,0);
+	a(s_wvar,	s_wpp,		NULL,	')',')',	a_eat+a_varinsert,0);
 	a(s_wvar,	s_wpp,		NULL,	0,255,		a_varinsert,	0);
 	
 	a(s_wescape, s_quo,	NULL,	'\0','\0',		a_nil,			0);

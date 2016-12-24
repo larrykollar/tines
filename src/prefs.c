@@ -50,7 +50,7 @@ Tprefs prefs = {
 	1						/* curses */
 };
 
-long pid;
+char pid[100]; /* text representation of process ID */
 
 typedef struct {
 	char name[4];
@@ -71,7 +71,7 @@ void init_prefs ()
 	sprintf (prefs.default_db_file, "C:\\tines_data");
 #endif
 	
-	pid = getpid();
+	sprintf( pid, "%d", getpid() );
 
 	cli_add_string ("format", prefs.format, "The format of the current file.");
 	cli_add_string ("rc_file", prefs.rc_file, "The path and name of the current rc file.");
@@ -83,7 +83,7 @@ void init_prefs ()
 	cli_add_int ("savepos", &prefs.savepos, "If true, saves the current position.");
 	cli_add_int ("saveexpand", &prefs.saveexpand, "If true, saves the current expansion state.");
 	cli_add_int ("readonly", &prefs.readonly, "If true, the database is read-only.");
-	cli_add_int ("pid", &pid, "The process ID for this instance of Tines.");
+	cli_add_string ("pid", pid, "The process ID for this instance of Tines as a string.");
 
 #ifdef NCURSES_VERSION 
 	cli_add_int ("escdelay", (long *)&ESCDELAY,

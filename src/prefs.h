@@ -28,7 +28,7 @@ typedef struct {
 } Tprefs;
 
 extern Tprefs prefs;
-extern long pid;
+extern char pid[100];
 
 /*	initializes preferences with default values
 */
