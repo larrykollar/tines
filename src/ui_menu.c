@@ -14,7 +14,7 @@ typedef struct MenuT{
 } MenuT;
 
 #define MENU_MAX_COLS 10
-#define MENU_MAX_ROWS 20
+#define MENU_MAX_ROWS 30
 
 static MenuT menu[MENU_MAX_COLS][MENU_MAX_ROWS];
 
