@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <glob.h>
 #include <libgen.h>
 #include <sys/param.h>
 
@@ -154,74 +153,23 @@ int file_check (char *filename)
 	return 1;
 }
 
-/* globs a user-entered file name, returns the expanded path/file */
-char* fn_expand( char* s, int globdironly )
+/* expands leading ~/ to user's home dir, returns the expanded path/file */
+char* fn_expand( char* s )
 {
-	glob_t g;
-	int n;
-	int flags = GLOB_TILDE | GLOB_NOSORT;
-	char *dname;
-	char *fname;
 	static char expanded[MAXPATHLEN];
-	
-	g.gl_offs = 0;
-	if( globdironly ) {
-		/* output file, only the directory is assumed to exist */
-		char s1[MAXPATHLEN]; /* POSIX dirname()/basename() can muck with s */
-		strcpy(s1, s);
-		dname = dirname(s1);
-		fname = basename(s);
-		n = glob( dname, flags, NULL, &g );
 
-		switch(n) {
-			case 0:
-				if( g.gl_pathc > 1 ) {
-					cli_outfunf( "%s matches more than one directory, using %s\n", dname, g.gl_pathv[0] );
-				}
-				snprintf(expanded, MAXPATHLEN, "%s/%s", g.gl_pathv[0], fname);
-				return expanded;
-				/* strcpy( expanded, g.gl_pathv[0] );
-				strncat( expanded, "/", 1 );
-				if( strlen(expanded) + strlen(fname) + 1 > MAXPATHLEN ) {
-						cli_outfunf( "Path name too long! %s%s\n", expanded, fname );
-						return "";
-				} else {
-					strncat( expanded, fname, strlen(fname)+1 );
-					return expanded;
-				} */
-				break;
-
-			case GLOB_NOMATCH:
-				cli_outfunf( "Could not find directory %s\n", dname );
-				return "";
-				break;
-
-			default:
-				cli_outfunf( "Problem, glob returned: %d\n", n );
-				return "";
-		}
-	} else {
-		/* input file, the entire path must already exist */
-		n = glob( s, flags, NULL, &g );
-
-		switch( n ) {
-			case 0:
-				if( g.gl_pathc > 1 ) {
-					cli_outfunf( "%s matches more than one file, using %s\n", s, g.gl_pathv[0] );
-				}
-				return g.gl_pathv[0];
-				break;
-
-			case GLOB_NOMATCH:
-				cli_outfunf( "Could not match %s\n", s );
-				return "";
-				break;
-
-			default:
-				cli_outfunf( "Problem, glob returned: %d\n", n );
-				return "";
-		}
-	}
+	if( !strncmp(s, "~/", 2) ) {
+        strcpy( expanded, getenv("HOME") );
+        if( strlen(expanded) + strlen(s)-1 >= MAXPATHLEN ) {
+            cli_outfunf ("Path too long, using /tmp/tines.toolong");
+            return( "/tmp/tines.toolong" );
+        } else {
+            strcat( expanded, s+1 );
+            return( expanded );
+        }
+    } else {
+        return( s );
+    }
 }
 
 

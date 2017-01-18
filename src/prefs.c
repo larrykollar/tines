@@ -57,6 +57,36 @@ typedef struct {
 	int color;
 } ColornameT;
 
+/* Changing to a function because cygwin (others?) don't like &ESCDELAY */
+static void* tines_set_escdelay (int argc, char **argv, void *data)
+{
+    Node *pos = (Node *) data;
+    long ed = ESCDELAY;
+    char *endptr = NULL;
+
+    /* usage: escdelay [<time>]
+       where <time> is the delay time, in ms
+       returns current ESCDELAY if no arg given */
+
+    if( argc < 2 ) {
+        cli_outfunf ("Current ESCDELAY value: %d ms\n", ed);
+		return pos;
+    }
+
+    ed = strtol( argv[1], &endptr, 10 );
+    if( endptr && (endptr[0] != '\0') ) {
+        cli_outfunf ("Warning: %s called with invalid data: '%s'; value found was %d\n", argv[0], endptr, ed);
+    }
+
+    if( ed < 1 ) {
+        cli_outfunf ("%s value %d invalid, ignored\n", argv[0], ed);
+        return pos;
+    } else {
+        set_escdelay(ed);
+        return pos;
+    }
+}
+
 /*
 !init_prefs();
 */
@@ -86,8 +116,9 @@ void init_prefs ()
 	cli_add_string ("pid", pid, "The process ID for this instance of Tines as a string.");
 
 #ifdef NCURSES_VERSION 
-	cli_add_int ("escdelay", (long *)&ESCDELAY,
-		"How long curses waits before it decides ESC is ESC and not a coded key sequence.");
+	cli_add_command ("escdelay", tines_set_escdelay, "[<time>]");
+    cli_add_help("escdelay",
+		"How long curses waits before it decides ESC is ESC and not a coded key sequence. Omit argument to show current setting.");
 #endif
 }
 

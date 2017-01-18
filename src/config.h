@@ -1,6 +1,6 @@
 
 #define PACKAGE "tines"
-#define VERSION "1.10.0"
+#define VERSION "1.10.2"
 #define SHAREDIR "/usr/local/share/tines/"
 #define RCFILEIN "tinesrc"
 #define RCFILEOUT ".tinesrc"
