@@ -1,7 +1,7 @@
 /*
  * file_opml.c -- generic xml import/export filters for Tines
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  * Modified for Tines by Larry Kollar, 2016
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -142,7 +142,7 @@ static void* export_opml (int argc, char **argv, void *data)
 	 * argv[1]: file name
 	 * argv[2]: node position */
 
-	filename = fn_expand( argc>=2?argv[1]:"", 1	);
+	filename = fn_expand( argc>=2?argv[1]:"" );
 
 	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
@@ -206,7 +206,7 @@ static void* import_opml (int argc, char **argv, void *data)
 	Node *tempnode=NULL;
 	FILE *file;
 
-	filename = fn_expand( argc==2?argv[1]:"", 0	);
+	filename = fn_expand( argc==2?argv[1]:"" );
 
 	file = fopen (filename, "r");
 	if (!file) {

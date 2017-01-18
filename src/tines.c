@@ -180,7 +180,7 @@ int main (int argc, char **argv)
 			break;
 		case 'r':
 			cmdline.rcfile = malloc(MAXPATHLEN);
-			strcpy(cmdline.rcfile, fn_expand(optarg, 0));
+			strcpy(cmdline.rcfile, fn_expand(optarg));
 			break;
 		case 'e': /* one-liner ala sed */
 			if(!cmdline.dbfile) {

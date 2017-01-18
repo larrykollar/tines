@@ -1,7 +1,7 @@
 /*
  * file_ascii.c -- ascii import and export filters for hnb
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -45,7 +45,7 @@ static void* import_ascii (int argc, char **argv, void *data)
 	FILE *file;
 
 	/* glob the file name to resolve ~/foo etc */
-	filename = fn_expand( argc==2?argv[1]:"", 0 );
+	filename = fn_expand( argc==2?argv[1]:"" );
 
 	file = fopen (filename, "r");
 	if (file == NULL) {
@@ -114,7 +114,7 @@ static void *export_ascii (int argc, char **argv, void *data)
 	char *cdata;
 	FILE *file;
 
-	filename = fn_expand( argc>=2?argv[1]:"", 1 );
+	filename = fn_expand( argc>=2?argv[1]:"" );
 
 	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;

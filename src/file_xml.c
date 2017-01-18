@@ -156,7 +156,7 @@ static void* export_xml (int argc, char **argv, void *data)
 	int saveall;
 	FILE *file;
 
-	filename = fn_expand( argc==2?argv[1]:"", 1	);
+	filename = fn_expand( argc==2?argv[1]:"" );
 
 	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
@@ -226,7 +226,7 @@ static void* import_xml (int argc, char **argv, void *data)
 
 	nodedata[0] = 0;
 
-	filename = fn_expand( argc==2?argv[1]:"", 0	);
+	filename = fn_expand( argc==2?argv[1]:"" );
 
 	file = fopen (filename, "r");
 	if (!file) {

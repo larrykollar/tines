@@ -122,7 +122,7 @@ static void* export_hnb (int argc, char **argv, void *data)
 	 * argv[1]: file name
 	 * argv[2]: node position */
 
-	filename = fn_expand( argc>=2?argv[1]:"", 1	);
+	filename = fn_expand( argc>=2?argv[1]:"" );
 
 	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
@@ -184,7 +184,7 @@ static void* import_hnb (int argc, char **argv, void *data)
 
 	FILE *file;
 
-	filename = fn_expand( argc==2?argv[1]:"", 0	);
+	filename = fn_expand( argc==2?argv[1]:"" );
 
 	file = fopen (filename, "r");
 	if (!file) {

@@ -1,7 +1,7 @@
 /*
  * file_binary.c -- binary fileformat, version specific and for internal use only 
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -82,7 +82,7 @@ static void* export_binary (int argc, char **argv, void *data)
 	char *filename;
 	FILE *file;
 
-	filename = fn_expand( argc>=2?argv[1]:"", 1	);
+	filename = fn_expand( argc>=2?argv[1]:"" );
 
 	if (!strcmp (filename, "-") || !strcmp(filename, ""))
 		file = stdout;
@@ -116,7 +116,7 @@ static void* import_binary (int argc, char **argv, void *data)
 
 	FILE *file;
 
-	filename = fn_expand( argc==2?argv[1]:"", 0	);
+	filename = fn_expand( argc==2?argv[1]:"" );
 
 	file = fopen (filename, "r");
 	if (!file) {
