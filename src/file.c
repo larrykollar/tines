@@ -130,10 +130,21 @@ int xml_getpos (char *filename)
 			fclose (file);
 			return 0;
 		}
+		if ((s = strstr (buf, "<?tines pos=\""))) {
+			fclose (file);
+
+			return (int)strtol ( s+strlen("<?tines pos=\""), NULL, 10 );
+		}
+        /* handle legacy processing instructions */
 		if ((s = strstr (buf, "<?hnb pos=\""))) {
 			fclose (file);
 
-			return atoi (&s[11]);
+			return (int)strtol ( s+strlen("<?hnb pos=\""), NULL, 10 );
+		}
+		if ((s = strstr (buf, "<?pos=\""))) {
+			fclose (file);
+
+			return (int)strtol ( s+strlen("<?pos=\""), NULL, 10 );
 		}
 	}
 	fclose (file);
