@@ -58,6 +58,7 @@
 #include "evilloop.h"
 #include "file_copy.h"
 
+extern char opml_scroll[128];
 
 static void usage (const char *av0)
 {
@@ -391,6 +392,14 @@ o)pen read_only\n\
 			while (oldpos--)
 				pos = node_recurse (pos);
 		}
+        /* OPML files: use the processing instruction if available,
+           otherwise use the value of vertScrollState. */
+        if( oldpos == -1 && !strcmp(prefs.format, "opml")
+                         && strlen(opml_scroll) > 0 ) {
+            int os = strtol( opml_scroll, NULL, 10 );
+            while( os-- )
+                pos = node_recurse(pos);
+        }
 	}
 
 	if (prefs.tutorial) {
