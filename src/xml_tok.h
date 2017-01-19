@@ -1,6 +1,6 @@
 #ifndef XML_TOK_H
 
-/* xml/html tokenizer (c) Øyvind Kolås 2002 */
+/* xml/html tokenizer (c) Ã˜yvind KolÃ¥s 2002 */
 
 #define inbufsize 4096
 #define outbufsize 4096

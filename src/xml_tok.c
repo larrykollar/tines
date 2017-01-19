@@ -1,7 +1,7 @@
 /*
  * xml_tok.c -- pull based xml tokenizer
  *
- * Copyright (C) 2002 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2002 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
