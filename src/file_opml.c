@@ -37,6 +37,10 @@
 #include "query.h"
 #include "util_string.h"
 
+char *opml_list_expanded( int init, Node *node, int saveall );
+int opml_check_expanded( int num, char *explist );
+
+
 #define indent(count,char)	{int j;for(j=0;j<count;j++)fprintf(file,char);}
 
 /* *INDENT-OFF* */
@@ -141,12 +145,17 @@ static void* export_opml (int argc, char **argv, void *data)
     time_t curtime;
     int exists;
 
-	/* argv[0]: name used to invoke this command
+	/* argv[0]: command name (export_opml or export_opml_branch)
 	 * argv[1]: file name (optional, default to stdout)
 	 * argv[2]: node position (optional, default to 1) */
 
-	filename = fn_expand( argc>=2?argv[1]:"" );
+    /* saveall = 0 if we're only saving the branch */
+	saveall = strcmp(argv[0], "export_opml_branch");
 
+    /* set expansionState */
+    strcpy( opml_exp, opml_list_expanded(1, node, saveall) );
+
+    filename = fn_expand( argc>=2?argv[1]:"" );
     exists = file_check(filename);
 
 	if (!strcmp (filename, "-") || !strcmp(filename, ""))
@@ -205,9 +214,6 @@ static void* export_opml (int argc, char **argv, void *data)
 			opml_title, opml_created, opml_mod, opml_owner, opml_email,
 			opml_exp, opml_scroll, opml_top, opml_left, opml_bot, opml_right);
 
-	/* saveall = 0 if we're only saving the branch */
-	saveall = strcmp(argv[0], "export_opml_branch");
-
 	opml_export_nodes (file, node, 0, saveall);
 
 	fprintf (file, "\n</body>\n</opml>\n");
@@ -233,6 +239,7 @@ static void* import_opml (int argc, char **argv, void *data)
     int maxstrsize = 0;
 	xml_tok_state *s;
 	import_state_t ist;
+    int entrycount = 1;
 
 	Node *tempnode=NULL;
 	FILE *file;
@@ -354,6 +361,10 @@ static void* import_opml (int argc, char **argv, void *data)
 				level++;
 				in_outlineelement = 1;
 				tempnode=node_new();
+                if( opml_check_expanded(entrycount, opml_exp) ) {
+                    node_setflag( tempnode, F_expanded, 1 );
+                }
+                ++entrycount;
 				continue;
 			}
 			if (in_outlineelement && type == t_att){
@@ -396,6 +407,55 @@ static void* import_opml (int argc, char **argv, void *data)
 	return node;
 }
 
+/* Build list of expanded nodes for expansionState */
+char *opml_list_expanded( int init, Node *node, int saveall ) {
+
+    static char explist[1025] = "";
+    char entry[10];
+    static int explen = 0;
+    static int opml_nodenum = 1;
+
+    if( init ) { /* need to reset these for 2nd export */
+        explist[0] = '\0';
+        explen = 0;
+        opml_nodenum = 1;
+    }
+
+    while( node ) {
+        if (node_getflag(node,F_expanded)) {
+            sprintf( entry, ",%d", opml_nodenum );
+            explen += strlen( entry );
+            if( explen < 1025 )
+                strcat( explist, entry );
+        }
+        if (node_right (node)) {
+			opml_list_expanded( 0, node_right(node), 1 );
+		}
+
+		/* needs to only export one branch at level 0 */
+		if( saveall )
+			node = node_down (node);
+		else
+			break;
+
+        ++opml_nodenum;
+    }
+    return (char *)explist+1; /* skip initial comma */
+}
+
+/* returns 1 if the number appears in the expansionState list */
+int opml_check_expanded( int num, char *explist ) {
+    char entry[10];
+    char fullsize[1026];
+
+    sprintf( fullsize, ",%s,", explist ); /* put commas on either end of list */
+    sprintf( entry, ",%d,", num ); /* now we only have to search once */
+
+    if( strstr(explist, entry) )
+        return 1;
+    else
+        return 0;
+}
 
 /*
 !init_file_opml();
@@ -417,7 +477,7 @@ void init_file_opml ()
     cli_add_string ("opml_mod", opml_mod, "The outline modification date.");
     cli_add_string ("opml_owner", opml_owner, "The name of the creator.");
     cli_add_string ("opml_email", opml_email, "The email address of the creator.");
-    cli_add_string ("opml_exp", opml_exp, "Expansion state, not supported yet.");
+    cli_add_string ("opml_exp", opml_exp, "List of expanded nodes.");
     cli_add_string ("opml_scroll", opml_scroll, "Position when last closed.");
     cli_add_string ("opml_top", opml_top, "Position of top of window. Tines does not use this.");
     cli_add_string ("opml_left", opml_left, "Position of left side of window. Tines does not use this.");
