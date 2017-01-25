@@ -1,4 +1,4 @@
-.TH TINES_HNB 7 "26 Jan 2016"
+.TH TINES_HNB 7 "24 Jan 2017"
 .SH NAME
 tines_hnb \- hnb/Tines outliner format
 .
@@ -41,7 +41,9 @@ Users can use the
 command to set custom attributes and values.
 Tines preserves these when reading and writing hnb files.
 .LP
-The DTD is embedded in each hnb file.
+The DTD is embedded in each
+.I hnb
+file.
 .RS
 .nf
 
@@ -55,9 +57,26 @@ The DTD is embedded in each hnb file.
 >]>
 .fi
 .RE
-.LP
-In addition, the processing instruction <?hnb pos="\fIn\fP" ?>
-stores which entry was selected when the file was last closed.
+.
+.SS Processing Instructions
+Tines recognizes and uses
+the following processing instructions
+for determining the position when last saved
+("n" is the linear node number,
+where 1 is the first node):
+.TP 4
+\[bu]
+<?pos="n"?> (original
+.I hnb
+syntax)
+.TP 4
+\[bu]
+<?hnb pos="n"?> (written by the
+.I lhnb
+extended version)
+.TP 4
+\[bu]
+<?tines pos="n"?> (Tines syntax)
 .
 .SH SEE ALSO
 .BR tines (1),

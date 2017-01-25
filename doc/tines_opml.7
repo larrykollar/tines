@@ -1,5 +1,5 @@
 .\" t
-.TH TINES_OPML 7 "26 Jan 2016"
+.TH TINES_OPML 7 "24 Jan 2017"
 .SH NAME
 tines_opml \- Interactions/conversions between Tines and OPML format
 .
@@ -7,26 +7,56 @@ tines_opml \- Interactions/conversions between Tines and OPML format
 Outline Processor Markup Language (OPML)
 is a standard interchange format for outliners,
 and will become the default format for Tines
-in the near future
-(the hnb format will be maintained as a legacy format).
+in the future
+(the
+.I hnb
+format will be maintained as a legacy format).
+To run Tines as an OPML outliner,
+use the
+.B topml
+command.
+.LP
 This manpage describes how Tines maps
-(and intends to map)
-hnb and OPML elements and attributes.
+.I hnb
+and OPML elements and attributes.
 .LP
 Tines supports OPML 1.0.
 Any OPML 2.0 elements and attributes
 are silently ignored.
 .
 .SS OPML Head Element
-The hnb format has no analogous section.
-Tines and
+The
 .I hnb
-silently discard any information
-in the OPML <head> element on import.
+format has no analogous section.
+Tines 1.11.0 and newer versions
+preserve all OPML 1.0 standard <head> elements
+and make use of the metadata where sensible.
+All <head> elements
+have corresponding text variables
+that can be used to view or change
+the metadata as needed.
 .LP
-On export, Tines and
-.I hnb
-write a placeholder <title> element.
+If Tines opens an OPML file with both
+a Tines "pos" processing instruction
+(e.g. <?tines\ pos="12"?>)
+and a value for <vertScrollState>,
+Tines uses the value in the processing instruction.
+In any case, the two should have the same value.
+.LP
+On export, Tines automatically updates
+the values of the following <head> elements:
+.TP 4
+\[bu]
+dateModified
+.TP 4
+\[bu]
+vertScrollState
+.TP 4
+\[bu]
+expansionState
+.LP
+If the <title> element is undefined,
+Tines sets the value to the text of the first node in the outline.
 .
 .SS Attributes
 Tines and
@@ -49,7 +79,9 @@ where hnb does not require the <data> element.
 Thus, to avoid unexpected behavior,
 Tines must insert a token text string when exporting blank entries.
 .LP
-hnb format has two attributes:
+The
+.I hnb
+format has two attributes:
 .TP 6
 .I type
 A freeform text attribute.
@@ -58,7 +90,9 @@ If set to "todo," Tines and
 render the entry with a checkbox
 (indicating the entry is a to-do item).
 Tines also supports a value of "text"
-to mark entries that should be rendered as body text on export.
+to mark entries that should be rendered as body text
+when exporting to text-centric formats
+such as Groff or Markdown.
 .TP 6
 .I done
 When
@@ -90,20 +124,35 @@ if it exists.
 In Tines 2.0, all import/export actions
 will be driven through XSLT stylesheets,
 allowing the user to modify or extend conversions.
-The planned attribute mapping is:
-.TS
-cb | cb s
-cb | cb cb
-l  | l  l .
-OPML    hnb
-type    type    done
-_
-text    text    -
-todo    todo    no
-done    todo    yes
-.TE
+.
+.SS Processing Instructions
+Tines recognizes and uses
+the following processing instructions
+for determining the position when last saved
+("n" is the linear node number,
+where 1 is the first node):
+.TP 4
+\[bu]
+<?pos="n"?> (original
+.I hnb
+syntax)
+.TP 4
+\[bu]
+<?hnb pos="n"?> (written by the
+.I lhnb
+extended version)
+.TP 4
+\[bu]
+<?tines pos="n"?> (Tines syntax)
+.LP
+The presence of one of those processing instructions
+in an OPML file
+overrides any value specified in the vertScrollState element.
+Unless a different outliner preserves processing instructions,
+the values should be the same.
 .
 .SH "SEE ALSO"
+.BR topml (1),
 .BR tines_hnb (7),
 OPML 1.0 definition (http://dev.opml.org/spec1.html)
 .
