@@ -2,7 +2,7 @@
 # Arguments to install
 # Use this one for Linux
 INSTFLAGS=-D
-# Use this one for MacOSX & BSD
+# Use this one for MacOSX, BSD, and Cygwin
 # INSTFLAGS=-d
 
 # Install directories
