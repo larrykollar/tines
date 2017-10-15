@@ -1,7 +1,7 @@
 /*
  * file_ascii.c -- generic xml import/export filters for hnb
  *
- * Copyright (C) 2001-2003 Øyvind Kolås <pippin@users.sourceforge.net>
+ * Copyright (C) 2001-2003 Ã˜yvind KolÃ¥s <pippin@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free

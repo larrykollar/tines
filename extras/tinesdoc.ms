@@ -691,7 +691,7 @@ savepos (integer)
 .LP
 If true, saves the current position along with the data. Supported in both hnb and OPML formats.
 .LP
-On save, Tines inserts a \<?pos="x"?> processing instruction, where x is the current position. When reading the file, Tines sets the current position to the value found in the processing instruction.
+On save, Tines inserts a \<?tines pos="x"?> processing instruction, where x is the current position. When reading the file, Tines sets the current position to the value found in the processing instruction.
 .NH 3
 readonly (integer)
 .LP

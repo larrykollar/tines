@@ -1,14 +1,17 @@
 
 # Arguments to install
 # Use this one for Linux
-INSTFLAGS=-D
+# INSTFLAGS=-D
 # Use this one for MacOSX, BSD, and Cygwin
-# INSTFLAGS=-d
+INSTFLAGS=-d
 
 # Install directories
 BINDIR=/usr/local/bin
 MANDIR=/usr/local/man
 SHAREDIR=/usr/local/share/tines
+PKGBINDIR=ar/bin
+PKGMANDIR=ar/man
+PKGSHAREDIR=ar/share/tines
 
 # Override the shell builtin echo
 ECHO=/bin/echo

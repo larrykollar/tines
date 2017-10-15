@@ -43,6 +43,9 @@ extern int nodes_above;
 extern int active_line;
 extern int nodes_below;
 
+extern int tines_nodes_up;
+extern int tines_nodes_down;
+
 static Node *up (Node *sel, Node *node)
 {
 	if (node_up (node) && node_getflag( node_up (node), F_expanded)) {
@@ -731,9 +734,6 @@ void ui_draw (Node *node, char *input, int edit_mode)
 {
 	int lines;
 
-	int hnb_nodes_up;
-	int hnb_nodes_down;
-
 	static struct {
 		long self;
 		long prev;
@@ -787,8 +787,8 @@ void ui_draw (Node *node, char *input, int edit_mode)
 	nodes_below = LINES - active_line;
 
 	{
-		hnb_nodes_up = 0;
-		hnb_nodes_down = 0;
+		tines_nodes_up = 0;
+		tines_nodes_down = 0;
 
 		erase ();
 /* draw nodes above selected node */
@@ -805,7 +805,7 @@ void ui_draw (Node *node, char *input, int edit_mode)
 				line_nodeno[line] = node_no (tnode);
 
 				if (node_down (tnode) == prev_down) {
-					hnb_nodes_up++;
+					tines_nodes_up++;
 					prev_down = tnode;
 				}
 
@@ -839,7 +839,7 @@ void ui_draw (Node *node, char *input, int edit_mode)
 				lines += draw_item (lines, 0, tnode, drawmode_normal);
 
 				if (node_up (tnode) == prev_up) {
-					hnb_nodes_down++;
+					tines_nodes_down++;
 					prev_up = tnode;
 				}
 
@@ -857,8 +857,8 @@ void ui_draw (Node *node, char *input, int edit_mode)
 
 /*	refresh ();*/
 
-	hnb_nodes_up++;
-	hnb_nodes_down++;
+	tines_nodes_up++;
+	tines_nodes_down++;
 }
 
 /*
