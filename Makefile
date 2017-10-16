@@ -1,9 +1,9 @@
 
 # Arguments to install
 # Use this one for Linux
-# INSTFLAGS=-D
+INSTFLAGS=-D
 # Use this one for MacOSX, BSD, and Cygwin
-INSTFLAGS=-d
+# INSTFLAGS=-d
 
 # Install directories
 BINDIR=/usr/local/bin
