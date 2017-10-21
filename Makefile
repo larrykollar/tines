@@ -1,9 +1,14 @@
 
-# Arguments to install
-# Use this one for Linux
-INSTFLAGS=-D
-# Use this one for MacOSX, BSD, and Cygwin
-# INSTFLAGS=-d
+# get target OS (Linux, Darwin, BSD, or Cygwin)
+# Right now, this affects only install
+target_os != uname
+
+# Set install flags based on OS
+ifeq "$(target_os)" "Linux"
+	INSTFLAGS=-D -d
+else
+	INSTFLAGS=-d
+endif
 
 # Install directories
 BINDIR=/usr/local/bin
