@@ -5,9 +5,9 @@ target_os != uname
 
 # Set install flags based on OS
 ifeq "$(target_os)" "Linux"
-	INSTFLAGS=-D -d
-else
 	INSTFLAGS=-d
+else
+	INSTFLAGS=-D
 endif
 
 # Install directories
