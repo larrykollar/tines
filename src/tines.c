@@ -207,7 +207,7 @@ int main (int argc, char **argv)
 			cmdline.def_db = 0;
 		}
 	} else {
-		cmdline.cmd = argv[optind++];
+		cmdline.cmd = argv[optind];
 		cmdline.ui = 0;
 	}
 
@@ -430,8 +430,8 @@ o)pen read_only\n\
 			ui_end ();
 			break;
 		case 0: /* -e */
-			/* pos = (Node *) cli_docmd (cmdline.cmd, pos); */ /* issue #12 */
-			while (argno <= argc) {
+			/* pos = (Node *) cli_docmd (cmdline.cmd, pos); */ /* issue #13 */
+			while (argno < argc) {
 				pos = (Node *) cli_docmd (argv[argno++], pos);
 			}
 			break;
