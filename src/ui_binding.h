@@ -2,8 +2,11 @@
 #ifndef UI_BINDING_H
 #define UI_BINDING_H
 
+#include "ui_keycodes.h"
+
 typedef struct {
 	int key;
+	int with_meta;
 	int action;
 	char *action_name;
 	char *action_param;
@@ -59,7 +62,7 @@ extern Tbinding *lastbinding;
 extern int ui_current_scope;
 
 
-Tbinding *parsekey (int key, int scope);
+Tbinding *parsekey (ui_keycode key, int scope);
 char *tidy_keyname (const char *keyname);
 char *resolve_binding (int scope, int action);
 

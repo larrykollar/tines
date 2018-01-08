@@ -29,7 +29,8 @@ void ui_end ();
    to the defines above in this file, and returns the new
    value. (also processes some of the events like resize itself)
 */
-int ui_input ();
+
+ui_keycode ui_input ();
 
 /* used for approximately guessing how much we should skip 
    when page up/page down is requested.

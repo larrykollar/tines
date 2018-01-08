@@ -121,11 +121,26 @@ void ui_end ()
 
 /*extern Node *pos;
 */
-int ui_input ()
+ui_keycode ui_input ()
 {
 	int c;
 	refresh();
 	c = getch ();
+
+	ui_keycode result;
+	result.key = c;
+	result.is_meta = 0;
+
+	if (c == 27) {		// Escape or Meta?
+		nodelay(stdscr, 1);
+		int nextk = getch();
+		if (nextk != ERR) {
+			result.key = nextk;
+			result.is_meta = 1;
+		}
+		nodelay(stdscr, 0);
+	}
+
 	switch (c) {
 #ifdef KEY_RESIZE
 		case KEY_RESIZE:
@@ -134,8 +149,11 @@ int ui_input ()
 			}
 			cli_width = COLS;
 			c = getch ();
-			return ui_action_ignore;
+			result.key = ui_action_ignore;
+			return result;
 #endif
 	}
-	return (c);
+
+	//return (c);
+	return result;
 }

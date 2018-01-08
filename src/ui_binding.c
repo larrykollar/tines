@@ -162,6 +162,7 @@ static keydbitm keydb[] = {
 	{KEY_SUNDO, "sundo"},
 	{KEY_SUSPEND, "suspend"},
 	{KEY_UNDO, "undo"},
+	{KEY_BTAB, "btab"},
 	{' ', "space"},
 	{0, "^space"},
 	{1, "^A"},
@@ -191,6 +192,8 @@ static keydbitm keydb[] = {
 	{25, "^Y"},
 	{26, "^Z"},
 	{27, "esc"},
+	{337, "sprevious"},
+	{336, "snext"},
 	{999, ".."},
 	{1000, "any"},				/* special key used to trap all keys (i.e. avoid typing without editing) */
 };
@@ -207,7 +210,7 @@ static int string2scope (char *str)
 	int j = 0;
 
 	while (j < scope_count) {
-		if (!strcmp (str, ui_scope_names[j]))
+		if (strcmp (str, ui_scope_names[j]) == 0)
 			return j;
 		j++;
 	}
@@ -262,7 +265,7 @@ static void* ui_context_cmd (int argc, char **argv, void *data)
 }
 
 static void makebinding (int scope_no, int key, int action, char *action_name,
-						 char *action_params)
+						 char *action_params, int with_meta)
 {
 	ui_binding[scope_no][ui_binding_count[scope_no]].key = key;
 	ui_binding[scope_no][ui_binding_count[scope_no]].action = action;
@@ -270,6 +273,7 @@ static void makebinding (int scope_no, int key, int action, char *action_name,
 		strdup (action_name);
 	ui_binding[scope_no][ui_binding_count[scope_no]].action_param =
 		strdup (action_params);
+	ui_binding[scope_no][ui_binding_count[scope_no]].with_meta = with_meta;
 	ui_binding_count[scope_no]++;
 }
 
@@ -286,12 +290,18 @@ static void* ui_bind_cmd (int argc, char **argv, void *data)
 	key=argv[1];
 	action=argv[2];
 
+	int with_meta = 0;
+	if (key[0] == 'M' && key[1] != '\0' && key[1] == '-') {
+		with_meta = 1;
+		key += 2;
+	}
+
 	if (string2action (action) != -1) {
 		makebinding (ui_current_scope, string2keycode (key),
-					 string2action (action), action, "");
+					 string2action (action), action, "", with_meta);
 	} else {
 		makebinding (ui_current_scope, string2keycode (key),
-					 ui_action_command, "command", action);
+					 ui_action_command, "command", action, with_meta);
 	}
 
 	return data;
@@ -302,26 +312,42 @@ static void* ui_bind_cmd (int argc, char **argv, void *data)
 static Tbinding keyproxy = { 0, 0, "key", "key" };
 Tbinding *lastbinding;
 
-Tbinding *parsekey (int key, int scope)
+Tbinding *parsekey (ui_keycode k, int scope)
 {
+	int key = k.key;
 	int j = 0;
 
 	while (j < ui_binding_count[scope]) {
-		if (key == ui_binding[scope][j].key) {
+		if (key == ui_binding[scope][j].key && k.is_meta == ui_binding[scope][j].with_meta) {
 			lastbinding = &ui_binding[scope][j];
 			return lastbinding;
 		} else if (ui_binding[scope][j].key == 1000 /* anykey */ ) {
-			lastbinding = &ui_binding[scope][j];
-			*((int *) &lastbinding->action_param[0]) = key;
-			return lastbinding;
+			if (k.is_meta != 0) {
+				keyproxy.action = ui_action_ignore;
+				keyproxy.key = 0;
+				lastbinding = &keyproxy;
+				return lastbinding;
+			} else {
+				lastbinding = &ui_binding[scope][j];
+				*((int *) &lastbinding->action_param[0]) = key;
+				return lastbinding;
+			}
 		}
 
 		j++;
 	}
-	keyproxy.action = key;
-	keyproxy.key = key;
-	lastbinding = &keyproxy;
-	return lastbinding;
+
+	if (k.is_meta != 0) {
+		keyproxy.action = ui_action_ignore;
+		keyproxy.key = 0;
+		lastbinding = &keyproxy;
+		return lastbinding;
+	} else {
+		keyproxy.action = key;
+		keyproxy.key = key;
+		lastbinding = &keyproxy;
+		return lastbinding;
+	}
 }
 
 static char *unboundstr = "><";
