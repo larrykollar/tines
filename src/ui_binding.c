@@ -173,6 +173,7 @@ static keydbitm keydb[] = {
 	{6, "^F"},
 	{7, "^G"},
 	{8, "backspace2"},
+	{8, "^H"},
 	{9, "tab"},
 	{10, "^J"},
 	{11, "^K"},

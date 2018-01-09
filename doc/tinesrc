@@ -200,6 +200,25 @@
 		bind f1 'status "Take a look at ~/.tinesrc to check out the configuration"'
 		bind .. 'status "there you will also find details about the available keybindings."'
 		bind .. 'status "please feel free to contribute more useful keybindings and helptexts..."'
+
+		bind M-h left
+		bind M-l right
+		bind M-j down
+		bind M-k up
+		
+		bind M-H "movenode left"
+		bind M-L "movenode right"
+		bind M-J "movenode down"
+		bind M-K "movenode up"
+
+		bind M-^H left
+		bind ..   collapse
+
+		bind M-^L expand
+		bind ..   right
+
+		bind M-^K collapse
+		bind M-^J expand
 		
 		bind esc menu
 		bind ^Q 'context quitsave'
@@ -237,13 +256,11 @@
 		bind down  down
 		bind ^N    down
 		bind left  left
-		bind btab  left
 		bind right right
-		bind tab   right
 		bind npage pagedown
 		bind ppage pageup
 		bind home  "go root"
-		
+
 		bind return edit
 		bind del    remove
 		
@@ -258,7 +275,7 @@
 		bind .. "movenode up"
 		bind .. edit
 		
-		#bind tab complete
+		bind tab complete
 		bind ^T  toggle_todo
 		bind ^D  toggle_done
 		bind >   indent
