@@ -295,22 +295,16 @@ Node *evilloop (Node *pos)
 					}
 					break;
 				case ui_action_unbound:
-					undefined_key (ui_scope_names[ui_current_scope],
-								   binding->key !=
-								   1000 ? binding->key : *((int *) &binding->
-														   action_param[0]));
+					undefined_key (ui_scope_names[ui_current_scope], binding);
 				case ui_action_ignore:
 					break;
 				default:
-					if (binding->action > 31 && binding->action < 255) {	/*  input for buffer */
+					if (binding->action > 31 && binding->action < 255 && binding->with_meta == 0) {	/*  input for buffer */
 						inputbuf[strlen (inputbuf) + 1] = 0;
 						inputbuf[strlen (inputbuf)] = binding->action;
-					} else
-						undefined_key (ui_scope_names[ui_current_scope],
-									   binding->key !=
-									   1000 ? binding->
-									   key : *((int *) &binding->
-											   action_param[0]));
+					} else {
+						undefined_key (ui_scope_names[ui_current_scope], binding);
+					}
 					break;
 			}
 		} while ((++binding)->key == 999);

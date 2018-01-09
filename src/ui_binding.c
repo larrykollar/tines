@@ -162,6 +162,7 @@ static keydbitm keydb[] = {
 	{KEY_SUNDO, "sundo"},
 	{KEY_SUSPEND, "suspend"},
 	{KEY_UNDO, "undo"},
+	{KEY_BTAB, "btab"},
 	{' ', "space"},
 	{0, "^space"},
 	{1, "^A"},
@@ -191,6 +192,8 @@ static keydbitm keydb[] = {
 	{25, "^Y"},
 	{26, "^Z"},
 	{27, "esc"},
+	{337, "sprevious"},
+	{336, "snext"},
 	{999, ".."},
 	{1000, "any"},				/* special key used to trap all keys (i.e. avoid typing without editing) */
 };
@@ -207,7 +210,7 @@ static int string2scope (char *str)
 	int j = 0;
 
 	while (j < scope_count) {
-		if (!strcmp (str, ui_scope_names[j]))
+		if (strcmp (str, ui_scope_names[j]) == 0)
 			return j;
 		j++;
 	}
@@ -262,7 +265,7 @@ static void* ui_context_cmd (int argc, char **argv, void *data)
 }
 
 static void makebinding (int scope_no, int key, int action, char *action_name,
-						 char *action_params)
+						 char *action_params, int with_meta)
 {
 	ui_binding[scope_no][ui_binding_count[scope_no]].key = key;
 	ui_binding[scope_no][ui_binding_count[scope_no]].action = action;
@@ -270,6 +273,7 @@ static void makebinding (int scope_no, int key, int action, char *action_name,
 		strdup (action_name);
 	ui_binding[scope_no][ui_binding_count[scope_no]].action_param =
 		strdup (action_params);
+	ui_binding[scope_no][ui_binding_count[scope_no]].with_meta = with_meta;
 	ui_binding_count[scope_no]++;
 }
 
@@ -286,12 +290,18 @@ static void* ui_bind_cmd (int argc, char **argv, void *data)
 	key=argv[1];
 	action=argv[2];
 
+	int with_meta = 0;
+	if (key[0] == 'M' && key[1] != '\0' && key[1] == '-') {
+		with_meta = 1;
+		key += 2;
+	}
+
 	if (string2action (action) != -1) {
 		makebinding (ui_current_scope, string2keycode (key),
-					 string2action (action), action, "");
+					 string2action (action), action, "", with_meta);
 	} else {
 		makebinding (ui_current_scope, string2keycode (key),
-					 ui_action_command, "command", action);
+					 ui_action_command, "command", action, with_meta);
 	}
 
 	return data;
@@ -302,12 +312,13 @@ static void* ui_bind_cmd (int argc, char **argv, void *data)
 static Tbinding keyproxy = { 0, 0, "key", "key" };
 Tbinding *lastbinding;
 
-Tbinding *parsekey (int key, int scope)
+Tbinding *parsekey (ui_keycode k, int scope)
 {
+	int key = k.key;
 	int j = 0;
 
 	while (j < ui_binding_count[scope]) {
-		if (key == ui_binding[scope][j].key) {
+		if (key == ui_binding[scope][j].key && k.is_meta == ui_binding[scope][j].with_meta) {
 			lastbinding = &ui_binding[scope][j];
 			return lastbinding;
 		} else if (ui_binding[scope][j].key == 1000 /* anykey */ ) {
@@ -318,8 +329,10 @@ Tbinding *parsekey (int key, int scope)
 
 		j++;
 	}
+
 	keyproxy.action = key;
 	keyproxy.key = key;
+	keyproxy.with_meta = k.is_meta;
 	lastbinding = &keyproxy;
 	return lastbinding;
 }
@@ -332,7 +345,7 @@ char *resolve_binding (int scope, int action)
 
 	while (no < ui_binding_count[scope]) {
 		if (action == ui_binding[scope][no].action)
-			return tidy_keyname (keyname (ui_binding[scope][no].key));
+			return tidy_keyname (&ui_binding[scope][no]);
 		no++;
 	}
 	return unboundstr;
@@ -343,11 +356,13 @@ char *resolve_binding (int scope, int action)
  *	Function to make a keynames returned from curses a little nicer
  *
  */
-char *tidy_keyname (const char *keyname)
+char *tidy_keyname (Tbinding *k)
 {
 	static char buf[100];
 
-	strcpy (buf, keyname);
+	memset(buf, 0, 100);
+	strcpy (buf, keyname(k->key));
+
 	if (!strncmp (buf, "KEY_", 4)) {
 		memmove (buf, buf + 4, sizeof (buf) - 4);
 	}
@@ -361,25 +376,26 @@ char *tidy_keyname (const char *keyname)
 	}
 
 	if (!strcmp (buf, "IC"))
-		return "ins";
+		strcpy (buf, "ins");
 	if (!strcmp (buf, "DC"))
-		return "del";
+		strcpy (buf, "del");
 	if (!strcmp (buf, "UP"))
-		return "up";
+		strcpy (buf, "up");
 	if (!strcmp (buf, "^M"))
-		return "return";
+		strcpy (buf, "return");
 	if (!strcmp (buf, "^I"))
-		return "tab";
+		strcpy (buf, "tab");
 	if (!strcmp (buf, "END"))
-		return "end";
+		strcpy (buf, "end");
 	if (!strcmp (buf, "^["))
-		return "esc";
+		strcpy (buf, "esc");
 	if (!strcmp (buf, "^@"))
-		return "^space";
+		strcpy (buf, "^space");
 	if (!strcmp (buf, " "))
-		return "space";
+		strcpy (buf, "space");
 	if (!strcmp (buf, "BACKSPACE"))
-		return "backspace";
+		strcpy (buf, "backspace");
+
 	if (strlen (buf) > 3) {
 		char *c = buf;
 
@@ -388,6 +404,15 @@ char *tidy_keyname (const char *keyname)
 			c++;
 		}
 	}
+
+	if (k->with_meta) {
+		memmove (buf + 2, buf, strlen(buf));
+		buf[0] = 'M';
+		buf[1] = '-';
+	}
+
+	//fprintf(stderr, "tidy_keyname: produced %s\n", buf);
+
 	return buf;
 }
 

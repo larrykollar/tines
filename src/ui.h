@@ -29,7 +29,8 @@ void ui_end ();
    to the defines above in this file, and returns the new
    value. (also processes some of the events like resize itself)
 */
-int ui_input ();
+
+ui_keycode ui_input ();
 
 /* used for approximately guessing how much we should skip 
    when page up/page down is requested.
@@ -41,10 +42,13 @@ extern int ui_inited;
 
 void ui_getstr (char *prompt, char *datastorage);
 
-#define undefined_key(a,c)\
-	{if(c!=ui_action_ignore){\
-	docmdf(pos,"status \"No action assigned to '%s'(%id) in %s-mode\"",tidy_keyname(keyname(c)),c,a);\
-	}}\
+// #define undefined_key(a,c)\
+// 	{if(c!=ui_action_ignore){\
+// 	docmdf(pos,"status \"No action assigned to '%s'(%id) in %s-mode\"",tidy_keyname(c),c->key,a);\
+// 	}}\
+
+#define undefined_key(a,c) do_undefined_key(a,c)
+void do_undefined_key (char * scope, Tbinding * c);
 
 #define info(a)\
 	{set_status(a);\
