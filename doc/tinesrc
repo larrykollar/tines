@@ -322,6 +322,8 @@
 		
 		bind del  delete
 		bind ^D   delete
+
+		bind M-d  kill_word
 		
 	context lineedit
 		helptext lineedit

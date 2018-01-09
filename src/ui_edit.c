@@ -165,6 +165,22 @@ static void* ui_edit_cmd (int argc, char **argv, void *data)
 					}
 				}
 				break;
+			case ui_action_kill_word:
+				{
+					/* A block is needed to stop the compiler from complaining that
+					   we're defining a variable here */
+					int targ = cursor_pos;
+					if (targ < 0) break;
+					while (targ < strlen(input) - 1) {
+						targ++;
+						if (input[targ] == ' ' && targ < strlen(input) - 1 && \
+							input[targ+1] != ' ') {
+							break;
+						}
+					}
+					memmove (&input[cursor_pos], &input[targ], strlen(input) - (targ-1));
+				}
+				break;
 			case ui_action_backspace:
 				if (cursor_pos) {
 					memmove (&input[cursor_pos - 1],
