@@ -157,3 +157,18 @@ ui_keycode ui_input ()
 	//return (c);
 	return result;
 }
+
+void do_undefined_key (char * scope, Tbinding * binding) {
+	/* if it's any-key, the key itself is stored in a different place...  (see ui_binding.c)
+	   this logic used to be copy-pasted around in several places; I just transplanted it */
+	if (binding->key != ui_action_ignore) {
+		if (binding->key == 1000) {
+			binding->key = *((int *)&binding->action_param[0]);
+			docmdf(NULL,"status \"No action assigned to '%s'(%id) in %s-mode\"",tidy_keyname(binding),binding->key,scope);
+			binding->key = 1000;
+		} else {
+			docmdf(NULL,"status \"No action assigned to '%s'(%id) in %s-mode\"",tidy_keyname(binding),binding->key,scope);
+		}
+	}
+}
+

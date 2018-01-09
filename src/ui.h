@@ -42,10 +42,13 @@ extern int ui_inited;
 
 void ui_getstr (char *prompt, char *datastorage);
 
-#define undefined_key(a,c)\
-	{if(c!=ui_action_ignore){\
-	docmdf(pos,"status \"No action assigned to '%s'(%id) in %s-mode\"",tidy_keyname(keyname(c)),c,a);\
-	}}\
+// #define undefined_key(a,c)\
+// 	{if(c!=ui_action_ignore){\
+// 	docmdf(pos,"status \"No action assigned to '%s'(%id) in %s-mode\"",tidy_keyname(c),c->key,a);\
+// 	}}\
+
+#define undefined_key(a,c) do_undefined_key(a,c)
+void do_undefined_key (char * scope, Tbinding * c);
 
 #define info(a)\
 	{set_status(a);\

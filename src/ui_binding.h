@@ -63,7 +63,7 @@ extern int ui_current_scope;
 
 
 Tbinding *parsekey (ui_keycode key, int scope);
-char *tidy_keyname (const char *keyname);
+char *tidy_keyname (Tbinding *k);
 char *resolve_binding (int scope, int action);
 
 #endif /* UI_BINDING_H */
