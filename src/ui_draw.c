@@ -39,9 +39,6 @@
 
 #define KEEPLINES 5
 
-//TODO: make this configurable in 'software'!
-#define PARAGRAPH_INDENT l
-
 extern int nodes_above;
 extern int active_line;
 extern int nodes_below;
@@ -176,15 +173,15 @@ static int draw_textblock (int line_start, int col_start, int width,
 			wordwrap:
 				if (col + wpos + 1 >= col_end) {	/* reached margin */
 					if (lines_used == 1)
-						col_start += PARAGRAPH_INDENT;
+						col_start += prefs.para_indent;
 
 					if (drawmode == drawmode_edit) {
 						if (cursor_state == 0)
 							hnb_edit_posup = cursor_pos - (col - col_start);
 						if (cursor_state == 1) {
-							if (cursor_pos < PARAGRAPH_INDENT)
+							if (cursor_pos < prefs.para_indent)
 								hnb_edit_posdown = cursor_pos + (col - col_start) + \
-								   (PARAGRAPH_INDENT - cursor_pos);
+								   (prefs.para_indent - cursor_pos);
 							else
 								hnb_edit_posdown = cursor_pos + (col - col_start);
 							cursor_state = 2;

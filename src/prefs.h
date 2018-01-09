@@ -25,6 +25,7 @@ typedef struct {
 	long saveexpand;
 	long readonly;
 	int ui;
+	int para_indent;
 } Tprefs;
 
 extern Tprefs prefs;
