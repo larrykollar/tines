@@ -139,6 +139,12 @@
 		# easily be extended since it fakes it with a XML comment)
 		# 1=true 0=false
 		savepos	"1"
+
+	##### Persist folding
+		# whether tines remembers which nodes were expanded or not
+		# when loading a file. if you set this to 0, you will always
+		# start with a fully collapsed tree.
+		saveexpand 0
 		
 	##### XML format
 		##### XML Cuddling
