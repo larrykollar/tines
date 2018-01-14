@@ -208,6 +208,8 @@ typedef struct {
 Node *tree_narrow (Node *pos, TreeNarrowingState *s);
 Node *tree_widen (Node *pos, TreeNarrowingState *s);
 
+TreeNarrowingState global_tree_narrow;   // for widen / narrow commands
+
 extern char TEXT[5];
 
 

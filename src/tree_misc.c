@@ -349,6 +349,40 @@ void init_insertbelow ()
 		"Adds a new entry immediatly below the current entry. The new entry has the same attributes as the current entry.");
 }
 
+static void* widen_narrow_cmd (int argc, char **argv, void *data)
+{
+	Node *pos = (Node *) data;
+	if (!global_tree_narrow.is_narrowed) {
+		pos = tree_narrow (pos, &global_tree_narrow);
+	} else {
+		pos = tree_widen (pos, &global_tree_narrow);
+	}
+	return pos;
+}
+
+static void* widen_narrow_region_cmd (int argc, char **argv, void *data)
+{
+	Node *pos = (Node *) data;
+	Node *sp = pos;
+	if (node_left (pos)) {
+		pos = node_left (pos);
+		docmd(pos, "narrow_or_widen");
+		pos = sp;
+	}
+	return pos;
+}
+
+/*
+!init_widen_narrow();
+*/
+void init_widen_narrow ()
+{
+	cli_add_command ("narrow_or_widen", widen_narrow_cmd, "");
+	cli_add_help ("narrow_or_widen", "Narrows the view to the currently selected node and its children, temporarily severing the rest of the tree. EXPERIMENTAL. Use with care. Don't save while the view is narrow or you WILL lose data.");
+	cli_add_command ("narrow_or_widen_region", widen_narrow_region_cmd, "");
+	cli_add_help ("narrow_or_widen_region", "Narrows the view to the region your cursor is in -- that is, the current node, nodes around it at the same level, and its parent. EXPERIMENTAL. Use with care. Don't save while the view is narrow or you WILL lose data.");
+}
+
 /*
 	TODO:
 		setting of attributes,.. percentage, size, donebydate etc.
