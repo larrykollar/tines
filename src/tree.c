@@ -30,6 +30,8 @@ user) */
 #include <stdlib.h>
 #include "tree.h"
 
+#include "libcli/cli.h"
+
 char TEXT[5] = "text";
 
 Node *node_recurse (Node *node)
@@ -531,4 +533,86 @@ Node *tree_duplicate (Node *source, Node *target)
 	}
 
 	return target;
+}
+
+Node *tree_narrow (Node *pos, TreeNarrowingState *s) {
+	if (s->is_narrowed)
+		return pos;
+
+	s->saved_up = pos->up;
+	s->saved_down = pos->down;
+	s->saved_left = pos->left;
+	s->is_narrowed = 1;
+	pos->up = pos->down = pos->left = NULL;
+
+	return pos;
+}
+
+Node *tree_widen (Node *pos, TreeNarrowingState *s) {
+	if (!s->is_narrowed)
+		return pos;
+
+	Node *head = node_root (pos);
+
+	head->up = s->saved_up;
+	head->left = s->saved_left;
+	if (head->up != NULL) {
+		head->up->down = head;
+	} else {
+		// if it's null, we might need to set the right of left
+		if (head->left != NULL)
+			head->left->right = head;
+	}
+
+	Node *tail = head;
+	while (node_down (tail)) {
+		tail = node_down (tail);
+		if (head->left != NULL)
+			tail->left = head->left;
+	}
+
+	tail->down = s->saved_down;
+	if (tail->down != NULL)
+		tail->down->up = tail;
+	// else, if it's null, do we need to set... the ... i don't even know
+
+	s->is_narrowed = 0;
+
+	return pos;
+}
+
+TreeNarrowingState global_tree_narrow;
+
+static void* widen_narrow_cmd (int argc, char **argv, void *data)
+{
+	Node *pos = (Node *) data;
+	if (!global_tree_narrow.is_narrowed) {
+		pos = tree_narrow (pos, &global_tree_narrow);
+	} else {
+		pos = tree_widen (pos, &global_tree_narrow);
+	}
+	return pos;
+}
+
+static void* widen_narrow_region_cmd (int argc, char **argv, void *data)
+{
+	Node *pos = (Node *) data;
+	Node *sp = pos;
+	if (node_left (pos)) {
+		pos = node_left (pos);
+		docmd(pos, "narrow_or_widen");
+		pos = sp;
+	}
+	return pos;
+}
+
+/*
+!init_widen_narrow();
+*/
+void init_widen_narrow ()
+{
+	cli_add_command ("narrow_or_widen", widen_narrow_cmd, "");
+	cli_add_help ("narrow_or_widen", "Narrows the view to the currently selected node and its children, temporarily severing the rest of the tree. EXPERIMENTAL. Use with care. Don't save while the view is narrow or you WILL lose data.");
+	cli_add_command ("narrow_or_widen_region", widen_narrow_region_cmd, "");
+	cli_add_help ("narrow_or_widen_region", "Narrows the view to the region your cursor is in -- that is, the current node, nodes around it at the same level, and its parent. EXPERIMENTAL. Use with care. Don't save while the view is narrow or you WILL lose data.");
 }

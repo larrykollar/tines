@@ -191,6 +191,23 @@ char *node_getdata(Node *node);
 
 Node *tree_duplicate (Node *source, Node *target);
 
+/* Tries to narrow tree to `pos` and any nodes below it.
+   Narrowing twice with the same state is a no-op.
+   If you use this, you must make sure you don't create a state where the
+   tree is narrowed and never widened. Especially don't do so and throw out
+   the TreeNarrowingState: That would be a memory leak.
+   
+ */
+typedef struct {
+	Node *saved_up;
+	Node *saved_down;
+	Node *saved_left;
+	int is_narrowed;
+} TreeNarrowingState;
+
+Node *tree_narrow (Node *pos, TreeNarrowingState *s);
+Node *tree_widen (Node *pos, TreeNarrowingState *s);
+
 extern char TEXT[5];
 
 
