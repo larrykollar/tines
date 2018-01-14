@@ -368,6 +368,11 @@ static void* widen_narrow_region_cmd (int argc, char **argv, void *data)
 		pos = node_left (pos);
 		docmd(pos, "narrow_or_widen");
 		pos = sp;
+	} else {
+		/* Don't make the user think they got stuck unable to widen the
+		   tree if they used the non-region command. */
+		if (global_tree_narrow.is_narrowed)
+			pos = tree_widen (pos, &global_tree_narrow);
 	}
 	return pos;
 }
