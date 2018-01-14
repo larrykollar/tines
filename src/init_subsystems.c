@@ -41,6 +41,7 @@ void init_ui_edit();
 void init_ui_menu();
 void init_ui_overlay();
 void init_ui_style();
+void init_widen_narrow();
 
 void init_subsystems(){
  init_autosave();
@@ -85,4 +86,5 @@ void init_subsystems(){
  init_ui_menu();
  init_ui_overlay();
  init_ui_style();
+ init_widen_narrow();
 }
