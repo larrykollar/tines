@@ -192,6 +192,11 @@ static void* cmd_save (int argc, char **argv, void *data)
 		docmd (pos, "status \"Read-only mode, not writing to disk.\"\n");
 		return pos;
 	}
+
+	if (global_tree_narrow.is_narrowed) {
+		pos = tree_widen (pos, &global_tree_narrow);
+		docmd (pos, "status \"Tree un-narrowed to save to disk.\"");
+	}
 	
 	if (prefs.db_file[0] != (char) 255) { /* magic value of tutorial */
 		{
@@ -214,6 +219,7 @@ static void* cmd_save (int argc, char **argv, void *data)
 	} else {
 		/* make tutorial users initial database, if initial database dont exist */
 	}
+
 	return pos;
 }
 
