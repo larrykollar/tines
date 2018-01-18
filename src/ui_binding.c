@@ -310,7 +310,7 @@ static void* ui_bind_cmd (int argc, char **argv, void *data)
 
 
 
-static Tbinding keyproxy = { 0, 0, "key", "key" };
+static Tbinding keyproxy = { 0, 0, 0, "key", "key" };
 Tbinding *lastbinding;
 
 Tbinding *parsekey (ui_keycode k, int scope)
