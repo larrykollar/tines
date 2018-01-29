@@ -225,6 +225,9 @@
 
 		bind M-^K collapse
 		bind M-^J expand
+
+		bind M-o narrow_or_widen_region
+		bind M-^O narrow_or_widen
 		
 		bind esc menu
 		bind ^Q 'context quitsave'
