@@ -1,0 +1,2 @@
+autoscan-2.69: warning: missing AC_PROG_RANLIB wanted by: 
+	ltmain.sh:3819

@@ -35,7 +35,7 @@
 		forced_down 1
 	
 	##### automatically added nodes
-		# To put automatically added nodes at the top of the current leve,
+		# To put automatically added nodes at the top of the current level,
 		# set this variable to 1.
 		add_at_top 0
 	
@@ -697,7 +697,7 @@
 	context main
 	macro define m_about
 		status "Tines - an outliner, planner, organizer, and notebook"
-		status "(c) 2015-2016 Larry Kollar (lkollar@gmail.com)"
+		status "(c) 2015-2017 Larry Kollar (lkollar@gmail.com)"
 		status "Using OPML configuration file."
 	end
 	

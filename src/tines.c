@@ -24,7 +24,7 @@
 		std. oppretting
 		redigering
 		gå til parent
-		
+
 		--
 		sannsynlig grunn: feil håndtering av temporary attributte
 
@@ -85,9 +85,9 @@ Options:\n\
 	fprintf (stderr, "\t-s --stylized load stylized xml (using libxml2)\n");
 #endif
 	fprintf (stderr, "\n\
-\t-rc=<file>        specify a different config file\n\
-\t-ui=<interface>   interface to use, curses (default) or CLI\n\
-\t-e                execute commands\n\
+\t--rc=<file>        specify a different config file\n\
+\t--ui=<interface>   interface to use, curses (default) or CLI\n\
+\t-e <cmds>          execute commands\n\
 \n\n");
 }
 
@@ -100,7 +100,7 @@ int main (int argc, char **argv)
 	int argno;
 
 	/* current commandline argument in focus */
-	
+
 	int recover=0;  /* whether in recover mode */
 
 	struct {					/* initialized defaults */
@@ -174,7 +174,7 @@ int main (int argc, char **argv)
 			} else if(!strcmp(optarg, "keygrab")) {
 				cmdline.ui = 4;
 			} else {
-				fprintf(stderr, "unknown -ui option: %s\n", optarg);
+				fprintf(stderr, "unknown --ui option: %s\n", optarg);
 				usage( progname );
 				exit(1);
 			}
@@ -207,7 +207,7 @@ int main (int argc, char **argv)
 			cmdline.def_db = 0;
 		}
 	} else {
-		cmdline.cmd = argv[optind++];
+		cmdline.cmd = argv[optind];
 		cmdline.ui = 0;
 	}
 
@@ -277,16 +277,16 @@ int main (int argc, char **argv)
 		char file_to_load[PREFS_FN_LEN];
 
 		strcpy(file_to_load, prefs.db_file);
-		
+
 		{ /* check for recovery file */
 		  char recovery_file[PREFS_FN_LEN];
 		  FILE *tfile;
-		  
+
 	  	  struct stat statbuf;
 		  long file_modified;
 	   	  stat(prefs.db_file, &statbuf);
 		  file_modified=statbuf.st_ctime;
-		  
+
 		  snprintf(recovery_file, PREFS_FN_LEN, "%s_tines_rescue", prefs.db_file);
 		  tfile = fopen(recovery_file, "r");
 		  if(tfile){
@@ -299,7 +299,7 @@ int main (int argc, char **argv)
 
 			  if(ui_inited)
 				  ui_end();
-	
+
 			  fclose(tfile);
 			 while(!got_response){
 				  fprintf(stderr, "A recovery file (%s) exists.\n\
@@ -339,7 +339,7 @@ o)pen read_only\n\
 				 ui_init();
 		  }
 		}
-		
+
 		if (!recover && ( 
 		    !strcmp(prefs.format,"opml") ||
 		    !strcmp(prefs.format,"hnb") || 
@@ -430,7 +430,7 @@ o)pen read_only\n\
 			ui_end ();
 			break;
 		case 0: /* -e */
-			pos = (Node *) cli_docmd (cmdline.cmd, pos);
+			/* pos = (Node *) cli_docmd (cmdline.cmd, pos); */ /* issue #13 */
 			while (argno < argc) {
 				pos = (Node *) cli_docmd (argv[argno++], pos);
 			}

@@ -9,10 +9,10 @@
 	##### samples
 		#bullet_parent          "  -"
 		#bullet_parent          "  *"
-		#bullet_parent          "  ·"
+		#bullet_parent          "  ï¿½"
 		#bullet_parent_expanded "  +"
 		#bullet_parent_expanded "  *"
-		#bullet_parent_expanded "  ·"
+		#bullet_parent_expanded "  ï¿½"
 		#bullet_leaf            "  *"
 		#bullet_leaf            "  -"
 		#bullet_todo_leaf_undone   "[ ]"
@@ -115,7 +115,7 @@
 			#spell_command "ispell -x"
 			#spell_command "ispell -x -damerican"
 			#spell_command "ispell -x -dbritish"
-			#spell_command "ispell -x -dbokmål"
+			#spell_command "ispell -x -dbokmï¿½l"
 			#spell_command "ispell -x -dnynorsk"
 		spell_command "ispell -x"
 		
@@ -503,14 +503,14 @@
 		bind any "unbound"
 		
 	context user_ispell
-		helptext "Language for ispell: | |F1| Br.english  |F2| Am.english  |F3| Norwegian bokmål  |F4| Norwegian nynorsk"
+		helptext "Language for ispell: | |F1| Br.english  |F2| Am.english  |F3| Norwegian bokmï¿½l  |F4| Norwegian nynorsk"
 		bind f1  'spell_command "ispell -x -damerican"'
 		bind ..  'context main'
 		
 		bind f2  'spell_command "ispell -x -dbritish"'
 		bind ..  'context main'
 		
-		bind f3  'spell_command "ispell -x -dbokmål"'
+		bind f3  'spell_command "ispell -x -dbokmï¿½l"'
 		bind ..  'context main'
 		
 		bind f4  'spell_command "ispell -x -dnynorsk"'
@@ -676,7 +676,7 @@
 	context main
 	macro define m_about
 		status "Tines - an outliner, planner, organizer, and notebook
-		status "(c) 2015 Larry Kollar (lkollar@gmail.com)
+		status "(c) 2015-2017 Larry Kollar (lkollar@gmail.com)
 	end
 	
 	macro m_about
