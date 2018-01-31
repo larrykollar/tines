@@ -193,10 +193,12 @@ static void* cmd_save (int argc, char **argv, void *data)
 		return pos;
 	}
 
+#ifdef USE_NARROW_MODE
 	if (global_tree_narrow.is_narrowed) {
 		pos = tree_widen (pos, &global_tree_narrow);
 		docmd (pos, "status \"Tree un-narrowed to save to disk.\"");
 	}
+#endif /*USE_NARROW_MODE*/
 	
 	if (prefs.db_file[0] != (char) 255) { /* magic value of tutorial */
 		{

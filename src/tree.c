@@ -535,6 +535,7 @@ Node *tree_duplicate (Node *source, Node *target)
 	return target;
 }
 
+#ifdef USE_NARROW_MODE
 Node *tree_narrow (Node *pos, TreeNarrowingState *s) {
 	if (s->is_narrowed)
 		return pos;
@@ -580,3 +581,4 @@ Node *tree_widen (Node *pos, TreeNarrowingState *s) {
 
 	return pos;
 }
+#endif /*USE_NARROW_MODE*/

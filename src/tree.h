@@ -191,6 +191,7 @@ char *node_getdata(Node *node);
 
 Node *tree_duplicate (Node *source, Node *target);
 
+#ifdef USE_NARROW_MODE
 /* Tries to narrow tree to `pos` and any nodes below it.
    Narrowing twice with the same state is a no-op.
    If you use this, you must make sure you don't create a state where the
@@ -209,6 +210,7 @@ Node *tree_narrow (Node *pos, TreeNarrowingState *s);
 Node *tree_widen (Node *pos, TreeNarrowingState *s);
 
 TreeNarrowingState global_tree_narrow;   // for widen / narrow commands
+#endif
 
 extern char TEXT[5];
 

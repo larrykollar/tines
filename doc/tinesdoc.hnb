@@ -139,6 +139,7 @@
 				<node><data>If you want the expanded/collapsed state of your entries to persist between sessions, edit the &apos;saveexpand&apos; option in your ~/.tinesrc file.</data></node>
 			</node>
 			<node><data>Narrow subtree</data>
+				<node><data>NB: This feature is currently incomplete. To compile it into tines, edit `src/config.h` to #define USE_NARROW_MODE first.</data></node>
 				<node><data>&apos;Narrowing&apos; is an experimental feature that temporarily detaches a node and its children from the rest of the outline, allowing you to view and work on that node (and add nodes around it) without distractions. This is especially good for parts of the tree that are nested many levels deep.</data></node>
 				<node><data>The command `narrow_or_widen` detaches the node your cursor is on and its children. The command `narrow_or_widen_region` detaches the parent of the node your cursor is on, creating the effect of isolating the tree your cursor is in.</data></node>
 				<node><data>The default configuration includes keybindings to narrow/widen the subtree: Alt+o calls `narrow_or_widen_region` and Alt+Ctrl+o calls narrow_or_widen.</data></node>

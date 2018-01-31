@@ -349,6 +349,7 @@ void init_insertbelow ()
 		"Adds a new entry immediatly below the current entry. The new entry has the same attributes as the current entry.");
 }
 
+#ifdef USE_NARROW_MODE
 static void* widen_narrow_cmd (int argc, char **argv, void *data)
 {
 	Node *pos = (Node *) data;
@@ -376,16 +377,19 @@ static void* widen_narrow_region_cmd (int argc, char **argv, void *data)
 	}
 	return pos;
 }
+#endif /*USE_NARROW_MODE*/
 
 /*
 !init_widen_narrow();
 */
 void init_widen_narrow ()
 {
+#ifdef USE_NARROW_MODE
 	cli_add_command ("narrow_or_widen", widen_narrow_cmd, "");
 	cli_add_help ("narrow_or_widen", "Narrows the view to the currently selected node and its children, temporarily severing the rest of the tree. EXPERIMENTAL. Use with care. May not play nice with autosave.");
 	cli_add_command ("narrow_or_widen_region", widen_narrow_region_cmd, "");
 	cli_add_help ("narrow_or_widen_region", "Narrows the view to the region your cursor is in -- that is, the current node, nodes around it at the same level, and its parent. EXPERIMENTAL. Use with care. May not play nice with autosave.");
+#endif /*USE_NARROW_MODE*/
 }
 
 /*
