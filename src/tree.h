@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include "node.h"
+#include "config.h"
 
 /*flag (attribute) definitions*/
 enum {
