@@ -205,10 +205,18 @@ typedef struct {
 	Node *saved_down;
 	Node *saved_left;
 	int is_narrowed;
+
+	Node *suspend_head;
+	Node *suspend_tail;
+	Node *suspend_pos;
+	int suspend;
 } TreeNarrowingState;
 
 Node *tree_narrow (Node *pos, TreeNarrowingState *s);
 Node *tree_widen (Node *pos, TreeNarrowingState *s);
+
+Node *tree_narrow_suspend (Node *pos, TreeNarrowingState *s);
+Node *tree_narrow_unsuspend (Node *pos, TreeNarrowingState *s);
 
 TreeNarrowingState global_tree_narrow;   // for widen / narrow commands
 #endif

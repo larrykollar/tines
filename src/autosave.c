@@ -38,9 +38,19 @@ static void autosave_invoke(Node *pos){
 		{
 			char buf[4096];
 			
+#ifdef USE_NARROW_MODE
+			if (global_tree_narrow.is_narrowed) {
+				pos = tree_narrow_suspend (pos, &global_tree_narrow);
+			}
+#endif
 			sprintf (buf, "export_binary %s_tines_rescue", prefs.db_file);		
 			docmd (node_root(pos), buf);
 			cli_outfunf("autosaved, %i nodes changed\n",nodes_changed);
+#ifdef USE_NARROW_MODE
+			if (global_tree_narrow.suspend) {
+				pos = tree_narrow_unsuspend (pos, &global_tree_narrow);
+			}
+#endif
 		}
 	}
 	if(autosave_sync)

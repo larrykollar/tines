@@ -581,4 +581,54 @@ Node *tree_widen (Node *pos, TreeNarrowingState *s) {
 
 	return pos;
 }
+
+Node *tree_narrow_suspend (Node *pos, TreeNarrowingState *s) {
+	if (!s->is_narrowed)
+		return pos;
+	if (s->suspend)
+		return pos;
+
+	s->suspend_head = node_root (pos);
+	s->suspend_tail = node_bottom (s->suspend_head);
+	s->suspend_pos = pos;
+
+	s->suspend = 1;
+
+	pos = tree_widen (pos, s);
+
+	return pos;
+}
+
+Node *tree_narrow_unsuspend (Node *pos, TreeNarrowingState *s) {
+	if (s->is_narrowed)
+		return pos;
+	if (!s->suspend)
+		return pos;
+
+	Node *head = s->suspend_head;
+	Node *tail = s->suspend_tail;
+
+	head->left = head->up = NULL;
+	tail->down = NULL;
+
+	/* We needed to null out tail->down *first* so we don't run over into
+	 * the previously-invisible part of the tree and screw things up.
+	 */
+	tail = head;
+	while (node_down (tail)) {
+		tail = node_down (tail);
+		tail->left = NULL;
+	}
+	tail->down = NULL;
+
+	s->suspend = 0;
+	s->suspend_head = NULL;
+	s->suspend_tail = NULL;
+	s->is_narrowed = 1;
+
+	/* This is going to get us in SOOO much trouble if someone
+	 * tries to modify the tree while suspended... :\
+	 */
+	return s->suspend_pos;
+}
 #endif /*USE_NARROW_MODE*/
