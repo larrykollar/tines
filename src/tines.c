@@ -362,7 +362,7 @@ o)pen read_only\n\
 		{
 			char buf[PREFS_FN_LEN];
 			if(recover)
-				sprintf (buf, "import_binary %s", file_to_load);
+				sprintf (buf, "import_hnb %s", file_to_load);
 			else {
 				/* File specified on command line:
 				 *   exists: load it
