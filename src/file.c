@@ -195,8 +195,7 @@ static void* cmd_save (int argc, char **argv, void *data)
 
 #ifdef USE_NARROW_MODE
 	if (global_tree_narrow.is_narrowed) {
-		pos = tree_widen (pos, &global_tree_narrow);
-		docmd (pos, "status \"Tree un-narrowed to save to disk.\"");
+		pos = tree_narrow_suspend (pos, &global_tree_narrow);
 	}
 #endif /*USE_NARROW_MODE*/
 	
@@ -221,6 +220,12 @@ static void* cmd_save (int argc, char **argv, void *data)
 	} else {
 		/* make tutorial users initial database, if initial database dont exist */
 	}
+
+#ifdef USE_NARROW_MODE
+	if (global_tree_narrow.suspend) {
+		pos = tree_narrow_unsuspend (pos, &global_tree_narrow);
+	}
+#endif /*USE_NARROW_MODE*/
 
 	return pos;
 }
