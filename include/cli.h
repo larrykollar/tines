@@ -25,8 +25,8 @@
 
 	cli_split(commandline, char head[40], &tailstring);
 */
-#ifndef LIBCLI_H
-#define LIBCLI_H
+#ifndef LIBCLI_H_INCLUDED
+#define LIBCLI_H_INCLUDED
 
 #include <stdarg.h>
 
@@ -77,4 +77,4 @@ extern void(*cli_unknown) (int,char **,void *); /* handler for unmatched command
 extern int cli_width;				/* wrap width of output window */
 
 #include "cli_history.h"
-#endif /* LIBCLI_H */
+#endif /* LIBCLI_H_INCLUDED */
