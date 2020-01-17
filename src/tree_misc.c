@@ -349,6 +349,49 @@ void init_insertbelow ()
 		"Adds a new entry immediatly below the current entry. The new entry has the same attributes as the current entry.");
 }
 
+#ifdef USE_NARROW_MODE
+static void* widen_narrow_cmd (int argc, char **argv, void *data)
+{
+	Node *pos = (Node *) data;
+	if (!global_tree_narrow.is_narrowed) {
+		pos = tree_narrow (pos, &global_tree_narrow);
+	} else {
+		pos = tree_widen (pos, &global_tree_narrow);
+	}
+	return pos;
+}
+
+static void* widen_narrow_region_cmd (int argc, char **argv, void *data)
+{
+	Node *pos = (Node *) data;
+	Node *sp = pos;
+	if (node_left (pos)) {
+		pos = node_left (pos);
+		docmd(pos, "narrow_or_widen");
+		pos = sp;
+	} else {
+		/* Don't make the user think they got stuck unable to widen the
+		   tree if they used the non-region command. */
+		if (global_tree_narrow.is_narrowed)
+			pos = tree_widen (pos, &global_tree_narrow);
+	}
+	return pos;
+}
+#endif /*USE_NARROW_MODE*/
+
+/*
+!init_widen_narrow();
+*/
+void init_widen_narrow ()
+{
+#ifdef USE_NARROW_MODE
+	cli_add_command ("narrow_or_widen", widen_narrow_cmd, "");
+	cli_add_help ("narrow_or_widen", "Narrows the view to the currently selected node and its children, temporarily severing the rest of the tree. EXPERIMENTAL. Use with care. May not play nice with autosave.");
+	cli_add_command ("narrow_or_widen_region", widen_narrow_region_cmd, "");
+	cli_add_help ("narrow_or_widen_region", "Narrows the view to the region your cursor is in -- that is, the current node, nodes around it at the same level, and its parent. EXPERIMENTAL. Use with care. May not play nice with autosave.");
+#endif /*USE_NARROW_MODE*/
+}
+
 /*
 	TODO:
 		setting of attributes,.. percentage, size, donebydate etc.

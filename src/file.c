@@ -192,6 +192,12 @@ static void* cmd_save (int argc, char **argv, void *data)
 		docmd (pos, "status \"Read-only mode, not writing to disk.\"\n");
 		return pos;
 	}
+
+#ifdef USE_NARROW_MODE
+	if (global_tree_narrow.is_narrowed) {
+		pos = tree_narrow_suspend (pos, &global_tree_narrow);
+	}
+#endif /*USE_NARROW_MODE*/
 	
 	if (prefs.db_file[0] != (char) 255) { /* magic value of tutorial */
 		{
@@ -214,6 +220,13 @@ static void* cmd_save (int argc, char **argv, void *data)
 	} else {
 		/* make tutorial users initial database, if initial database dont exist */
 	}
+
+#ifdef USE_NARROW_MODE
+	if (global_tree_narrow.suspend) {
+		pos = tree_narrow_unsuspend (pos, &global_tree_narrow);
+	}
+#endif /*USE_NARROW_MODE*/
+
 	return pos;
 }
 

@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include "node.h"
+#include "config.h"
 
 /*flag (attribute) definitions*/
 enum {
@@ -190,6 +191,35 @@ char *node_getdata(Node *node);
 */
 
 Node *tree_duplicate (Node *source, Node *target);
+
+#ifdef USE_NARROW_MODE
+/* Tries to narrow tree to `pos` and any nodes below it.
+   Narrowing twice with the same state is a no-op.
+   If you use this, you must make sure you don't create a state where the
+   tree is narrowed and never widened. Especially don't do so and throw out
+   the TreeNarrowingState: That would be a memory leak.
+   
+ */
+typedef struct {
+	Node *saved_up;
+	Node *saved_down;
+	Node *saved_left;
+	int is_narrowed;
+
+	Node *suspend_head;
+	Node *suspend_tail;
+	Node *suspend_pos;
+	int suspend;
+} TreeNarrowingState;
+
+Node *tree_narrow (Node *pos, TreeNarrowingState *s);
+Node *tree_widen (Node *pos, TreeNarrowingState *s);
+
+Node *tree_narrow_suspend (Node *pos, TreeNarrowingState *s);
+Node *tree_narrow_unsuspend (Node *pos, TreeNarrowingState *s);
+
+TreeNarrowingState global_tree_narrow;   // for widen / narrow commands
+#endif
 
 extern char TEXT[5];
 

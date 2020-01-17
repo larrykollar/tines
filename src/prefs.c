@@ -47,7 +47,8 @@ Tprefs prefs = {
 	0,						/* save position */
 	0,						/* save expanded state */
 	0,						/* readonly */
-	1						/* curses */
+	1,						/* curses */
+	0						/* para_indent */
 };
 
 char pid[100]; /* text representation of process ID */
@@ -113,6 +114,7 @@ void init_prefs ()
 	cli_add_int ("savepos", &prefs.savepos, "If true, saves the current position.");
 	cli_add_int ("saveexpand", &prefs.saveexpand, "If true, saves the current expansion state.");
 	cli_add_int ("readonly", &prefs.readonly, "If true, the database is read-only.");
+	cli_add_int("parindent", &prefs.para_indent, "How many characters (if more than 0) to indent the body of a node that is more than 1 line long.");
 	cli_add_string ("pid", pid, "The process ID for this instance of Tines as a string.");
 
 #ifdef NCURSES_VERSION 

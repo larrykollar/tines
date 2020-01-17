@@ -56,6 +56,13 @@
 		##### samples
 			#display_format # "i4- d"
 		display_format "i4- d"
+	
+	##### paragraph indent
+		# defines how much to indent the text of nodes that are longer than one line
+		# this helps to visually distinguish the beginning of a node when there
+		# are paragraph-length chunks of text in the tree.
+		# negative numbers currently don't quite work right.
+		parindent 1
 		
 	##### fixed focus
 		# If 1, lock the selection bar to a position 1/3 down the screen
@@ -132,6 +139,12 @@
 		# easily be extended since it fakes it with a XML comment)
 		# 1=true 0=false
 		savepos	"1"
+
+	##### Persist folding
+		# whether tines remembers which nodes were expanded or not
+		# when loading a file. if you set this to 0, you will always
+		# start with a fully collapsed tree.
+		saveexpand 0
 		
 	##### XML format
 		##### XML Cuddling
@@ -193,6 +206,28 @@
 		bind f1 'status "Take a look at ~/.tinesrc to check out the configuration"'
 		bind .. 'status "there you will also find details about the available keybindings."'
 		bind .. 'status "please feel free to contribute more useful keybindings and helptexts..."'
+
+		bind M-h left
+		bind M-l right
+		bind M-j down
+		bind M-k up
+		
+		bind M-H "movenode left"
+		bind M-L "movenode right"
+		bind M-J "movenode down"
+		bind M-K "movenode up"
+
+		bind M-^H left
+		bind ..   collapse
+
+		bind M-^L expand
+		bind ..   right
+
+		bind M-^K collapse
+		bind M-^J expand
+
+		bind M-o narrow_or_widen_region
+		bind M-^O narrow_or_widen
 		
 		bind esc menu
 		bind ^Q 'context quitsave'
@@ -226,13 +261,15 @@
 		
 		bind ^A 'action'
 		bind up    up
+		bind ^P    up
 		bind down  down
+		bind ^N    down
 		bind left  left
 		bind right right
 		bind npage pagedown
 		bind ppage pageup
 		bind home  "go root"
-		
+
 		bind return edit
 		bind del    remove
 		
@@ -281,12 +318,17 @@
 	context nodeedit
 		helptext "editing node |  |ESC| revert || |return| confirm"
 		bind up    up
+		bind ^P    up
 		bind down  down
+		bind ^N    down
 		bind left  left
+		bind ^B    left
 		bind right right
+		bind ^F    right
 		
 		bind return  confirm
 		bind esc     cancel
+		bind ^C      cancel
 		
 		bind ^S  split
 		bind ^J  join
@@ -300,9 +342,14 @@
 		bind end  eol
 
 		bind ^W   skipword
+		bind M-f  skipword
 		bind ^B   bskipword
+		bind M-b  bskipword
 		
 		bind del  delete
+		bind ^D   delete
+
+		bind M-d  kill_word
 		
 	context lineedit
 		helptext lineedit
@@ -335,7 +382,7 @@
 		bind any    cancel
 		
 	context quitsave
-		helptext "Save on exit? |    | Y |es | J |a || | N |o || |ESC| cancel"
+		helptext "Save on exit? |    | Y |es | J |a || | N |o || |^C| cancel"
 		bind Y  save
 		bind .. quit
 		
@@ -352,6 +399,7 @@
 		bind n  quit
 		
 		bind esc "context main"
+		bind ^C  "context main"
 		bind any unbound
 		
 	context spellcheck
@@ -375,19 +423,24 @@
 		bind any unbound
 
 	context grab
-		helptext "Node grabbed |  |return| |space| drop here || |ESC| cancel"
+		helptext "Node grabbed |  |return| |space| drop here || |^C| cancel"
 		bind esc    restore_state
+		bind ^C     restore_state
 		bind ..     "context main"
 		bind return "context main"
 		bind space  "context main"
 		bind left   "movenode left"
+		bind btab   "movenode left"
 		bind right  "movenode right"
+		bind tab    "movenode right"
 		bind up     "movenode up"
+		bind ^P     "movenode up"
 		bind down   "movenode down"
+		bind ^N     "movenode down"
 		bind any    unbound
 
 	context export
-		helptext "Export |  | A |scii || | H |tml  html| C |ss  | P |ostscript  | O |PML  |ESC| cancel "
+		helptext "Export |  | A |scii || | H |tml  html| C |ss  | P |ostscript  | O |PML  |^C| cancel "
 			macro define m_export_ascii
 				save_state
 				go root
@@ -429,6 +482,7 @@
 				restore_state
 			end
 		bind esc "context main"
+		bind ^C  "context main"
 		bind A	"macro m_export_ascii"
 		bind a	"macro m_export_ascii"
 		bind H  "macro m_export_html"

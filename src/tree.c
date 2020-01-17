@@ -30,6 +30,8 @@ user) */
 #include <stdlib.h>
 #include "tree.h"
 
+#include "libcli/cli.h"
+
 char TEXT[5] = "text";
 
 Node *node_recurse (Node *node)
@@ -532,3 +534,101 @@ Node *tree_duplicate (Node *source, Node *target)
 
 	return target;
 }
+
+#ifdef USE_NARROW_MODE
+Node *tree_narrow (Node *pos, TreeNarrowingState *s) {
+	if (s->is_narrowed)
+		return pos;
+
+	s->saved_up = pos->up;
+	s->saved_down = pos->down;
+	s->saved_left = pos->left;
+	s->is_narrowed = 1;
+	pos->up = pos->down = pos->left = NULL;
+
+	return pos;
+}
+
+Node *tree_widen (Node *pos, TreeNarrowingState *s) {
+	if (!s->is_narrowed)
+		return pos;
+
+	Node *head = node_root (pos);
+
+	head->up = s->saved_up;
+	head->left = s->saved_left;
+	if (head->up != NULL) {
+		head->up->down = head;
+	} else {
+		// if it's null, we might need to set the right of left
+		if (head->left != NULL)
+			head->left->right = head;
+	}
+
+	Node *tail = head;
+	while (node_down (tail)) {
+		tail = node_down (tail);
+		if (head->left != NULL)
+			tail->left = head->left;
+	}
+
+	tail->down = s->saved_down;
+	if (tail->down != NULL)
+		tail->down->up = tail;
+	// else, if it's null, do we need to set... the ... i don't even know
+
+	s->is_narrowed = 0;
+
+	return pos;
+}
+
+Node *tree_narrow_suspend (Node *pos, TreeNarrowingState *s) {
+	if (!s->is_narrowed)
+		return pos;
+	if (s->suspend)
+		return pos;
+
+	s->suspend_head = node_root (pos);
+	s->suspend_tail = node_bottom (s->suspend_head);
+	s->suspend_pos = pos;
+
+	s->suspend = 1;
+
+	pos = tree_widen (pos, s);
+
+	return pos;
+}
+
+Node *tree_narrow_unsuspend (Node *pos, TreeNarrowingState *s) {
+	if (s->is_narrowed)
+		return pos;
+	if (!s->suspend)
+		return pos;
+
+	Node *head = s->suspend_head;
+	Node *tail = s->suspend_tail;
+
+	head->left = head->up = NULL;
+	tail->down = NULL;
+
+	/* We needed to null out tail->down *first* so we don't run over into
+	 * the previously-invisible part of the tree and screw things up.
+	 */
+	tail = head;
+	while (node_down (tail)) {
+		tail = node_down (tail);
+		tail->left = NULL;
+	}
+	tail->down = NULL;
+
+	s->suspend = 0;
+	s->suspend_head = NULL;
+	s->suspend_tail = NULL;
+	s->is_narrowed = 1;
+
+	/* This is going to get us in SOOO much trouble if someone
+	 * tries to modify the tree while suspended... :\
+	 */
+	return s->suspend_pos;
+}
+#endif /*USE_NARROW_MODE*/

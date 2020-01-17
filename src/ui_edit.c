@@ -165,6 +165,22 @@ static void* ui_edit_cmd (int argc, char **argv, void *data)
 					}
 				}
 				break;
+			case ui_action_kill_word:
+				{
+					/* A block is needed to stop the compiler from complaining that
+					   we're defining a variable here */
+					int targ = cursor_pos;
+					if (targ < 0) break;
+					while (targ < strlen(input) - 1) {
+						targ++;
+						if (input[targ] == ' ' && targ < strlen(input) - 1 && \
+							input[targ+1] != ' ') {
+							break;
+						}
+					}
+					memmove (&input[cursor_pos], &input[targ], strlen(input) - (targ-1));
+				}
+				break;
 			case ui_action_backspace:
 				if (cursor_pos) {
 					memmove (&input[cursor_pos - 1],
@@ -200,23 +216,17 @@ static void* ui_edit_cmd (int argc, char **argv, void *data)
 				}
 				break;
 			case ui_action_unbound:
-				undefined_key (ui_scope_names[ui_scope_nodeedit],
-							   c->key !=
-							   1000 ? c->key : *((int *) &c->
-												 action_param[0]));
+				undefined_key (ui_scope_names[ui_scope_nodeedit], c);
 			case ui_action_ignore:
 				break;
 			default:
-				if (c->action > 31 && c->action < 255) {	/*  input for buffer */
+				if (c->action > 31 && c->action < 255 && c->with_meta == 0) {	/*  input for buffer */
 					memmove (&input[cursor_pos + 1],
 							 &input[cursor_pos],
 							 strlen (input) - cursor_pos + 1);
 					input[cursor_pos++] = c->action;
 				} else {
-					undefined_key (ui_scope_names[ui_scope_nodeedit],
-								   c->key !=
-								   1000 ? c->key : *((int *) &c->
-													 action_param[0]));
+					undefined_key (ui_scope_names[ui_scope_nodeedit], c);
 				}
 				break;
 		}

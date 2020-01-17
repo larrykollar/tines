@@ -172,11 +172,18 @@ static int draw_textblock (int line_start, int col_start, int width,
 			case '\r':			/* all whitespace is treated as spaces */
 			wordwrap:
 				if (col + wpos + 1 >= col_end) {	/* reached margin */
+					if (lines_used == 1)
+						col_start += prefs.para_indent;
+
 					if (drawmode == drawmode_edit) {
 						if (cursor_state == 0)
 							hnb_edit_posup = cursor_pos - (col - col_start);
 						if (cursor_state == 1) {
-							hnb_edit_posdown = cursor_pos + (col - col_start);
+							if (cursor_pos < prefs.para_indent)
+								hnb_edit_posdown = cursor_pos + (col - col_start) + \
+								   (prefs.para_indent - cursor_pos);
+							else
+								hnb_edit_posdown = cursor_pos + (col - col_start);
 							cursor_state = 2;
 						}
 					}
